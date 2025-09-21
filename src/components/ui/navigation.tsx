@@ -41,7 +41,7 @@ export function Navigation({ className }: NavigationProps) {
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-amber rounded-lg flex items-center justify-center">
                 {/* <span className="text-amber-foreground font-bold text-lg">🦕</span> */}
-                <img src="/public/logoDinosaur.svg" alt="Dino Library" className="w-6 h-6" />
+                <img src="/logoDinosaur.svg" alt="Dino Library" className="w-6 h-6" />
               </div>
               <span className="font-bold text-xl text-foreground">Dino Library</span>
             </Link>

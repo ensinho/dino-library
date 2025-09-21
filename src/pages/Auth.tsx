@@ -129,7 +129,7 @@ export default function Auth() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-amber rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <img src="/public/logoDinosaur.svg" alt="Dino Library" className="w-12 h-12" />
+            <img src="/logoDinosaur.svg" alt="Dino Library" className="w-12 h-12" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Welcome to <span className="bg-gradient-amber bg-clip-text text-transparent">Dino Library</span>
