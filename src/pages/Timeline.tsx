@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Calendar, MapPin, Users, Search, Filter, Eye, Zap } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, MapPin, Users, Search, Filter, Eye, Zap, Mountain, Skull, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ArchaeologicalDiscovery {
@@ -20,6 +21,17 @@ interface ArchaeologicalDiscovery {
   longitude?: number;
 }
 
+interface GeologicalEvent {
+  id: string;
+  title: string;
+  description: string;
+  period: string;
+  years_ago: number;
+  type: 'period_start' | 'period_end' | 'extinction' | 'climate_change' | 'geological';
+  icon: React.ReactNode;
+  color: string;
+}
+
 export default function Timeline() {
   const [discoveries, setDiscoveries] = useState<ArchaeologicalDiscovery[]>([]);
   const [filteredDiscoveries, setFilteredDiscoveries] = useState<ArchaeologicalDiscovery[]>([]);
@@ -28,6 +40,71 @@ export default function Timeline() {
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [visibleItems, setVisibleItems] = useState(6);
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('discoveries');
+
+  // Geological events data
+  const geologicalEvents: GeologicalEvent[] = [
+    {
+      id: 'cretaceous_end',
+      title: 'End-Cretaceous Mass Extinction',
+      description: 'The asteroid impact that ended the age of dinosaurs. A massive asteroid struck Earth, causing global climate change and the extinction of non-avian dinosaurs.',
+      period: 'Cretaceous',
+      years_ago: 66,
+      type: 'extinction',
+      icon: <Skull className="w-6 h-6" />,
+      color: 'from-red-600 to-orange-600'
+    },
+    {
+      id: 'cretaceous_start',
+      title: 'Cretaceous Period Begins',
+      description: 'The final period of the Mesozoic Era begins. Flowering plants appear and dinosaurs reach their peak diversity.',
+      period: 'Cretaceous',
+      years_ago: 145,
+      type: 'period_start',
+      icon: <Mountain className="w-6 h-6" />,
+      color: 'from-purple-500 to-pink-500'
+    },
+    {
+      id: 'jurassic_start',
+      title: 'Jurassic Period Begins',
+      description: 'The golden age of dinosaurs begins. Supercontinent Pangaea breaks apart, creating new ocean basins and climate patterns.',
+      period: 'Jurassic',
+      years_ago: 201,
+      type: 'period_start',
+      icon: <Globe className="w-6 h-6" />,
+      color: 'from-green-500 to-emerald-500'
+    },
+    {
+      id: 'triassic_jurassic_extinction',
+      title: 'Triassic-Jurassic Extinction Event',
+      description: 'A major extinction event that eliminated many competitors of dinosaurs, allowing them to become the dominant terrestrial vertebrates.',
+      period: 'Triassic',
+      years_ago: 201,
+      type: 'extinction',
+      icon: <Zap className="w-6 h-6" />,
+      color: 'from-yellow-600 to-red-600'
+    },
+    {
+      id: 'triassic_start',
+      title: 'Triassic Period Begins',
+      description: 'The first period of the Mesozoic Era. Early dinosaurs evolve and the supercontinent Pangaea dominates Earth\'s geography.',
+      period: 'Triassic',
+      years_ago: 252,
+      type: 'period_start',
+      icon: <Mountain className="w-6 h-6" />,
+      color: 'from-red-500 to-orange-500'
+    },
+    {
+      id: 'permian_extinction',
+      title: 'Permian-Triassic Extinction',
+      description: 'The Great Dying - the most severe mass extinction event in Earth\'s history. Sets the stage for dinosaur evolution.',
+      period: 'Permian',
+      years_ago: 252,
+      type: 'extinction',
+      icon: <Skull className="w-6 h-6" />,
+      color: 'from-gray-600 to-black'
+    }
+  ];
 
   useEffect(() => {
     fetchDiscoveries();
@@ -113,186 +190,287 @@ export default function Timeline() {
             <div className="absolute inset-0 bg-amber/20 rounded-full blur-xl animate-pulse"></div>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-amber to-amber-glow bg-clip-text text-transparent">
-            Archaeological Discoveries Timeline 
+            Paleontological Timeline
           </h1>
           <p className="text-lg md:text-base text-white/90 max-w-3xl mx-auto">
-            A journey through the paleontological discoveries that revolutionized our understanding of dinosaurs. 
+            Journey through Earth's history - from geological events that shaped our planet to the archaeological discoveries that revealed the dinosaur world.
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6 flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Buscar descobertas..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-amber/50"
-            />
-          </div>
-          <div className="flex gap-2">
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="px-3 py-2 border border-border rounded-md bg-card text-foreground transition-all duration-200 hover:border-amber/50 focus:border-amber focus:ring-2 focus:ring-amber/30"
-            >
-              <option value="">Todos os anos</option>
-              {getUniqueYears().map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedYear('');
-                setVisibleItems(6);
-              }}
-              className="hover:bg-amber/10 hover:border-amber transition-all duration-200"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              Limpar
-            </Button>
-          </div>
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="discoveries" className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Archaeological Discoveries
+            </TabsTrigger>
+            <TabsTrigger value="geological" className="flex items-center gap-2">
+              <Mountain className="w-4 h-4" />
+              Geological Timeline
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="relative">
-          <div className="absolute left-6 top-0 w-0.5 h-full bg-gradient-to-b from-amber/30 via-amber/50 to-amber/30"></div>
+          {/* Archaeological Discoveries Tab */}
+          <TabsContent value="discoveries">
+            <div className="mb-6 flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="Search discoveries..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-amber/50"
+                />
+              </div>
+              <div className="flex gap-2">
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="px-3 py-2 border border-border rounded-md bg-card text-foreground transition-all duration-200 hover:border-amber/50 focus:border-amber focus:ring-2 focus:ring-amber/30"
+                >
+                  <option value="">All years</option>
+                  {getUniqueYears().map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedYear('');
+                    setVisibleItems(6);
+                  }}
+                  className="hover:bg-amber/10 hover:border-amber transition-all duration-200"
+                >
+                  <Filter className="w-4 h-4 mr-2" />
+                  Clear
+                </Button>
+              </div>
+            </div>
 
-          <div className="space-y-4">
-            {filteredDiscoveries.slice(0, visibleItems).map((discovery, index) => (
-              <div 
-                key={discovery.id} 
-                className="relative group animate-slideInUp"
-                style={{
-                  animationDelay: `${index * 100}ms`
-                }}
-              >
-                {/* Timeline dot - mais dinâmico */}
-                <div className="absolute left-4 w-4 h-4 bg-gradient-to-r from-amber to-amber-glow rounded-full border-2 border-background shadow-lg group-hover:scale-125 transition-all duration-300 hidden md:block">
-                  <div className="absolute inset-0 bg-amber/30 rounded-full animate-ping"></div>
-                </div>
+            <div className="relative">
+              <div className="absolute left-6 top-0 w-0.5 h-full bg-gradient-to-b from-amber/30 via-amber/50 to-amber/30"></div>
 
-                {/* Content - Cards mais compactos */}
-                <div className="md:ml-12">
-                  <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 bg-card/80 backdrop-blur-sm border-border/50 hover:border-amber/30">
-                    <CardHeader className="bg-gradient-to-r from-amber/5 to-forest/5 pb-3 pt-4">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg mb-2 group-hover:text-amber transition-colors duration-300">
-                            {discovery.title}
-                          </CardTitle>
-                          <CardDescription className="flex flex-wrap items-center gap-3 text-sm">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4 text-amber/70" />
-                              {formatDate(discovery.discovery_date)}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4 text-amber/70" />
-                              {discovery.location}
-                            </span>
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-amber/20 text-amber-dark text-xs">
-                            {new Date(discovery.discovery_date).getFullYear()}
-                          </Badge>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleCardExpansion(discovery.id)}
-                            className="p-1 h-auto hover:bg-amber/10"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-4">
-                      <div className={`grid ${discovery.image_url ? 'md:grid-cols-3' : 'grid-cols-1'} gap-4`}>
-                        <div className={discovery.image_url ? 'md:col-span-2' : 'col-span-1'}>
-                          <p className={`text-muted-foreground leading-relaxed text-sm ${
-                            expandedCard === discovery.id ? '' : 'line-clamp-3'
-                          }`}>
-                            {discovery.description}
-                          </p>
+              <div className="space-y-4">
+                {filteredDiscoveries.slice(0, visibleItems).map((discovery, index) => (
+                  <div 
+                    key={discovery.id} 
+                    className="relative group animate-slideInUp"
+                    style={{
+                      animationDelay: `${index * 100}ms`
+                    }}
+                  >
+                    <div className="absolute left-4 w-4 h-4 bg-gradient-to-r from-amber to-amber-glow rounded-full border-2 border-background shadow-lg group-hover:scale-125 transition-all duration-300 hidden md:block">
+                      <div className="absolute inset-0 bg-amber/30 rounded-full animate-ping"></div>
+                    </div>
 
-                          {expandedCard === discovery.id && (
-                            <div className="mt-4 space-y-3 animate-fadeIn">
-                              {discovery.significance && (
-                                <div>
-                                  <h4 className="font-semibold mb-1 text-amber text-sm">Scientific Significance:</h4>
-                                  <p className="text-xs text-muted-foreground">
-                                    {discovery.significance}
-                                  </p>
-                                </div>
-                              )}
-
-                              {(discovery.researcher_name || discovery.organization) && (
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 p-2 rounded-md">
-                                  <Users className="w-3 h-3 text-amber/70" />
-                                  <div>
-                                    {discovery.researcher_name && (
-                                      <span>Researcher: {discovery.researcher_name}</span>
-                                    )}
-                                    {discovery.organization && (
-                                      <span className={discovery.researcher_name ? " • " : ""}>
-                                        {discovery.organization}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
+                    <div className="md:ml-12">
+                      <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 bg-card/80 backdrop-blur-sm border-border/50 hover:border-amber/30">
+                        <CardHeader className="bg-gradient-to-r from-amber/5 to-forest/5 pb-3 pt-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <CardTitle className="text-lg mb-2 group-hover:text-amber transition-colors duration-300">
+                                {discovery.title}
+                              </CardTitle>
+                              <CardDescription className="flex flex-wrap items-center gap-3 text-sm">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-4 h-4 text-amber/70" />
+                                  {formatDate(discovery.discovery_date)}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4 text-amber/70" />
+                                  {discovery.location}
+                                </span>
+                              </CardDescription>
                             </div>
-                          )}
-                        </div>
-
-                        {discovery.image_url && (
-                          <div className="md:col-span-1">
-                            <div className="relative overflow-hidden rounded-lg group">
-                              <img
-                                src={discovery.image_url}
-                                alt={discovery.title}
-                                className="w-full h-32 md:h-40 object-cover transition-transform duration-500 group-hover:scale-110"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary" className="bg-amber/20 text-amber-dark text-xs">
+                                {new Date(discovery.discovery_date).getFullYear()}
+                              </Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => toggleCardExpansion(discovery.id)}
+                                className="p-1 h-auto hover:bg-amber/10"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
                             </div>
                           </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                          <div className={`grid ${discovery.image_url ? 'md:grid-cols-3' : 'grid-cols-1'} gap-4`}>
+                            <div className={discovery.image_url ? 'md:col-span-2' : 'col-span-1'}>
+                              <p className={`text-muted-foreground leading-relaxed text-sm ${
+                                expandedCard === discovery.id ? '' : 'line-clamp-3'
+                              }`}>
+                                {discovery.description}
+                              </p>
+
+                              {expandedCard === discovery.id && (
+                                <div className="mt-4 space-y-3 animate-fadeIn">
+                                  {discovery.significance && (
+                                    <div>
+                                      <h4 className="font-semibold mb-1 text-amber text-sm">Scientific Significance:</h4>
+                                      <p className="text-xs text-muted-foreground">
+                                        {discovery.significance}
+                                      </p>
+                                    </div>
+                                  )}
+
+                                  {(discovery.researcher_name || discovery.organization) && (
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 p-2 rounded-md">
+                                      <Users className="w-3 h-3 text-amber/70" />
+                                      <div>
+                                        {discovery.researcher_name && (
+                                          <span>Researcher: {discovery.researcher_name}</span>
+                                        )}
+                                        {discovery.organization && (
+                                          <span className={discovery.researcher_name ? " • " : ""}>
+                                            {discovery.organization}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            {discovery.image_url && (
+                              <div className="md:col-span-1">
+                                <div className="relative overflow-hidden rounded-lg group">
+                                  <img
+                                    src={discovery.image_url}
+                                    alt={discovery.title}
+                                    className="w-full h-32 md:h-40 object-cover transition-transform duration-500 group-hover:scale-110"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {visibleItems < filteredDiscoveries.length && (
+                <div className="text-center mt-8">
+                  <Button
+                    onClick={loadMoreItems}
+                    className="bg-gradient-to-r from-amber to-amber-glow hover:from-amber-glow hover:to-amber text-black font-semibold px-8 py-3 transition-all duration-300 hover:scale-105"
+                  >
+                    View More Discoveries ({filteredDiscoveries.length - visibleItems} remaining)
+                  </Button>
                 </div>
-              </div>
-            ))}
-          </div>
+              )}
 
-          {/* Load More Button */}
-          {visibleItems < filteredDiscoveries.length && (
-            <div className="text-center mt-8">
-              <Button
-                onClick={loadMoreItems}
-                className="bg-gradient-to-r from-amber to-amber-glow hover:from-amber-glow hover:to-amber text-black font-semibold px-8 py-3 transition-all duration-300 hover:scale-105"
-              >
-                Ver Mais Descobertas ({filteredDiscoveries.length - visibleItems} restantes)
-              </Button>
+              {filteredDiscoveries.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="bg-muted/20 rounded-2xl p-8 max-w-md mx-auto">
+                    <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold mb-2">No discoveries found</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Try adjusting your search filters.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </TabsContent>
 
-          {filteredDiscoveries.length === 0 && (
-            <div className="text-center py-12">
-              <div className="bg-muted/20 rounded-2xl p-8 max-w-md mx-auto">
-                <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">Nenhuma descoberta encontrada</h3>
-                <p className="text-muted-foreground text-sm">
-                  Tente ajustar os filtros ou termos de busca.
-                </p>
+          {/* Geological Timeline Tab */}
+          <TabsContent value="geological">
+            <div className="relative">
+              <div className="absolute left-6 top-0 w-1 h-full bg-gradient-to-b from-red-500 via-green-500 to-purple-500 opacity-20"></div>
+
+              <div className="space-y-6">
+                {geologicalEvents.map((event, index) => (
+                  <div 
+                    key={event.id} 
+                    className="relative group animate-slideInUp"
+                    style={{
+                      animationDelay: `${index * 150}ms`
+                    }}
+                  >
+                    <div className={`absolute left-3 w-8 h-8 bg-gradient-to-r ${event.color} rounded-full border-4 border-background shadow-lg group-hover:scale-125 transition-all duration-300 flex items-center justify-center text-white hidden md:flex`}>
+                      {event.icon}
+                    </div>
+
+                    <div className="md:ml-16">
+                      <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 bg-card/80 backdrop-blur-sm border-border/50 hover:border-amber/30">
+                        <CardHeader className={`bg-gradient-to-r ${event.color} text-white pb-3 pt-4`}>
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <CardTitle className="text-xl mb-2 flex items-center gap-3">
+                                <span className="md:hidden">{event.icon}</span>
+                                {event.title}
+                              </CardTitle>
+                              <CardDescription className="text-white/90 text-sm">
+                                <Badge variant="secondary" className="bg-white/20 text-white mr-2">
+                                  {event.years_ago} Million Years Ago
+                                </Badge>
+                                <Badge variant="secondary" className="bg-white/20 text-white">
+                                  {event.period} Period
+                                </Badge>
+                              </CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="p-6">
+                          <p className="text-muted-foreground leading-relaxed">
+                            {event.description}
+                          </p>
+                          
+                          <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+                            <span className="capitalize">
+                              {event.type.replace('_', ' ')} Event
+                            </span>
+                            <span>•</span>
+                            <span>Mesozoic Era</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Era Legend */}
+              <div className="mt-12">
+                <Card className="bg-gradient-to-r from-amber/10 to-orange/10 border-amber/20">
+                  <CardContent className="pt-6">
+                    <h3 className="text-lg font-semibold mb-4 text-center">Mesozoic Era Overview</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="text-center p-4 bg-gradient-to-b from-red-100 to-red-50 rounded-lg">
+                        <div className="text-2xl mb-2">🌋</div>
+                        <h4 className="font-semibold text-red-700">Triassic</h4>
+                        <p className="text-sm text-red-600">252-201 MYA</p>
+                        <p className="text-xs text-muted-foreground mt-1">Early dinosaur evolution</p>
+                      </div>
+                      <div className="text-center p-4 bg-gradient-to-b from-green-100 to-green-50 rounded-lg">
+                        <div className="text-2xl mb-2">🌲</div>
+                        <h4 className="font-semibold text-green-700">Jurassic</h4>
+                        <p className="text-sm text-green-600">201-145 MYA</p>
+                        <p className="text-xs text-muted-foreground mt-1">Golden age of dinosaurs</p>
+                      </div>
+                      <div className="text-center p-4 bg-gradient-to-b from-purple-100 to-purple-50 rounded-lg">
+                        <div className="text-2xl mb-2">🌺</div>
+                        <h4 className="font-semibold text-purple-700">Cretaceous</h4>
+                        <p className="text-sm text-purple-600">145-66 MYA</p>
+                        <p className="text-xs text-muted-foreground mt-1">Peak diversity & extinction</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
-          )}
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

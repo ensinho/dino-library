@@ -7,6 +7,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
+import SpeciesDetail from "./pages/SpeciesDetail";
+import Discover from "./pages/Discover";
+import Glossary from "./pages/Glossary";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Map from "./pages/Map";
@@ -60,6 +63,9 @@ const App = () => {
             />
             {/* O resto das suas rotas continua aqui... */}
             <Route path="/catalog" element={<Layout><Catalog /><Footer /></Layout>} />
+            <Route path="/discover" element={<Layout><Discover /><Footer /></Layout>} />
+            <Route path="/glossary" element={<Layout><Glossary /><Footer /></Layout>} />
+            <Route path="/species/:dinoId" element={<Layout><SpeciesDetail /><Footer /></Layout>} />
             <Route path="/map" element={<Layout><Map /><Footer /></Layout>} />
             <Route path="/timeline" element={<Layout><Timeline /><Footer /></Layout>} />
             <Route path="/education" element={<Layout><Education /><Footer /></Layout>} />

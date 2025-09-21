@@ -9,7 +9,8 @@ import {
   GraduationCap, 
   User,
   Menu,
-  X
+  X,
+  Compass
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -25,6 +26,7 @@ export function Navigation({ className }: NavigationProps) {
   const navigationItems = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Collection', href: '/catalog', icon: Search },
+    { name: 'Discover', href: '/discover', icon: Compass },
     { name: 'Maps', href: '/map', icon: Map },
     { name: 'Timeline', href: '/timeline', icon: Clock },
     { name: 'Learning', href: '/education', icon: GraduationCap },

@@ -8,7 +8,11 @@
       "period": "Período Geológico",
       "diet": "Dieta",
       "location": "Habitava em",
+      "size": "Filtros de Tamanho",
+      "advanced": "Avançado",
       "clear": "Limpar Filtros",
+      "reset": "Redefinir",
+      "sizeComparison": "Comparação de Tamanho",
       "allPeriods": "Todos os Períodos",
       "allDiets": "Todas as Dietas",
       "allLocations": "Todas as Localizações"
@@ -55,6 +59,125 @@
       "title": "Nenhum dinossauro encontrado",
       "subtitle": "Tente ajustar seus critérios de busca ou limpar os filtros.",
       "action": "Limpar todos os filtros"
+    }
+  },
+  "species": {
+    "loading": "Carregando detalhes da espécie...",
+    "notFound": {
+      "title": "Espécie Não Encontrada",
+      "message": "Não conseguimos encontrar a espécie de dinossauro que você está procurando."
+    },
+    "backToCatalog": "Voltar ao Catálogo",
+    "share": "Compartilhar",
+    "nameOrigin": "Origem do Nome",
+    "noImage": "Nenhuma imagem disponível",
+    "unknown": "Desconhecido",
+    "tabs": {
+      "overview": "Visão Geral",
+      "gallery": "Galeria",
+      "anatomy": "Anatomia",
+      "ecology": "Ecologia",
+      "discovery": "Descoberta"
+    },
+    "factFile": {
+      "title": "Ficha Técnica",
+      "length": "Comprimento",
+      "height": "Altura",
+      "weight": "Peso",
+      "diet": "Dieta",
+      "locomotion": "Locomoção",
+      "intelligence": "Inteligência"
+    },
+    "diet": {
+      "title": "Dieta e Alimentação",
+      "carnivore": "Este dinossauro era carnívoro, alimentando-se principalmente de carne de outros animais. Provavelmente usava seus dentes afiados e mandíbulas poderosas para caçar e consumir presas.",
+      "herbivore": "Este dinossauro era herbívoro, alimentando-se exclusivamente de plantas. Tinha dentes especializados e sistemas digestivos adaptados para processar material vegetal.",
+      "omnivore": "Este dinossauro era onívoro, com uma dieta variada incluindo plantas e carne. Essa flexibilidade provavelmente lhe dava vantagens em diferentes ambientes."
+    },
+    "features": {
+      "title": "Características Notáveis"
+    },
+    "anatomy": {
+      "title": "Anatomia e Aparência",
+      "description": "Informações anatômicas detalhadas sobre esta espécie de dinossauro.",
+      "physicalCharacteristics": "Características Físicas",
+      "specialFeatures": "Características Especiais"
+    },
+    "ecology": {
+      "environment": "Ambiente",
+      "period": "Período Geológico",
+      "habitat": "Habitat",
+      "behavior": "Comportamento",
+      "noBehaviorInfo": "Nenhuma informação específica de comportamento disponível para esta espécie."
+    },
+    "discovery": {
+      "title": "Descoberta e Pesquisa",
+      "firstDiscovered": "Primeiro Descoberto",
+      "fossilLocation": "Local do Fóssil",
+      "source": "Saiba Mais",
+      "learnMore": "Ver Fonte"
+    },
+    "relatedSpecies": {
+      "title": "Descubra Mais Espécies",
+      "description": "Explore nossa coleção completa de espécies de dinossauros e aprenda sobre seu mundo fascinante.",
+      "exploreCatalog": "Explorar Catálogo"
+    },
+    "gallery": {
+      "title": "Galeria de Imagens",
+      "description": "Representações visuais, reconstruções e evidências fósseis desta espécie de dinossauro.",
+      "noImages": "Nenhuma imagem disponível para esta espécie",
+      "viewLarge": "Ver Ampliado",
+      "viewFullGallery": "Ver Galeria Completa",
+      "previous": "Anterior",
+      "next": "Próximo",
+      "of": "de"
+    }
+  },
+  "discover": {
+    "title": "Descubra Dinossauros",
+    "subtitle": "Explore temas fascinantes e descubra dinossauros agrupados por suas características mais marcantes.",
+    "loading": "Descobrindo espécies...",
+    "speciesFound": "espécies encontradas",
+    "worldwide": "Descobertas mundiais",
+    "viewAll": "Ver Todos",
+    "length": "de comprimento",
+    "noDescription": "Nenhuma descrição disponível",
+    "groups": {
+      "giants": {
+        "title": "Gigantes",
+        "description": "Os maiores dinossauros que já caminharam na Terra. Saurópodes massivos e outras criaturas colossais."
+      },
+      "predators": {
+        "title": "Predadores",
+        "description": "Carnívoros rápidos e mortais. Os caçadores mais temidos do mundo pré-histórico."
+      },
+      "brazil": {
+        "title": "Do Brasil",
+        "description": "Dinossauros descobertos no Brasil. Espécies únicas de sítios fósseis sul-americanos."
+      },
+      "armored": {
+        "title": "Blindados",
+        "description": "Dinossauros fortemente defendidos com armaduras, espinhos e chifres para proteção."
+      },
+      "rare": {
+        "title": "Achados Raros",
+        "description": "Espécies de dinossauros descobertas recentemente ou excepcionalmente raras com características únicas."
+      },
+      "aerial": {
+        "title": "Senhores do Céu",
+        "description": "Répteis voadores e dinossauros que dominaram os céus pré-históricos."
+      }
+    },
+    "noSpecies": {
+      "title": "Nenhuma espécie encontrada",
+      "subtitle": "Não conseguimos encontrar dinossauros que correspondam aos critérios desta categoria.",
+      "action": "Explorar Todas as Espécies"
+    },
+    "cta": {
+      "title": "Quer saber mais?",
+      "description": "Mergulhe mais fundo nessas criaturas fascinantes e descubra suas histórias completas.",
+      "viewAll": "Ver Todos na Categoria",
+      "exploreAll": "Explorar Todas as Espécies"
     }
   },
   "common": {

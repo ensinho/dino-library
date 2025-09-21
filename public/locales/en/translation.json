@@ -8,7 +8,11 @@
       "period": "Geological Period",
       "diet": "Diet",
       "location": "Lived In",
+      "size": "Size Filters",
+      "advanced": "Advanced",
       "clear": "Clear Filters",
+      "reset": "Reset",
+      "sizeComparison": "Size Comparison",
       "allPeriods": "All Periods",
       "allDiets": "All Diets",
       "allLocations": "All Locations"
@@ -55,6 +59,125 @@
       "title": "No dinosaurs found",
       "subtitle": "Try adjusting your search criteria or clearing the filters.",
       "action": "Clear all filters"
+    }
+  },
+  "species": {
+    "loading": "Loading species details...",
+    "notFound": {
+      "title": "Species Not Found",
+      "message": "We couldn't find the dinosaur species you're looking for."
+    },
+    "backToCatalog": "Back to Catalog",
+    "share": "Share",
+    "nameOrigin": "Name Origin",
+    "noImage": "No image available",
+    "unknown": "Unknown",
+    "tabs": {
+      "overview": "Overview",
+      "gallery": "Gallery",
+      "anatomy": "Anatomy",
+      "ecology": "Ecology",
+      "discovery": "Discovery"
+    },
+    "factFile": {
+      "title": "Fact File",
+      "length": "Length",
+      "height": "Height",
+      "weight": "Weight",
+      "diet": "Diet",
+      "locomotion": "Locomotion",
+      "intelligence": "Intelligence"
+    },
+    "diet": {
+      "title": "Diet & Feeding",
+      "carnivore": "This dinosaur was a carnivore, feeding primarily on meat from other animals. It likely used its sharp teeth and powerful jaws to hunt and consume prey.",
+      "herbivore": "This dinosaur was a herbivore, feeding exclusively on plants. It had specialized teeth and digestive systems adapted for processing plant material.",
+      "omnivore": "This dinosaur was an omnivore, with a varied diet including both plants and meat. This flexibility likely gave it advantages in different environments."
+    },
+    "features": {
+      "title": "Notable Features"
+    },
+    "anatomy": {
+      "title": "Anatomy & Appearance",
+      "description": "Detailed anatomical information about this dinosaur species.",
+      "physicalCharacteristics": "Physical Characteristics",
+      "specialFeatures": "Special Features"
+    },
+    "ecology": {
+      "environment": "Environment",
+      "period": "Geological Period",
+      "habitat": "Habitat",
+      "behavior": "Behavior",
+      "noBehaviorInfo": "No specific behavior information available for this species."
+    },
+    "discovery": {
+      "title": "Discovery & Research",
+      "firstDiscovered": "First Discovered",
+      "fossilLocation": "Fossil Location",
+      "source": "Learn More",
+      "learnMore": "View Source"
+    },
+    "relatedSpecies": {
+      "title": "Discover More Species",
+      "description": "Explore our complete collection of dinosaur species and learn about their fascinating world.",
+      "exploreCatalog": "Explore Catalog"
+    },
+    "gallery": {
+      "title": "Image Gallery",
+      "description": "Visual representations, reconstructions, and fossil evidence of this dinosaur species.",
+      "noImages": "No images available for this species",
+      "viewLarge": "View Large",
+      "viewFullGallery": "View Full Gallery",
+      "previous": "Previous",
+      "next": "Next",
+      "of": "of"
+    }
+  },
+  "discover": {
+    "title": "Discover Dinosaurs",
+    "subtitle": "Explore fascinating themes and discover dinosaurs grouped by their most remarkable characteristics.",
+    "loading": "Discovering species...",
+    "speciesFound": "species found",
+    "worldwide": "Worldwide discoveries",
+    "viewAll": "View All",
+    "length": "long",
+    "noDescription": "No description available",
+    "groups": {
+      "giants": {
+        "title": "Giants",
+        "description": "The largest dinosaurs that ever walked the Earth. Massive sauropods and other colossal creatures."
+      },
+      "predators": {
+        "title": "Predators",
+        "description": "Fast and deadly carnivores. The most fearsome hunters of the prehistoric world."
+      },
+      "brazil": {
+        "title": "From Brazil",
+        "description": "Dinosaurs discovered in Brazil. Unique species from South American fossil sites."
+      },
+      "armored": {
+        "title": "Armored",
+        "description": "Heavily defended dinosaurs with armor, spikes, and horns for protection."
+      },
+      "rare": {
+        "title": "Rare Finds",
+        "description": "Recently discovered or exceptionally rare dinosaur species with unique characteristics."
+      },
+      "aerial": {
+        "title": "Sky Rulers",
+        "description": "Flying reptiles and dinosaurs that ruled the prehistoric skies."
+      }
+    },
+    "noSpecies": {
+      "title": "No species found",
+      "subtitle": "We couldn't find any dinosaurs matching this category criteria.",
+      "action": "Explore All Species"
+    },
+    "cta": {
+      "title": "Want to learn more?",
+      "description": "Dive deeper into these fascinating creatures and discover their complete stories.",
+      "viewAll": "View All in Category",
+      "exploreAll": "Explore All Species"
     }
   },
   "common": {

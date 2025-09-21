@@ -38,6 +38,8 @@ export interface DinosaurFilters {
   period?: string;
   diet?: string;
   location?: string;
+  lengthRange?: [number, number];
+  heightRange?: [number, number];
   page?: number;
   limit?: number;
 }
@@ -208,6 +210,15 @@ export class DinosaurService {
 
     if (filters.location && filters.location !== 'all') {
       query = query.eq('lived_in', filters.location);
+    }
+
+    // Apply size filters
+    if (filters.lengthRange) {
+      query = query.gte('length_m', filters.lengthRange[0]).lte('length_m', filters.lengthRange[1]);
+    }
+
+    if (filters.heightRange) {
+      query = query.gte('height_m', filters.heightRange[0]).lte('height_m', filters.heightRange[1]);
     }
 
     // Apply pagination

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,12 +11,15 @@ import { Search, Filter, Ruler, Calendar, MapPin, Weight, Bone } from 'lucide-re
 import { dinosaurService, DinosaurSpecies } from '@/services/dinosaurService';
 import { useAnalytics } from '@/services/analyticsService';
 import LanguageSwitcher from '@/components/ui/language-switcher';
+import PeriodTimeline from '@/components/PeriodTimeline';
+import SizeFilter from '@/components/SizeFilter';
 
 // Using DinosaurSpecies type from the service
 
 export default function Catalog() {
   const { t, i18n } = useTranslation();
   const analytics = useAnalytics();
+  const navigate = useNavigate();
   
   const [species, setSpecies] = useState<DinosaurSpecies[]>([]);
   const [filteredSpecies, setFilteredSpecies] = useState<DinosaurSpecies[]>([]);
@@ -25,6 +29,9 @@ export default function Catalog() {
   const [periodFilter, setPeriodFilter] = useState('all');
   const [dietFilter, setDietFilter] = useState('all');
   const [livedInFilter, setLivedInFilter] = useState('all');
+  const [lengthRange, setLengthRange] = useState<[number, number]>([0, 50]);
+  const [heightRange, setHeightRange] = useState<[number, number]>([0, 20]);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -37,11 +44,11 @@ export default function Catalog() {
 
   useEffect(() => {
     fetchSpecies();
-  }, [searchTerm, periodFilter, dietFilter, livedInFilter, currentPage]);
+  }, [searchTerm, periodFilter, dietFilter, livedInFilter, lengthRange, heightRange, currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, periodFilter, dietFilter, livedInFilter]);
+  }, [searchTerm, periodFilter, dietFilter, livedInFilter, lengthRange, heightRange]);
 
   // Removed client-side filtering - now handled by the service
 
@@ -55,6 +62,8 @@ export default function Catalog() {
         period: periodFilter === 'all' ? undefined : periodFilter,
         diet: dietFilter === 'all' ? undefined : dietFilter,
         location: livedInFilter === 'all' ? undefined : livedInFilter,
+        lengthRange: lengthRange[0] === 0 && lengthRange[1] === 50 ? undefined : lengthRange,
+        heightRange: heightRange[0] === 0 && heightRange[1] === 20 ? undefined : heightRange,
         page: currentPage,
         limit: itemsPerPage
       });
@@ -69,7 +78,9 @@ export default function Catalog() {
         analytics.trackSearch(searchTerm, response.total, {
           period: periodFilter,
           diet: dietFilter,
-          location: livedInFilter
+          location: livedInFilter,
+          lengthRange: lengthRange,
+          heightRange: heightRange
         });
       }
       
@@ -104,12 +115,19 @@ export default function Catalog() {
     setPeriodFilter('all');
     setDietFilter('all');
     setLivedInFilter('all');
+    setLengthRange([0, 50]);
+    setHeightRange([0, 20]);
     analytics.track('filters_cleared');
+  };
+
+  const resetSizeFilters = () => {
+    setLengthRange([0, 50]);
+    setHeightRange([0, 20]);
   };
 
   const handleSpeciesClick = (species: DinosaurSpecies) => {
     analytics.trackSpeciesView(species.row_index, species.common_name);
-    // TODO: Navigate to species detail page
+    navigate(`/species/${species.row_index}`);
   };
 
   const getDietIcon = (diet: string | null) => {
@@ -155,69 +173,96 @@ export default function Catalog() {
         </div>
 
         {/* Filters */}
-        <div className="bg-card rounded-xl shadow-fossil p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder={t('catalog.search')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+        <div className="space-y-6 mb-8">
+          {/* Basic Filters Row */}
+          <div className="bg-card rounded-xl shadow-fossil p-6">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder={t('catalog.search')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              <Select value={dietFilter} onValueChange={(value) => handleFilterChange('diet', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('catalog.filters.diet')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('catalog.filters.allDiets')}</SelectItem>
+                  <SelectItem value="Carnivore">{t('catalog.diet.carnivore')}</SelectItem>
+                  <SelectItem value="Herbivore">{t('catalog.diet.herbivore')}</SelectItem>
+                  <SelectItem value="Omnivore">{t('catalog.diet.omnivore')}</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={livedInFilter} onValueChange={(value) => handleFilterChange('location', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('catalog.filters.location')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('catalog.filters.allLocations')}</SelectItem>
+                  <SelectItem value="North America">{t('catalog.locations.north_america')}</SelectItem>
+                  <SelectItem value="South America">{t('catalog.locations.south_america')}</SelectItem>
+                  <SelectItem value="Europe">{t('catalog.locations.europe')}</SelectItem>
+                  <SelectItem value="Asia">{t('catalog.locations.asia')}</SelectItem>
+                  <SelectItem value="Africa">{t('catalog.locations.africa')}</SelectItem>
+                  <SelectItem value="Australia">{t('catalog.locations.australia')}</SelectItem>
+                  <SelectItem value="Antarctica">{t('catalog.locations.antarctica')}</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <LanguageSwitcher />
+
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                  className="flex items-center space-x-2"
+                >
+                  <Filter className="w-4 h-4" />
+                  <span>{t('catalog.filters.advanced')}</span>
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={clearFilters}
+                  className="flex items-center space-x-2"
+                >
+                  <span>{t('catalog.filters.clear')}</span>
+                </Button>
+              </div>
             </div>
-            
-            <Select value={periodFilter} onValueChange={(value) => handleFilterChange('period', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('catalog.filters.period')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('catalog.filters.allPeriods')}</SelectItem>
-                <SelectItem value="triassic">{t('catalog.periods.triassic')}</SelectItem>
-                <SelectItem value="jurassic">{t('catalog.periods.jurassic')}</SelectItem>
-                <SelectItem value="cretaceous">{t('catalog.periods.cretaceous')}</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={dietFilter} onValueChange={(value) => handleFilterChange('diet', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('catalog.filters.diet')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('catalog.filters.allDiets')}</SelectItem>
-                <SelectItem value="Carnivore">{t('catalog.diet.carnivore')}</SelectItem>
-                <SelectItem value="Herbivore">{t('catalog.diet.herbivore')}</SelectItem>
-                <SelectItem value="Omnivore">{t('catalog.diet.omnivore')}</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={livedInFilter} onValueChange={(value) => handleFilterChange('location', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('catalog.filters.location')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('catalog.filters.allLocations')}</SelectItem>
-                <SelectItem value="North America">{t('catalog.locations.north_america')}</SelectItem>
-                <SelectItem value="South America">{t('catalog.locations.south_america')}</SelectItem>
-                <SelectItem value="Europe">{t('catalog.locations.europe')}</SelectItem>
-                <SelectItem value="Asia">{t('catalog.locations.asia')}</SelectItem>
-                <SelectItem value="Africa">{t('catalog.locations.africa')}</SelectItem>
-                <SelectItem value="Australia">{t('catalog.locations.australia')}</SelectItem>
-                <SelectItem value="Antarctica">{t('catalog.locations.antarctica')}</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <LanguageSwitcher />
-
-            <Button
-              variant="outline"
-              onClick={clearFilters}
-              className="flex items-center space-x-2"
-            >
-              <Filter className="w-4 h-4" />
-              <span>{t('catalog.filters.clear')}</span>
-            </Button>
           </div>
+
+          {/* Advanced Filters */}
+          {showAdvancedFilters && (
+            <div className="bg-card rounded-xl shadow-fossil p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Period Timeline */}
+                <div>
+                  <PeriodTimeline 
+                    selectedPeriod={periodFilter}
+                    onPeriodChange={(period) => handleFilterChange('period', period)}
+                  />
+                </div>
+
+                {/* Size Filter */}
+                <div>
+                  <SizeFilter
+                    lengthRange={lengthRange}
+                    onLengthRangeChange={setLengthRange}
+                    heightRange={heightRange}
+                    onHeightRangeChange={setHeightRange}
+                    onReset={resetSizeFilters}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Results Count */}
