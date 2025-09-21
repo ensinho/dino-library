@@ -1,4 +1,6 @@
 export default async function handler(request: Request) {
+  console.log('🦕 Dinosaur API called:', request.method, request.url);
+  
   // CORS headers
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -8,6 +10,7 @@ export default async function handler(request: Request) {
 
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
+    console.log('🦕 Handling CORS preflight');
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
@@ -32,16 +35,24 @@ export default async function handler(request: Request) {
   ];
 
   try {
+    console.log('🦕 Processing request method:', request.method);
+    
     // Handle POST request for search
     if (request.method === 'POST') {
+      console.log('🦕 Handling POST request');
       const body = await request.json().catch(() => ({}));
+      console.log('🦕 Request body:', body);
       
-      return new Response(JSON.stringify({
+      const response = {
         data: mockData,
         total: mockData.length,
         page: 1,
         totalPages: 1
-      }), {
+      };
+      
+      console.log('🦕 Sending response:', response);
+      
+      return new Response(JSON.stringify(response), {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
@@ -57,9 +68,11 @@ export default async function handler(request: Request) {
     });
 
   } catch (error) {
+    console.error('❌ Dinosaur API Error:', error);
     return new Response(JSON.stringify({ 
       error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders }

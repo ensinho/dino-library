@@ -201,7 +201,7 @@ export class AnalyticsService {
       if (config.debugMode) {
       }
       
-      await apiGateway.callService('analytics', '/api/events', {
+      await apiGateway.callService('analytics', '/events', {
         method: 'POST',
         body: JSON.stringify({ events: eventsToSend })
       });
