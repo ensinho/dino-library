@@ -4,8 +4,8 @@
   "framework": null,
   "installCommand": "npm install",
   "functions": {
-    "api/**/*.ts": {
-      "runtime": "deno"
+    "api/**/*.{ts,tsx}": {
+      "runtime": "vercel-deno-runtime"
     }
   },
   "env": {
@@ -16,7 +16,10 @@
   "build": {
     "env": {
       "VITE_USE_LOCAL_SERVICES": "false",
-      "VITE_VERCEL_DEPLOYMENT": "true"
+      "VITE_VERCEL_DEPLOYMENT": "true",
+      "DENO_VERSION": "1.45.0",
+      "DENO_CONFIG": "tsconfig.json",
+      "DENO_UNSTABLE": "true"
     }
   },
   "headers": [
