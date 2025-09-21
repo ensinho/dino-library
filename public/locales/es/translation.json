@@ -1,0 +1,77 @@
+{
+  "catalog": {
+    "title": "Colección de Dinosaurios",
+    "subtitle": "Explora nuestra colección completa de especies de dinosaurios con información detallada sobre cada una.",
+    "search": "Buscar dinosaurios...",
+    "loading": "Excavando fósiles...",
+    "filters": {
+      "period": "Período Geológico",
+      "diet": "Dieta",
+      "location": "Vivió en",
+      "clear": "Limpiar Filtros",
+      "allPeriods": "Todos los Períodos",
+      "allDiets": "Todas las Dietas",
+      "allLocations": "Todas las Ubicaciones"
+    },
+    "diet": {
+      "carnivore": "Carnívoro",
+      "herbivore": "Herbívoro",
+      "omnivore": "Omnívoro"
+    },
+    "periods": {
+      "triassic": "Triásico",
+      "jurassic": "Jurásico",
+      "cretaceous": "Cretácico"
+    },
+    "locations": {
+      "north_america": "América del Norte",
+      "south_america": "América del Sur",
+      "europe": "Europa",
+      "asia": "Asia",
+      "africa": "África",
+      "australia": "Australia",
+      "antarctica": "Antártida"
+    },
+    "stats": {
+      "length": "Longitud",
+      "height": "Altura",
+      "weight": "Peso",
+      "found": "Descubierto en",
+      "livedIn": "Vivió en",
+      "fossilLocation": "Ubicación del Fósil",
+      "meters": "m",
+      "kilograms": "kg",
+      "unknown": "Desconocido"
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "of": "de",
+      "species": "especies",
+      "page": "página",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "noResults": {
+      "title": "No se encontraron dinosaurios",
+      "subtitle": "Intenta ajustar tus criterios de búsqueda o limpiar los filtros.",
+      "action": "Limpiar todos los filtros"
+    }
+  },
+  "common": {
+    "language": "Idioma",
+    "loading": "Cargando...",
+    "error": "Error",
+    "retry": "Reintentar",
+    "close": "Cerrar"
+  },
+  "services": {
+    "status": "Estado de los Servicios",
+    "healthy": "Saludable",
+    "down": "Inactivo",
+    "unknown": "Desconocido",
+    "dinosaur": "Servicio de Dinosaurios",
+    "geological": "Servicio Geológico",
+    "discovery": "Servicio de Descubrimientos",
+    "analytics": "Servicio de Analytics"
+  }
+}

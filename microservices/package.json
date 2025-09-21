@@ -1,0 +1,29 @@
+{
+  "name": "dinolibrary-microservices",
+  "version": "1.0.0",
+  "description": "Scripts and utilities for managing DinoLibrary microservices",
+  "scripts": {
+    "start:services": "concurrently \"npm run start:dinosaur\" \"npm run start:analytics\"",
+    "start:dinosaur": "cd microservices/dinosaur-service && npm run dev",
+    "start:analytics": "cd microservices/analytics-service && npm run dev",
+    "start:all": "concurrently \"npm run dev\" \"npm run start:services\"",
+    "dev": "cd .. && npm run dev",
+    "install:services": "cd microservices/dinosaur-service && npm install && cd ../analytics-service && npm install",
+    "health": "node scripts/health-check.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "microservices",
+    "dinosaur",
+    "analytics",
+    "express"
+  ],
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.12.2"
+  }
+}

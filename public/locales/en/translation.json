@@ -1,0 +1,77 @@
+{
+  "catalog": {
+    "title": "Dinosaur Collection",
+    "subtitle": "Explore our complete collection of dinosaur species with detailed information about each one.",
+    "search": "Search dinosaurs...",
+    "loading": "Digging fossils...",
+    "filters": {
+      "period": "Geological Period",
+      "diet": "Diet",
+      "location": "Lived In",
+      "clear": "Clear Filters",
+      "allPeriods": "All Periods",
+      "allDiets": "All Diets",
+      "allLocations": "All Locations"
+    },
+    "diet": {
+      "carnivore": "Carnivore",
+      "herbivore": "Herbivore",
+      "omnivore": "Omnivore"
+    },
+    "periods": {
+      "triassic": "Triassic",
+      "jurassic": "Jurassic",
+      "cretaceous": "Cretaceous"
+    },
+    "locations": {
+      "north_america": "North America",
+      "south_america": "South America",
+      "europe": "Europe",
+      "asia": "Asia",
+      "africa": "Africa",
+      "australia": "Australia",
+      "antarctica": "Antarctica"
+    },
+    "stats": {
+      "length": "Length",
+      "height": "Height",
+      "weight": "Weight",
+      "found": "First Discovered",
+      "livedIn": "Lived In",
+      "fossilLocation": "Fossil Location",
+      "meters": "m",
+      "kilograms": "kg",
+      "unknown": "Unknown"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "species": "species",
+      "page": "page",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "noResults": {
+      "title": "No dinosaurs found",
+      "subtitle": "Try adjusting your search criteria or clearing the filters.",
+      "action": "Clear all filters"
+    }
+  },
+  "common": {
+    "language": "Language",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "close": "Close"
+  },
+  "services": {
+    "status": "Service Status",
+    "healthy": "Healthy",
+    "down": "Down",
+    "unknown": "Unknown",
+    "dinosaur": "Dinosaur Service",
+    "geological": "Geological Service",
+    "discovery": "Discovery Service",
+    "analytics": "Analytics Service"
+  }
+}

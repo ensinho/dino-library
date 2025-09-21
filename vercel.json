@@ -1,0 +1,61 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "npm install",
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "vercel-deno@1.5.0"
+    }
+  },
+  "env": {
+    "VITE_USE_LOCAL_SERVICES": "false",
+    "VITE_ENABLE_ANALYTICS": "true",
+    "VITE_DEBUG_MODE": "false"
+  },
+  "build": {
+    "env": {
+      "VITE_USE_LOCAL_SERVICES": "false",
+      "VITE_VERCEL_DEPLOYMENT": "true"
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/dinosaurs/:path*",
+      "destination": "/api/dinosaurs/:path*"
+    },
+    {
+      "source": "/api/analytics/:path*", 
+      "destination": "/api/analytics/:path*"
+    }
+  ]
+}

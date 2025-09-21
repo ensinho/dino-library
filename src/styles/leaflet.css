@@ -1,0 +1,38 @@
+/* Estilos para o mapa do Leaflet */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+.leaflet-popup-tip {
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+.leaflet-popup-close-button {
+  color: hsl(var(--primary));
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: hsl(var(--primary-foreground)) !important;
+  color: hsl(var(--primary)) !important;
+}
