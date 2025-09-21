@@ -1,4 +1,4 @@
-// Analytics Service - Serverless Function for Vercel with Deno
+// Analytics Service - Serverless Function for Vercel
 
 // Types
 interface AnalyticsEvent {
@@ -66,7 +66,7 @@ export default async function handler(request: Request) {
         status: 'healthy',
         service: 'analytics-service-vercel',
         timestamp: new Date().toISOString(),
-        runtime: 'deno',
+        runtime: 'nodejs',
         stats: {
           eventsInMemory: analyticsEvents.length,
           activeSessions: activeSessions.size,
@@ -282,7 +282,7 @@ export default async function handler(request: Request) {
 
       const stats = {
         server: {
-          runtime: 'deno-vercel',
+          runtime: 'nodejs-vercel',
           timestamp: new Date().toISOString()
         },
         data: {
