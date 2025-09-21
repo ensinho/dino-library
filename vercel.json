@@ -40,14 +40,6 @@
   ],
   "rewrites": [
     {
-      "source": "/api/dinosaurs/:path*",
-      "destination": "/api/dinosaurs/:path*"
-    },
-    {
-      "source": "/api/analytics/:path*", 
-      "destination": "/api/analytics/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -70,7 +70,7 @@ export class DinosaurService {
     }
 
     try {
-      const response = await apiGateway.callService('dinosaur', '/api/dinosaurs', {
+      const response = await apiGateway.callService('dinosaur', '', {
         method: 'POST',
         body: JSON.stringify(filters)
       });
@@ -101,7 +101,7 @@ export class DinosaurService {
       if (config.debugMode) {
         console.log(`🦕 Fetching dinosaur ${id} from microservice...`);
       }
-      const response = await apiGateway.callService('dinosaur', `/api/dinosaurs/${id}`);
+      const response = await apiGateway.callService('dinosaur', `/${id}`);
       this.setCache(cacheKey, response);
       return response;
 
@@ -325,7 +325,7 @@ export class DinosaurService {
     }
 
     try {
-      const response = await apiGateway.callService('dinosaur', '/api/filter-options');
+      const response = await apiGateway.callService('dinosaur', '/filters');
       this.setCache(cacheKey, response);
       return response;
     } catch (error) {
@@ -337,9 +337,9 @@ export class DinosaurService {
       if (supabaseError) throw supabaseError;
 
       const options = {
-        periods: [...new Set(data?.map(d => d.geological_period).filter(Boolean))],
-        diets: [...new Set(data?.map(d => d.diet).filter(Boolean))],
-        locations: [...new Set(data?.map(d => d.lived_in).filter(Boolean))]
+        periods: [...new Set(data?.map(d => d.geological_period).filter(Boolean))].sort() as string[],
+        diets: [...new Set(data?.map(d => d.diet).filter(Boolean))].sort() as string[],
+        locations: [...new Set(data?.map(d => d.lived_in).filter(Boolean))].sort() as string[]
       };
 
       this.setCache(cacheKey, options);
