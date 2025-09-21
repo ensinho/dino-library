@@ -22,9 +22,10 @@
 ### 🔍 **Catálogo Interativo de Espécies**
 - **Base de dados completa** com mais de 500 espécies de dinossauros
 - **Filtros avançados** por período geológico, dieta e localização
-- **Sistema de busca inteligente** com pesquisa em tempo real
+- **Sistema de busca inteligente** com pesquisa em tempo real via Supabase
 - **Paginação otimizada** para navegação eficiente
 - **Cards informativos** com detalhes científicos completos
+- **Cache inteligente** para melhor performance
 
 ### 🗺️ **Mapas Arqueológicos Interativos**
 - **Visualização geográfica** dos locais de descoberta de fósseis
@@ -72,14 +73,8 @@
 ### **Backend & Database**
 - **Supabase** - Backend-as-a-Service completo
 - **PostgreSQL** - Database relacional via Supabase
-- **Vercel Functions** - Serverless API endpoints
-- **Deno Runtime** - Runtime JavaScript moderno para APIs
-
-### **Arquitetura de Microserviços**
-- **Express.js** - Serviços independentes
-- **Node.js** - Runtime para microserviços
-- **API Gateway personalizado** - Roteamento e fallbacks
-- **Health Check system** - Monitoramento de serviços
+- **Supabase Auth** - Sistema de autenticação integrado
+- **Supabase Storage** - Armazenamento de arquivos
 
 ### **Internacionalização**
 - **i18next 25.5.2** - Sistema de traduções
@@ -95,23 +90,25 @@
 
 ```mermaid
 graph TB
-    A[Frontend React] --> B[API Gateway]
-    B --> C[Microserviço Dinossauros]
-    B --> D[Microserviço Analytics]
-    B --> E[Supabase Database]
+    A[Frontend React] --> B[Supabase Client]
+    B --> C[PostgreSQL Database]
+    B --> D[Supabase Auth]
+    B --> E[Supabase Storage]
     
-    F[Vercel Functions] --> E
-    G[Leaflet Maps] --> A
-    H[Auth System] --> E
+    F[Leaflet Maps] --> A
+    G[TanStack Query] --> A
+    H[i18next] --> A
     
-    subgraph "Microserviços Locais"
-        C --> I[Express Server :3001]
-        D --> J[Express Server :3004]
+    subgraph "Supabase Backend"
+        C --> I[Dinosaur Data]
+        D --> J[User Authentication]
+        E --> K[File Storage]
     end
     
-    subgraph "Cloud Services"
-        E --> K[PostgreSQL]
-        E --> L[Auth & Storage]
+    subgraph "Frontend Stack"
+        A --> L[React Router]
+        A --> M[Radix UI]
+        A --> N[Tailwind CSS]
     end
 ```
 
@@ -145,7 +142,6 @@ cp .env.example .env
 # Configure suas variáveis no arquivo .env
 VITE_SUPABASE_URL=sua_url_do_supabase
 VITE_SUPABASE_ANON_KEY=sua_chave_anonima
-VITE_USE_LOCAL_SERVICES=true
 VITE_ENABLE_ANALYTICS=true
 ```
 
@@ -155,20 +151,7 @@ VITE_ENABLE_ANALYTICS=true
 npx supabase db reset
 ```
 
-### **5. Inicie os microserviços (opcional)**
-```bash
-# Windows
-.\start-microservices.bat
-
-# Linux/Mac
-./start-microservices.sh
-
-# Ou manualmente
-cd microservices
-npm run start:services
-```
-
-### **6. Inicie o servidor de desenvolvimento**
+### **5. Inicie o servidor de desenvolvimento**
 ```bash
 npm run dev
 # ou
@@ -191,12 +174,6 @@ npm run vercel-build # Build otimizado para Vercel
 
 ```
 dino-library/
-├── 📁 api/                     # Vercel Serverless Functions
-│   ├── 📁 dinosaurs/          # API de dinossauros
-│   └── 📁 analytics/          # API de analytics
-├── 📁 microservices/          # Microserviços locais
-│   ├── 📁 dinosaur-service/   # Serviço de dinossauros
-│   └── 📁 analytics-service/  # Serviço de analytics
 ├── 📁 src/
 │   ├── 📁 components/         # Componentes React
 │   │   ├── 📁 ui/            # Componentes de UI base

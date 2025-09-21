@@ -228,7 +228,7 @@ export class AnalyticsService {
    */
   async getInsights(dateRange: { from: string; to: string }) {
     try {
-      return await apiGateway.callService('analytics', '/api/insights', {
+      return await apiGateway.callService('analytics', '/insights', {
         method: 'POST',
         body: JSON.stringify(dateRange)
       });

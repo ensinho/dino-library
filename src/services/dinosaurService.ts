@@ -9,7 +9,6 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import { apiGateway } from './apiGateway';
 import config from '@/lib/config';
 
 // Type definitions matching your database schema
@@ -56,7 +55,7 @@ export class DinosaurService {
 
   /**
    * Get dinosaurs with filtering and pagination
-   * Tries microservice first, falls back to Supabase
+   * Uses Supabase directly for better performance and reliability
    */
   async getDinosaurs(filters: DinosaurFilters = {}): Promise<DinosaurResponse> {
     const cacheKey = JSON.stringify(filters);
@@ -65,28 +64,35 @@ export class DinosaurService {
     const cached = this.getFromCache(cacheKey);
     if (cached) {
       if (config.debugMode) {
+        console.log('🦕 Using cached dinosaurs');
       }
       return cached;
     }
 
     try {
-      const response = await apiGateway.callService('dinosaur', '', {
-        method: 'POST',
-        body: JSON.stringify(filters)
-      });
-
+      if (config.debugMode) {
+        console.log('🦕 Fetching dinosaurs directly from Supabase:', filters);
+      }
+      
+      const response = await this.getDirectFromSupabase(filters);
       this.setCache(cacheKey, response);
       return response;
 
     } catch (error) {
-      const response = await this.getDirectFromSupabase(filters);
-      this.setCache(cacheKey, response);
-      return response;
+      console.error('❌ Error fetching dinosaurs:', error);
+      // Return empty result instead of throwing
+      return {
+        data: [],
+        total: 0,
+        page: 1,
+        totalPages: 1
+      };
     }
   }
 
   /**
    * Get a specific dinosaur by ID
+   * Uses Supabase directly
    */
   async getDinosaurById(id: string): Promise<DinosaurSpecies> {
     const cacheKey = `dinosaur-${id}`;
@@ -99,16 +105,9 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
-        console.log(`🦕 Fetching dinosaur ${id} from microservice...`);
+        console.log(`🦕 Fetching dinosaur ${id} from Supabase...`);
       }
-      const response = await apiGateway.callService('dinosaur', `/${id}`);
-      this.setCache(cacheKey, response);
-      return response;
-
-    } catch (error) {
-      if (config.debugMode || config.isDevelopment) {
-        console.warn('🦕 Microservice unavailable, falling back to Supabase');
-      }
+      
       const { data, error: supabaseError } = await supabase
         .from('dinosaur_species2')
         .select('*')
@@ -118,6 +117,10 @@ export class DinosaurService {
       if (supabaseError) throw supabaseError;
       this.setCache(cacheKey, data);
       return data;
+
+    } catch (error) {
+      console.error(`❌ Error fetching dinosaur ${id}:`, error);
+      throw error;
     }
   }
 
@@ -139,18 +142,22 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
+        console.log('📊 Fetching stats from Supabase...');
       }
-      const response = await apiGateway.callService('dinosaur', '/api/stats');
-      this.setCache(cacheKey, response);
-      return response;
-
-    } catch (error) {
-      if (config.debugMode || config.isDevelopment) {
-        console.warn('📊 Microservice unavailable, calculating stats from Supabase');
-      }
+      
       const stats = await this.calculateStatsFromSupabase();
       this.setCache(cacheKey, stats);
       return stats;
+
+    } catch (error) {
+      console.error('❌ Error fetching stats:', error);
+      // Return default stats
+      return {
+        totalSpecies: 0,
+        periodDistribution: {},
+        dietDistribution: {},
+        locationDistribution: {}
+      };
     }
   }
 
@@ -167,22 +174,16 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
+        console.log('🔍 Searching dinosaurs in Supabase...');
       }
-      const response = await apiGateway.callService('dinosaur', '/api/search', {
-        method: 'POST',
-        body: JSON.stringify({ query, limit })
-      });
       
-      this.setCache(cacheKey, response.data);
-      return response.data;
-
-    } catch (error) {
-      if (config.debugMode || config.isDevelopment) {
-        console.warn('🔍 Search microservice unavailable, falling back to Supabase');
-      }
       const results = await this.searchInSupabase(query, limit);
       this.setCache(cacheKey, results);
       return results;
+
+    } catch (error) {
+      console.error('❌ Error searching dinosaurs:', error);
+      return [];
     }
   }
 
@@ -311,6 +312,7 @@ export class DinosaurService {
 
   /**
    * Get unique values for filters
+   * Uses Supabase directly
    */
   async getFilterOptions(): Promise<{
     periods: string[];
@@ -325,11 +327,10 @@ export class DinosaurService {
     }
 
     try {
-      const response = await apiGateway.callService('dinosaur', '/filters');
-      this.setCache(cacheKey, response);
-      return response;
-    } catch (error) {
-      // Fallback to Supabase
+      if (config.debugMode) {
+        console.log('🦕 Fetching filter options from Supabase...');
+      }
+
       const { data, error: supabaseError } = await supabase
         .from('dinosaur_species2')
         .select('geological_period, diet, lived_in');
@@ -344,6 +345,15 @@ export class DinosaurService {
 
       this.setCache(cacheKey, options);
       return options;
+      
+    } catch (error) {
+      console.error('❌ Error fetching filter options:', error);
+      // Return default options
+      return {
+        periods: ['Triassic', 'Jurassic', 'Cretaceous'],
+        diets: ['Carnivore', 'Herbivore', 'Omnivore'],
+        locations: ['North America', 'South America', 'Europe', 'Asia', 'Africa', 'Australia']
+      };
     }
   }
 }
