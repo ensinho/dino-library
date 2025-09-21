@@ -5,7 +5,7 @@
   "installCommand": "npm install",
   "functions": {
     "api/**/*.{ts,tsx}": {
-      "runtime": "vercel-deno-runtime"
+      "runtime": "vercel-deno@3.1.0"
     }
   },
   "env": {
@@ -17,7 +17,7 @@
     "env": {
       "VITE_USE_LOCAL_SERVICES": "false",
       "VITE_VERCEL_DEPLOYMENT": "true",
-      "DENO_VERSION": "1.45.0",
+      "DENO_VERSION": "3.1.0",
       "DENO_CONFIG": "tsconfig.json",
       "DENO_UNSTABLE": "true"
     }
