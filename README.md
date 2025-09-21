@@ -4,89 +4,89 @@
 
 ![Dino Library Banner](./src/assets/backgrounds/JurassicBackground.jpg)
 
-**Uma experiência imersiva de aprendizado sobre dinossauros através de descobertas arqueológicas, mapas interativos e educação científica.**
+**An immersive learning experience about dinosaurs through archaeological discoveries, interactive maps and scientific education.**
 
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![React](https://img.shields.io/badge/React-18.3.1-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
 
-[Demo Live](https://dino-library.vercel.app) • [Reportar Bug](https://github.com/ensinho/dino-library/issues) • [Solicitar Feature](https://github.com/ensinho/dino-library/issues)
+[Live Demo](https://dino-library.vercel.app) • [Report Bug](https://github.com/ensinho/dino-library/issues) • [Request Feature](https://github.com/ensinho/dino-library/issues)
 
 </div>
 
 ---
 
-## 🌟 Features Principais
+## 🌟 Key Features
 
-### 🔍 **Catálogo Interativo de Espécies**
-- **Base de dados completa** com mais de 500 espécies de dinossauros
-- **Filtros avançados** por período geológico, dieta e localização
-- **Sistema de busca inteligente** com pesquisa em tempo real via Supabase
-- **Paginação otimizada** para navegação eficiente
-- **Cards informativos** com detalhes científicos completos
-- **Cache inteligente** para melhor performance
+### 🔍 **Interactive Species Catalog**
+- **Complete database** with over 500 dinosaur species
+- **Advanced filters** by geological period, diet and location
+- **Smart search system** with real-time search via Supabase
+- **Optimized pagination** for efficient navigation
+- **Informative cards** with complete scientific details
+- **Intelligent caching** for better performance
 
-### 🗺️ **Mapas Arqueológicos Interativos**
-- **Visualização geográfica** dos locais de descoberta de fósseis
-- **Integração com Leaflet** para mapas dinâmicos e responsivos
-- **Marcadores personalizados** para cada sítio arqueológico
-- **Informações detalhadas** sobre cada descoberta
+### 🗺️ **Interactive Archaeological Maps**
+- **Geographic visualization** of fossil discovery sites
+- **Leaflet integration** for dynamic and responsive maps
+- **Custom markers** for each archaeological site
+- **Detailed information** about each discovery
 
-### ⏰ **Timeline Evolutiva**
-- **Linha do tempo interativa** das descobertas paleontológicas
-- **Visualização cronológica** dos períodos geológicos
-- **Marcos históricos** da paleontologia mundial
+### ⏰ **Evolutionary Timeline**
+- **Interactive timeline** of paleontological discoveries
+- **Chronological visualization** of geological periods
+- **Historical milestones** of world paleontology
 
-### 🎓 **Centro Educacional**
-- **Quizzes interativos** para testar conhecimentos
-- **Conteúdo educativo** sobre paleontologia
-- **Experiências de aprendizado gamificadas**
+### 🎓 **Educational Center**
+- **Interactive quizzes** to test knowledge
+- **Educational content** about paleontology
+- **Gamified learning experiences**
 
-### 👤 **Sistema de Autenticação e Perfil**
-- **Login/Cadastro seguro** via Supabase Auth
-- **Perfis personalizados** com histórico de atividades
-- **Progresso de aprendizagem** salvo na nuvem
+### 👤 **Authentication and Profile System**
+- **Secure login/signup** via Supabase Auth
+- **Personalized profiles** with activity history
+- **Learning progress** saved in the cloud
 
-## 🚀 Tecnologias Utilizadas
+## 🚀 Technologies Used
 
 ### **Frontend**
-- **React 18.3.1** - Framework principal para UI
-- **TypeScript 5.8.3** - Tipagem estática para maior robustez
-- **Vite 5.4.19** - Build tool ultra-rápido
-- **React Router DOM 6.30.1** - Roteamento SPA
-- **TanStack Query 5.83.0** - Gerenciamento de estado e cache
+- **React 18.3.1** - Main framework for UI
+- **TypeScript 5.8.3** - Static typing for greater robustness
+- **Vite 5.4.19** - Ultra-fast build tool
+- **React Router DOM 6.30.1** - SPA routing
+- **TanStack Query 5.83.0** - State management and caching
 
 ### **UI/UX & Styling**
-- **Tailwind CSS 3.4.17** - Framework CSS utilitário
-- **Radix UI** - Componentes acessíveis e customizáveis
-- **Lucide React** - Biblioteca de ícones moderna
-- **Class Variance Authority** - Variantes de componentes tipadas
-- **Framer Motion** (via Tailwind Animate) - Animações fluidas
+- **Tailwind CSS 3.4.17** - Utility CSS framework
+- **Radix UI** - Accessible and customizable components
+- **Lucide React** - Modern icon library
+- **Class Variance Authority** - Typed component variants
+- **Framer Motion** (via Tailwind Animate) - Smooth animations
 
-### **Mapas & Visualização**
-- **Leaflet 1.9.4** - Mapas interativos
-- **React Leaflet 4.2.1** - Integração React + Leaflet
-- **Turf.js 7.2.0** - Análises geoespaciais
-- **Recharts 2.15.4** - Gráficos e visualizações de dados
+### **Maps & Visualization**
+- **Leaflet 1.9.4** - Interactive maps
+- **React Leaflet 4.2.1** - React + Leaflet integration
+- **Turf.js 7.2.0** - Geospatial analysis
+- **Recharts 2.15.4** - Charts and data visualizations
 
 ### **Backend & Database**
-- **Supabase** - Backend-as-a-Service completo
-- **PostgreSQL** - Database relacional via Supabase
-- **Supabase Auth** - Sistema de autenticação integrado
-- **Supabase Storage** - Armazenamento de arquivos
+- **Supabase** - Complete Backend-as-a-Service
+- **PostgreSQL** - Relational database via Supabase
+- **Supabase Auth** - Integrated authentication system
+- **Supabase Storage** - File storage
 
-### **Internacionalização**
-- **i18next 25.5.2** - Sistema de traduções
-- **Suporte a 3 idiomas**: Português, Inglês e Espanhol
-- **Detecção automática** de idioma do navegador
+### **Internationalization**
+- **i18next 25.5.2** - Translation system
+- **Support for 3 languages**: Portuguese, English and Spanish
+- **Automatic detection** of browser language
 
-### **Ferramentas de Desenvolvimento**
-- **ESLint 9.32.0** - Linting de código
-- **PostCSS 8.5.6** - Processamento de CSS
-- **Autoprefixer** - Compatibilidade CSS cross-browser
+### **Development Tools**
+- **ESLint 9.32.0** - Code linting
+- **PostCSS 8.5.6** - CSS processing
+- **Autoprefixer** - Cross-browser CSS compatibility
 
-## 🏗️ Arquitetura do Sistema
+## 🏗️ System Architecture
 
 ```mermaid
 graph TB
@@ -112,122 +112,122 @@ graph TB
     end
 ```
 
-## 📦 Instalação e Configuração
+## 📦 Installation and Setup
 
-### **Pré-requisitos**
-- Node.js 18+ ou Bun
+### **Prerequisites**
+- Node.js 18+ or Bun
 - Git
-- Conta no Supabase
+- Supabase account
 
-### **1. Clone o repositório**
+### **1. Clone the repository**
 ```bash
 git clone https://github.com/ensinho/dino-library.git
 cd dino-library
 ```
 
-### **2. Instale as dependências**
+### **2. Install dependencies**
 ```bash
-# Com npm
+# With npm
 npm install
 
-# Ou com bun (recomendado)
+# Or with bun (recommended)
 bun install
 ```
 
-### **3. Configure as variáveis de ambiente**
+### **3. Configure environment variables**
 ```bash
-# Copie o arquivo de exemplo
+# Copy the example file
 cp .env.example .env
 
-# Configure suas variáveis no arquivo .env
-VITE_SUPABASE_URL=sua_url_do_supabase
-VITE_SUPABASE_ANON_KEY=sua_chave_anonima
+# Configure your variables in the .env file
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anonymous_key
 VITE_ENABLE_ANALYTICS=true
 ```
 
-### **4. Configure o banco de dados**
+### **4. Configure the database**
 ```bash
-# Execute as migrações do Supabase
+# Run Supabase migrations
 npx supabase db reset
 ```
 
-### **5. Inicie o servidor de desenvolvimento**
+### **5. Start the development server**
 ```bash
 npm run dev
-# ou
+# or
 bun dev
 ```
 
-A aplicação estará disponível em `http://localhost:5173`
+The application will be available at `http://localhost:5173`
 
-## 🔧 Scripts Disponíveis
+## 🔧 Available Scripts
 
 ```bash
-npm run dev          # Servidor de desenvolvimento
-npm run build        # Build para produção
-npm run preview      # Preview do build de produção
-npm run lint         # Executar ESLint
-npm run vercel-build # Build otimizado para Vercel
+npm run dev          # Development server
+npm run build        # Production build
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+npm run vercel-build # Optimized build for Vercel
 ```
 
-## 📊 Estrutura do Projeto
+## 📊 Project Structure
 
 ```
 dino-library/
 ├── 📁 src/
-│   ├── 📁 components/         # Componentes React
-│   │   ├── 📁 ui/            # Componentes de UI base
-│   │   └── 📁 layout/        # Componentes de layout
-│   ├── 📁 pages/             # Páginas da aplicação
-│   ├── 📁 services/          # Serviços e APIs
+│   ├── 📁 components/         # React components
+│   │   ├── 📁 ui/            # Base UI components
+│   │   └── 📁 layout/        # Layout components
+│   ├── 📁 pages/             # Application pages
+│   ├── 📁 services/          # Services and APIs
 │   ├── 📁 hooks/             # Custom React Hooks
-│   ├── 📁 lib/               # Utilitários e configurações
-│   └── 📁 integrations/      # Integrações externas
+│   ├── 📁 lib/               # Utilities and configurations
+│   └── 📁 integrations/      # External integrations
 ├── 📁 public/
-│   └── 📁 locales/           # Arquivos de tradução
-└── 📁 supabase/              # Configurações do Supabase
-    └── 📁 migrations/        # Migrações do banco
+│   └── 📁 locales/           # Translation files
+└── 📁 supabase/              # Supabase configurations
+    └── 📁 migrations/        # Database migrations
 ```
 
-## 🌐 Deploy
+## 🌐 Deployment
 
-### **Vercel (Recomendado)**
-1. Conecte seu repositório ao Vercel
-2. Configure as variáveis de ambiente
-3. Deploy automático a cada push
+### **Vercel (Recommended)**
+1. Connect your repository to Vercel
+2. Configure environment variables
+3. Automatic deployment on every push
 
-### **Outros provedores**
+### **Other providers**
 ```bash
-# Build para produção
+# Build for production
 npm run build
 
-# A pasta 'dist' contém os arquivos para deploy
+# The 'dist' folder contains files for deployment
 ```
 
-## 🤝 Contribuição
+## 🤝 Contributing
 
-Contribuições são sempre bem-vindas! Para contribuir:
+Contributions are always welcome! To contribute:
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📈 Roadmap
 
-- [ ] **Sistema de favoritos** para dinossauros
-- [ ] **Realidade aumentada** para visualização 3D
-- [ ] **API pública** para desenvolvedores
-- [ ] **Sistema de conquistas** gamificado
-- [ ] **Modo offline** com PWA
-- [ ] **Integração com museus** parceiros
+- [ ] **Favorites system** for dinosaurs
+- [ ] **Augmented reality** for 3D visualization
+- [ ] **Public API** for developers
+- [ ] **Gamified achievement system**
+- [ ] **Offline mode** with PWA
+- [ ] **Partner museum integration**
 
-## 📄 Licença
+## 📄 License
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+This project is under the MIT license. See the [LICENSE](LICENSE) file for more details.
 
-## 👨‍💻 Autor
+## 👨‍💻 Author
 
 **Enzo Esmeraldo**
 
@@ -239,8 +239,8 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 <div align="center">
 
-**Feito com ❤️ por [Enzo Esmeraldo](https://github.com/ensinho)**
+**Made with ❤️ by [Enzo Esmeraldo](https://github.com/ensinho)**
 
-⭐ **Se este projeto te ajudou, considere dar uma estrela!**
+⭐ **If this project helped you, consider giving it a star!**
 
 </div>
