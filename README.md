@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Dino Library Banner](./src/assets/hero-dinosaur.jpg)
+![Dino Library Banner](./src/assets/backgrounds/JurassicBackground.jpg)
 
 **Uma experiência imersiva de aprendizado sobre dinossauros através de descobertas arqueológicas, mapas interativos e educação científica.**
 
