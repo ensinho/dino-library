@@ -196,5 +196,295 @@
     "geological": "Serviço Geológico",
     "discovery": "Serviço de Descobertas",
     "analytics": "Serviço de Analytics"
+  },
+  "news": {
+    "title": "Notícias de Paleontologia",
+    "subtitle": "Fique atualizado com as últimas descobertas, pesquisas e avanços em paleontologia",
+    "loading": "Carregando artigos...",
+    "search": "Buscar artigos...",
+    "categories": {
+      "all": "Todas as Categorias",
+      "discoveries": "Novas Descobertas",
+      "research": "Pesquisas e Estudos",
+      "technology": "Tecnologia e Métodos",
+      "exhibitions": "Exposições e Museus",
+      "conservation": "Conservação",
+      "education": "Educação"
+    },
+    "filters": {
+      "category": "Categoria",
+      "date": "Data",
+      "author": "Autor",
+      "clear": "Limpar Filtros"
+    },
+    "card": {
+      "readMore": "Ler Mais",
+      "minutes": "min de leitura",
+      "published": "Publicado",
+      "by": "por"
+    },
+    "detail": {
+      "backToNews": "Voltar para Notícias",
+      "share": "Compartilhar Artigo",
+      "relatedArticles": "Artigos Relacionados",
+      "tags": "Tags",
+      "author": "Autor",
+      "publishedOn": "Publicado em",
+      "lastUpdated": "Última atualização"
+    },
+    "noResults": {
+      "title": "Nenhum artigo encontrado",
+      "subtitle": "Tente ajustar sua busca ou filtros",
+      "action": "Limpar todos os filtros"
+    },
+    "loadMore": "Carregar Mais Artigos"
+  },
+  "home": {
+    "hero": {
+      "title": "Dino Library",
+      "subtitle": "Explore o fascinante mundo dos dinossauros através de descobertas arqueológicas, mapas interativos e experiências educacionais imersivas.",
+      "exploreCollection": "Explorar Coleção",
+      "startQuiz": "Iniciar Quiz"
+    },
+    "features": {
+      "title": "Descobrindo o Passado Pré-histórico",
+      "subtitle": "Nossa plataforma oferece uma experiência completa de aprendizado sobre dinossauros, combinando ciência, tecnologia e educação.",
+      "collection": {
+        "title": "Coleção de Espécies",
+        "description": "Explore nossa vasta coleção de dinossauros com informações detalhadas sobre cada espécie."
+      },
+      "maps": {
+        "title": "Mapas Interativos",
+        "description": "Descubra onde os fósseis foram encontrados e explore habitats pré-históricos."
+      },
+      "timeline": {
+        "title": "Linha do Tempo Arqueológica",
+        "description": "Acompanhe a evolução das descobertas paleontológicas ao longo do tempo."
+      },
+      "education": {
+        "title": "Área de Aprendizado",
+        "description": "Participe de quizzes interativos e aprenda de forma divertida."
+      }
+    },
+    "favorites": {
+      "title": "Alguns dos Meus Dinossauros Favoritos",
+      "subtitle": "Conheça três dos gigantes mais fascinantes da era Mesozoica.",
+      "period": "Período",
+      "diet": "Dieta",
+      "funFact": "Curiosidade"
+    },
+    "stats": {
+      "cataloged": "Espécies Catalogadas",
+      "discoveries": "Descobertas Mapeadas",
+      "resources": "Recursos Educacionais"
+    }
+  },
+  "timeline": {
+    "title": "Linha do Tempo Paleontológica",
+    "subtitle": "Viaje pela história da Terra - desde eventos geológicos que moldaram nosso planeta até as descobertas arqueológicas que revelaram o mundo dos dinossauros.",
+    "tabs": {
+      "discoveries": "Descobertas Arqueológicas",
+      "geological": "Linha do Tempo Geológica"
+    },
+    "filters": {
+      "searchPlaceholder": "Buscar descobertas...",
+      "allYears": "Todos os anos",
+      "clear": "Limpar"
+    },
+    "discovery": {
+      "significance": "Significância Científica",
+      "researcher": "Pesquisador",
+      "viewMore": "Ver Mais Descobertas",
+      "remaining": "restantes",
+      "noDiscoveries": "Nenhuma descoberta encontrada",
+      "adjustFilters": "Tente ajustar seus filtros de busca."
+    },
+    "geological": {
+      "millionYearsAgo": "Milhões de Anos Atrás",
+      "period": "Período",
+      "event": "Evento",
+      "mesozoicEra": "Era Mesozoica",
+      "eraOverview": "Visão Geral da Era Mesozoica",
+      "triassic": "Triássico",
+      "jurassic": "Jurássico",
+      "cretaceous": "Cretáceo",
+      "mya": "MAA",
+      "triassicDesc": "Evolução inicial dos dinossauros",
+      "jurassicDesc": "Era de ouro dos dinossauros",
+      "cretaceousDesc": "Pico de diversidade e extinção"
+    }
+  },
+  "education": {
+    "title": "Área Educacional",
+    "subtitle": "Aprenda sobre dinossauros de forma divertida e interativa",
+    "activities": "Atividades de Aprendizado",
+    "quiz": {
+      "general": {
+        "title": "Quiz Geral",
+        "description": "Teste seus conhecimentos sobre dinossauros com perguntas variadas",
+        "start": "Iniciar Quiz"
+      },
+      "easy": {
+        "title": "Quiz Fácil",
+        "description": "Perguntas básicas, ideais para iniciantes",
+        "start": "Iniciar Fácil"
+      },
+      "medium": {
+        "title": "Quiz Médio",
+        "description": "Um desafio intermediário para aprofundar seus conhecimentos",
+        "start": "Iniciar Médio"
+      },
+      "hard": {
+        "title": "Quiz Difícil",
+        "description": "Para verdadeiros especialistas em paleontologia",
+        "start": "Iniciar Difícil"
+      },
+      "exitQuiz": "Sair do Quiz",
+      "correct": "Correto",
+      "streak": "Sequência",
+      "speed": "Velocidade",
+      "totalScore": "Pontuação Total",
+      "question": "Pergunta",
+      "of": "de",
+      "currentStreak": "Sequência atual",
+      "confirmAnswer": "Confirmar Resposta",
+      "explanation": "Explicação",
+      "completed": "Quiz Completo!",
+      "answered": "Você acertou",
+      "questionsCorrectly": "perguntas corretamente",
+      "tryAgain": "Tentar Novamente",
+      "newQuiz": "Novo Quiz"
+    },
+    "lessons": {
+      "title": "Lições Interativas",
+      "description": "Em breve: Módulos de aprendizado estruturados",
+      "inDevelopment": "Em Desenvolvimento"
+    },
+    "simulations": {
+      "title": "Simulações 3D",
+      "description": "Em breve: Experiências imersivas com dinossauros"
+    },
+    "tips": {
+      "title": "Dicas de Estudo",
+      "tip1": "Comece com o quiz fácil para construir uma base sólida de conhecimento",
+      "tip2": "Leia as explicações das respostas para aprender com seus erros",
+      "tip3": "Explore o catálogo de espécies para aprender mais sobre cada dinossauro",
+      "tip4": "Use o mapa interativo para entender habitats e descobertas",
+      "tip5": "Pratique regularmente para melhorar sua pontuação"
+    },
+    "session": {
+      "exitQuiz": "Sair do Quiz",
+      "correct": "Corretas",
+      "streak": "Sequência",
+      "speed": "Velocidade",
+      "question": "Questão",
+      "of": "de",
+      "totalScore": "Pontuação Total",
+      "currentStreak": "Sequência atual",
+      "confirmAnswer": "Confirmar Resposta",
+      "explanation": "Explicação",
+      "quizCompleted": "Quiz Completo!",
+      "yourScore": "Sua Pontuação",
+      "answeredCorrectly": "Você acertou {score} de {total} questões",
+      "tryAgain": "Tentar Novamente",
+      "newQuiz": "Novo Quiz"
+    }
+  },
+  "map": {
+    "title": "Mapa Interativo de Fósseis",
+    "subtitle": "Explore onde fósseis de dinossauros foram descobertos ao redor do mundo",
+    "loading": "Carregando mapa...",
+    "filters": {
+      "period": "Filtrar por Período",
+      "diet": "Filtrar por Dieta",
+      "clear": "Limpar Filtros"
+    },
+    "stats": {
+      "discoveries": "Sítios Fósseis",
+      "species": "Espécies Mapeadas",
+      "countries": "Países"
+    },
+    "legend": {
+      "title": "Legenda",
+      "carnivore": "Carnívoro",
+      "herbivore": "Herbívoro",
+      "omnivore": "Onívoro",
+      "flying": "Répteis Voadores",
+      "aquatic": "Aquático"
+    },
+    "popup": {
+      "species": "Espécie",
+      "period": "Período",
+      "discovered": "Descoberto",
+      "location": "Localização",
+      "viewDetails": "Ver Detalhes"
+    }
+  },
+  "profile": {
+    "title": "Meu Perfil",
+    "subtitle": "Acompanhe seu progresso de aprendizado e gerencie sua conta",
+    "memberSince": "Membro desde {date}",
+    "organization": "Organização",
+    "editProfile": "Editar Perfil",
+    "cancel": "Cancelar",
+    "signOut": "Sair",
+    "displayName": "Nome de Exibição",
+    "yourName": "Seu nome",
+    "biography": "Biografia",
+    "bioPlaceholder": "Conte-nos um pouco sobre você...",
+    "orgPlaceholder": "Universidade, empresa ou instituição",
+    "save": "Salvar",
+    "saving": "Salvando...",
+    "statistics": "Estatísticas",
+    "stats": {
+      "quizStatistics": "Estatísticas de Quiz",
+      "bestScore": "Melhor Pontuação",
+      "latestScore": "Pontuação Mais Recente",
+      "totalQuizzes": "Total de Quizzes",
+      "lastQuiz": "Último Quiz",
+      "knowledgeLevel": "Nível de Conhecimento",
+      "basedOnScore": "Baseado na sua melhor pontuação",
+      "takeNewQuiz": "Fazer Novo Quiz",
+      "quizzesTaken": "Quizzes Feitos",
+      "speciesViewed": "Espécies Visualizadas",
+      "articlesRead": "Artigos Lidos"
+    },
+    "settings": {
+      "title": "Configurações da Conta",
+      "email": "Email",
+      "password": "Senha",
+      "language": "Idioma Preferido",
+      "theme": "Tema",
+      "notifications": "Notificações",
+      "save": "Salvar Alterações"
+    },
+    "achievements": {
+      "title": "Conquistas",
+      "description": "Suas conquistas e marcos ao aprender sobre dinossauros",
+      "welcome": "Bem-vindo!",
+      "welcomeDesc": "Criou sua conta na Biblioteca Dino",
+      "firstQuiz": "Primeiro Quiz",
+      "firstQuizDesc": "Completou seu primeiro quiz",
+      "expert": "Especialista",
+      "expertDesc": "Pontuou mais de 80% em um quiz",
+      "keepLearning": "Continue aprendendo para desbloquear mais conquistas!",
+      "locked": "Bloqueado",
+      "unlocked": "Desbloqueado"
+    },
+    "recentActivity": {
+      "title": "Atividade Recente",
+      "noActivity": "Nenhuma atividade recente"
+    }
+  },
+  "navigation": {
+    "home": "Início",
+    "catalog": "Catálogo",
+    "discover": "Descobrir",
+    "map": "Mapa",
+    "timeline": "Linha do Tempo",
+    "education": "Educação",
+    "news": "Notícias",
+    "profile": "Perfil",
+    "auth": "Entrar"
   }
 }

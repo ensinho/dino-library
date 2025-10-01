@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ interface GeologicalEvent {
 }
 
 export default function Timeline() {
+  const { t } = useTranslation();
   const [discoveries, setDiscoveries] = useState<ArchaeologicalDiscovery[]>([]);
   const [filteredDiscoveries, setFilteredDiscoveries] = useState<ArchaeologicalDiscovery[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -190,10 +192,10 @@ export default function Timeline() {
             <div className="absolute inset-0 bg-amber/20 rounded-full blur-xl animate-pulse"></div>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-amber to-amber-glow bg-clip-text text-transparent">
-            Paleontological Timeline
+            {t('timeline.title')}
           </h1>
           <p className="text-lg md:text-base text-white/90 max-w-3xl mx-auto">
-            Journey through Earth's history - from geological events that shaped our planet to the archaeological discoveries that revealed the dinosaur world.
+            {t('timeline.subtitle')}
           </p>
         </div>
       </div>
@@ -203,11 +205,11 @@ export default function Timeline() {
           <TabsList className="grid w-full grid-cols-2 mb-8">
             <TabsTrigger value="discoveries" className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              Archaeological Discoveries
+              {t('timeline.tabs.discoveries')}
             </TabsTrigger>
             <TabsTrigger value="geological" className="flex items-center gap-2">
               <Mountain className="w-4 h-4" />
-              Geological Timeline
+              {t('timeline.tabs.geological')}
             </TabsTrigger>
           </TabsList>
 
@@ -217,7 +219,7 @@ export default function Timeline() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="Search discoveries..."
+                  placeholder={t('timeline.filters.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-amber/50"
@@ -229,7 +231,7 @@ export default function Timeline() {
                   onChange={(e) => setSelectedYear(e.target.value)}
                   className="px-3 py-2 border border-border rounded-md bg-card text-foreground transition-all duration-200 hover:border-amber/50 focus:border-amber focus:ring-2 focus:ring-amber/30"
                 >
-                  <option value="">All years</option>
+                  <option value="">{t('timeline.filters.allYears')}</option>
                   {getUniqueYears().map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
@@ -244,7 +246,7 @@ export default function Timeline() {
                   className="hover:bg-amber/10 hover:border-amber transition-all duration-200"
                 >
                   <Filter className="w-4 h-4 mr-2" />
-                  Clear
+                  {t('timeline.filters.clear')}
                 </Button>
               </div>
             </div>
@@ -312,7 +314,7 @@ export default function Timeline() {
                                 <div className="mt-4 space-y-3 animate-fadeIn">
                                   {discovery.significance && (
                                     <div>
-                                      <h4 className="font-semibold mb-1 text-amber text-sm">Scientific Significance:</h4>
+                                      <h4 className="font-semibold mb-1 text-amber text-sm">{t('timeline.discovery.significance')}:</h4>
                                       <p className="text-xs text-muted-foreground">
                                         {discovery.significance}
                                       </p>
@@ -324,7 +326,7 @@ export default function Timeline() {
                                       <Users className="w-3 h-3 text-amber/70" />
                                       <div>
                                         {discovery.researcher_name && (
-                                          <span>Researcher: {discovery.researcher_name}</span>
+                                          <span>{t('timeline.discovery.researcher')}: {discovery.researcher_name}</span>
                                         )}
                                         {discovery.organization && (
                                           <span className={discovery.researcher_name ? " • " : ""}>
@@ -364,7 +366,7 @@ export default function Timeline() {
                     onClick={loadMoreItems}
                     className="bg-gradient-to-r from-amber to-amber-glow hover:from-amber-glow hover:to-amber text-black font-semibold px-8 py-3 transition-all duration-300 hover:scale-105"
                   >
-                    View More Discoveries ({filteredDiscoveries.length - visibleItems} remaining)
+                    {t('timeline.discovery.viewMore')} ({filteredDiscoveries.length - visibleItems} {t('timeline.discovery.remaining')})
                   </Button>
                 </div>
               )}
@@ -373,9 +375,9 @@ export default function Timeline() {
                 <div className="text-center py-12">
                   <div className="bg-muted/20 rounded-2xl p-8 max-w-md mx-auto">
                     <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-lg font-semibold mb-2">No discoveries found</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t('timeline.discovery.noDiscoveries')}</h3>
                     <p className="text-muted-foreground text-sm">
-                      Try adjusting your search filters.
+                      {t('timeline.discovery.adjustFilters')}
                     </p>
                   </div>
                 </div>
@@ -412,10 +414,10 @@ export default function Timeline() {
                               </CardTitle>
                               <CardDescription className="text-white/90 text-sm">
                                 <Badge variant="secondary" className="bg-white/20 text-white mr-2">
-                                  {event.years_ago} Million Years Ago
+                                  {event.years_ago} {t('timeline.geological.millionYearsAgo')}
                                 </Badge>
                                 <Badge variant="secondary" className="bg-white/20 text-white">
-                                  {event.period} Period
+                                  {event.period} {t('timeline.geological.period')}
                                 </Badge>
                               </CardDescription>
                             </div>
@@ -428,10 +430,10 @@ export default function Timeline() {
                           
                           <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
                             <span className="capitalize">
-                              {event.type.replace('_', ' ')} Event
+                              {event.type.replace('_', ' ')} {t('timeline.geological.event')}
                             </span>
                             <span>•</span>
-                            <span>Mesozoic Era</span>
+                            <span>{t('timeline.geological.mesozoicEra')}</span>
                           </div>
                         </CardContent>
                       </Card>
@@ -444,25 +446,25 @@ export default function Timeline() {
               <div className="mt-12">
                 <Card className="bg-gradient-to-r from-amber/10 to-orange/10 border-amber/20">
                   <CardContent className="pt-6">
-                    <h3 className="text-lg font-semibold mb-4 text-center">Mesozoic Era Overview</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-center">{t('timeline.geological.eraOverview')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="text-center p-4 bg-gradient-to-b from-red-100 to-red-50 rounded-lg">
                         <div className="text-2xl mb-2">🌋</div>
-                        <h4 className="font-semibold text-red-700">Triassic</h4>
-                        <p className="text-sm text-red-600">252-201 MYA</p>
-                        <p className="text-xs text-muted-foreground mt-1">Early dinosaur evolution</p>
+                        <h4 className="font-semibold text-red-700">{t('timeline.geological.triassic')}</h4>
+                        <p className="text-sm text-red-600">252-201 {t('timeline.geological.mya')}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('timeline.geological.triassicDesc')}</p>
                       </div>
                       <div className="text-center p-4 bg-gradient-to-b from-green-100 to-green-50 rounded-lg">
                         <div className="text-2xl mb-2">🌲</div>
-                        <h4 className="font-semibold text-green-700">Jurassic</h4>
-                        <p className="text-sm text-green-600">201-145 MYA</p>
-                        <p className="text-xs text-muted-foreground mt-1">Golden age of dinosaurs</p>
+                        <h4 className="font-semibold text-green-700">{t('timeline.geological.jurassic')}</h4>
+                        <p className="text-sm text-green-600">201-145 {t('timeline.geological.mya')}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('timeline.geological.jurassicDesc')}</p>
                       </div>
                       <div className="text-center p-4 bg-gradient-to-b from-purple-100 to-purple-50 rounded-lg">
                         <div className="text-2xl mb-2">🌺</div>
-                        <h4 className="font-semibold text-purple-700">Cretaceous</h4>
-                        <p className="text-sm text-purple-600">145-66 MYA</p>
-                        <p className="text-xs text-muted-foreground mt-1">Peak diversity & extinction</p>
+                        <h4 className="font-semibold text-purple-700">{t('timeline.geological.cretaceous')}</h4>
+                        <p className="text-sm text-purple-600">145-66 {t('timeline.geological.mya')}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('timeline.geological.cretaceousDesc')}</p>
                       </div>
                     </div>
                   </CardContent>

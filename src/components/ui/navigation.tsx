@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { 
   Home, 
@@ -10,7 +11,8 @@ import {
   User,
   Menu,
   X,
-  Compass
+  Compass,
+  Newspaper
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -21,15 +23,17 @@ interface NavigationProps {
 
 export function Navigation({ className }: NavigationProps) {
   const location = useLocation();
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigationItems = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'Collection', href: '/catalog', icon: Search },
-    { name: 'Discover', href: '/discover', icon: Compass },
-    { name: 'Maps', href: '/map', icon: Map },
-    { name: 'Timeline', href: '/timeline', icon: Clock },
-    { name: 'Learning', href: '/education', icon: GraduationCap },
+    { name: t('navigation.home'), href: '/', icon: Home },
+    { name: t('navigation.catalog'), href: '/catalog', icon: Search },
+    { name: t('navigation.discover'), href: '/discover', icon: Compass },
+    { name: t('navigation.map'), href: '/map', icon: Map },
+    { name: t('navigation.timeline'), href: '/timeline', icon: Clock },
+    { name: t('navigation.education'), href: '/education', icon: GraduationCap },
+    { name: t('navigation.news'), href: '/news', icon: Newspaper },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -77,7 +81,7 @@ export function Navigation({ className }: NavigationProps) {
                 className="flex items-center space-x-2"
               >
                 <User className="w-4 h-4" />
-                <span className="hidden sm:inline">Profile</span>
+                <span className="hidden sm:inline">{t('navigation.profile')}</span>
               </Button>
             </Link>
 

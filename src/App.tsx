@@ -16,6 +16,8 @@ import Map from "./pages/Map";
 import Timeline from "./pages/Timeline";
 import Education from "./pages/Education";
 import Profile from "./pages/Profile";
+import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
 import { Layout } from "./components/layout/Layout";
 import CallToAction from "./components/layout/CallToAction";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,6 +71,8 @@ const App = () => {
             <Route path="/map" element={<Layout><Map /><Footer /></Layout>} />
             <Route path="/timeline" element={<Layout><Timeline /><Footer /></Layout>} />
             <Route path="/education" element={<Layout><Education /><Footer /></Layout>} />
+            <Route path="/news" element={<Layout><News /><Footer /></Layout>} />
+            <Route path="/news/:id" element={<Layout><NewsDetail /><Footer /></Layout>} />
             <Route path="/profile" element={<Layout><Profile /><Footer /></Layout>} />
             <Route path="/auth" element={<Auth />} />
             <Route path="*" element={<NotFound />} />

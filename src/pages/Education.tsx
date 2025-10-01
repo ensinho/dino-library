@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,6 +45,7 @@ interface QuizSession {
 }
 
 export default function Education() {
+  const { t } = useTranslation();
   const [quizSession, setQuizSession] = useState<QuizSession | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -244,7 +246,7 @@ export default function Education() {
           <div className="flex items-center justify-between mb-6">
             <Button variant="outline" onClick={resetQuiz}>
               <RotateCcw className="w-4 h-4 mr-2" />
-              Exit Quiz
+              {t('education.session.exitQuiz')}
             </Button>
             <div className="flex items-center gap-4">
               <Badge variant="outline" className="flex items-center gap-2">
@@ -263,38 +265,38 @@ export default function Education() {
               <Card className="p-4 text-center bg-gradient-to-br from-primary/10 to-primary/5">
                 <Trophy className="w-6 h-6 mx-auto mb-2 text-amber" />
                 <div className="text-2xl font-bold text-primary">{quizSession.score}</div>
-                <div className="text-xs text-muted-foreground">Correct</div>
+                <div className="text-xs text-muted-foreground">{t('education.session.correct')}</div>
               </Card>
               <Card className="p-4 text-center bg-gradient-to-br from-orange-500/10 to-orange-500/5">
                 <Zap className="w-6 h-6 mx-auto mb-2 text-orange-500" />
                 <div className="text-2xl font-bold text-orange-500">{quizSession.streak}</div>
-                <div className="text-xs text-muted-foreground">Streak</div>
+                <div className="text-xs text-muted-foreground">{t('education.session.streak')}</div>
               </Card>
               <Card className="p-4 text-center bg-gradient-to-br from-green-500/10 to-green-500/5">
                 <Award className="w-6 h-6 mx-auto mb-2 text-green-500" />
                 <div className="text-2xl font-bold text-green-500">{quizSession.timeBonus}</div>
-                <div className="text-xs text-muted-foreground">Speed</div>
+                <div className="text-xs text-muted-foreground">{t('education.session.speed')}</div>
               </Card>
               
               <div className="mt-6">  
                 <Progress value={progress} className="mb-4" />
                 <div className="text-center">
                   <p className="text-muted-foreground text-sm">
-                    Question {quizSession.currentQuestion + 1} of {quizSession.questions.length}
+                    {t('education.session.question')} {quizSession.currentQuestion + 1} {t('education.session.of')} {quizSession.questions.length}
                   </p>
                 </div>
               </div>
               
               <Card className="p-4 bg-gradient-to-r from-amber/10 to-orange-500/10">
                 <p className="text-sm font-semibold text-primary text-center">
-                  🏆 Total Score
+                  🏆 {t('education.session.totalScore')}
                 </p>
                 <p className="text-xl font-bold text-center text-primary">
                   {quizSession.score + quizSession.bonusPoints + quizSession.timeBonus} / {quizSession.questions.length}
                 </p>
                 {quizSession.streak > 0 && (
                   <p className="text-xs text-orange-500 font-medium text-center mt-2">
-                    🔥 Current streak: {quizSession.streak}
+                    🔥 {t('education.session.currentStreak')}: {quizSession.streak}
                   </p>
                 )}
               </Card>
@@ -350,7 +352,7 @@ export default function Education() {
                   className="w-full mt-6 h-12 text-lg font-semibold bg-gradient-primary hover:scale-105 transition-transform"
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
-                  Confirm Answer
+                  {t('education.session.confirmAnswer')}
                 </Button>
               )}
 
@@ -358,7 +360,7 @@ export default function Education() {
                 <div className="mt-6 p-6 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-500/20 animate-fade-in">
                   <h4 className="font-semibold mb-3 flex items-center gap-2 text-blue-600">
                     <BookOpen className="w-5 h-5" />
-                    Explanation:
+                    {t('education.session.explanation')}:
                   </h4>
                   <p className="text-muted-foreground leading-relaxed">
                     {currentQuestion.explanation}
@@ -387,7 +389,7 @@ export default function Education() {
         <Card className="max-w-lg w-full text-center">
           <CardHeader>
             <Trophy className={`w-16 h-16 mx-auto mb-4 ${getScoreColor()}`} />
-            <CardTitle className="text-2xl">Quiz Completed!</CardTitle>
+            <CardTitle className="text-2xl">{t('education.session.quizCompleted')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-6">
@@ -395,16 +397,16 @@ export default function Education() {
                 {percentage}%
               </div>
               <p className="text-muted-foreground">
-                You answered {quizSession.score} of {quizSession.questions.length} questions correctly
+                {t('education.session.answeredCorrectly', { score: quizSession.score, total: quizSession.questions.length })}
               </p>
             </div>
 
             <div className="space-y-4">
               <Button onClick={resetQuiz} variant="outline" className="w-full">
-                Try Again
+                {t('education.session.tryAgain')}
               </Button>
               <Button onClick={() => startQuiz()} className="w-full">
-                New Quiz
+                {t('education.session.newQuiz')}
               </Button>
             </div>
           </CardContent>
@@ -418,17 +420,17 @@ export default function Education() {
       <div className="bg-gradient-primary text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl text-amber font-bold mb-6 animate-fade-in">
-            Educational Area
+            {t('education.title')}
           </h1>
           <p className="text-xl md:text-xl text-white/90 max-w-3xl mx-auto animate-fade-in">
-            Learn about dinosaurs in a fun and interactive way
+            {t('education.subtitle')}
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-8 text-center">Learning Activities</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">{t('education.activities')}</h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 animate-fade-in">
@@ -436,17 +438,17 @@ export default function Education() {
 
                 <div className="flex items-center justify-start mb-4 space-x-2">
                   <Brain className="w-12 h-12 text-amber" />
-                  <CardTitle>General Quiz</CardTitle>
+                  <CardTitle>{t('education.quiz.general.title')}</CardTitle>
                 </div>
 
                 <CardDescription>
-                  Test your dinosaur knowledge with varied questions
+                  {t('education.quiz.general.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button onClick={() => startQuiz()} className="w-full" disabled={loading}>
                   <PlayCircle className="w-4 h-4 mr-2" />
-                  Start Quiz
+                  {t('education.quiz.general.start')}
                 </Button>
               </CardContent>
             </Card>
@@ -455,10 +457,10 @@ export default function Education() {
               <CardHeader>
                 <div className="flex items-center justify-start mb-4 space-x-2">
                   <Target className="w-12 h-12 text-green-500" />
-                  <CardTitle>Easy Quiz</CardTitle>
+                  <CardTitle>{t('education.quiz.easy.title')}</CardTitle>
                 </div>
                 <CardDescription>
-                  Basic questions, ideal for beginners
+                  {t('education.quiz.easy.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -468,7 +470,7 @@ export default function Education() {
                   disabled={loading}
                 >
                   <PlayCircle className="w-4 h-4 mr-2" />
-                  Start Easy
+                  {t('education.quiz.easy.start')}
                 </Button>
               </CardContent>
             </Card>
@@ -477,10 +479,10 @@ export default function Education() {
               <CardHeader>
                 <div className="flex items-center justify-start mb-4 space-x-2">
                   <Target className="w-12 h-12 text-yellow-500" />
-                  <CardTitle>Medium Quiz</CardTitle>
+                  <CardTitle>{t('education.quiz.medium.title')}</CardTitle>
                 </div>
                 <CardDescription>
-                  An intermediate challenge to deepen your knowledge
+                  {t('education.quiz.medium.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -490,7 +492,7 @@ export default function Education() {
                   disabled={loading}
                 >
                   <PlayCircle className="w-4 h-4 mr-2" />
-                  Start Medium
+                  {t('education.quiz.medium.start')}
                 </Button>
               </CardContent>
             </Card>
@@ -499,10 +501,10 @@ export default function Education() {
               <CardHeader>
                 <div className="flex items-center justify-start mb-4 space-x-2">
                   <Target className="w-12 h-12 text-red-500" />
-                  <CardTitle>Hard Quiz</CardTitle>
+                  <CardTitle>{t('education.quiz.hard.title')}</CardTitle>
                 </div>
                 <CardDescription>
-                  For true paleontology experts
+                  {t('education.quiz.hard.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -512,7 +514,7 @@ export default function Education() {
                   disabled={loading}
                 >
                   <PlayCircle className="w-4 h-4 mr-2" />
-                  Start Hard
+                  {t('education.quiz.hard.start')}
                 </Button>
               </CardContent>
             </Card>
@@ -521,15 +523,15 @@ export default function Education() {
               <CardHeader>
                 <div className="flex items-center justify-start mb-4 space-x-2">
                   <BookOpen className="w-12 h-12 text-muted-foreground" />
-                  <CardTitle className="text-muted-foreground">Interactive Lessons</CardTitle>
+                  <CardTitle className="text-muted-foreground">{t('education.lessons.title')}</CardTitle>
                 </div>
                 <CardDescription>
-                  Coming soon: Structured learning modules
+                  {t('education.lessons.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" disabled className="w-full">
-                  In Development
+                  {t('education.lessons.inDevelopment')}
                 </Button>
               </CardContent>
             </Card>
@@ -538,15 +540,15 @@ export default function Education() {
               <CardHeader>
                 <div className="flex items-center justify-start mb-4 space-x-2">
                   <Trophy className="w-12 h-12 text-muted-foreground" />
-                  <CardTitle className="text-muted-foreground">3D Simulations</CardTitle>
+                  <CardTitle className="text-muted-foreground">{t('education.simulations.title')}</CardTitle>
                 </div>
                 <CardDescription>
-                  Coming soon: Immersive experiences with dinosaurs
+                  {t('education.simulations.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" disabled className="w-full">
-                  In Development
+                  {t('education.lessons.inDevelopment')}
                 </Button>
               </CardContent>
             </Card>
@@ -557,16 +559,16 @@ export default function Education() {
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <BookOpen className="w-6 h-6 text-amber" />
-              Study Tips
+              {t('education.tips.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-muted-foreground">
-              <li>• Start with the easy quiz to build a solid knowledge base</li>
-              <li>• Read the answer explanations to learn from your mistakes</li>
-              <li>• Explore the species catalog to learn more about each dinosaur</li>
-              <li>• Use the interactive map to understand habitats and discoveries</li>
-              <li>• Practice regularly to improve your score</li>
+              <li>• {t('education.tips.tip1')}</li>
+              <li>• {t('education.tips.tip2')}</li>
+              <li>• {t('education.tips.tip3')}</li>
+              <li>• {t('education.tips.tip4')}</li>
+              <li>• {t('education.tips.tip5')}</li>
             </ul>
           </CardContent>
         </Card>

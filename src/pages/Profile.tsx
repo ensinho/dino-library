@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +48,7 @@ export default function Profile() {
   
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     checkAuth();
@@ -244,7 +246,7 @@ export default function Profile() {
                   </span>
                   <span className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-                    Member since {new Date(profile.created_at).toLocaleDateString('en-US')}
+                    {t('profile.memberSince', { date: new Date(profile.created_at).toLocaleDateString() })}
                   </span>
                 </div>
 
@@ -254,7 +256,7 @@ export default function Profile() {
 
                 {profile.organization && (
                   <p className="text-sm text-muted-foreground mb-4">
-                    <strong>Organization:</strong> {profile.organization}
+                    <strong>{t('profile.organization')}:</strong> {profile.organization}
                   </p>
                 )}
 
@@ -265,14 +267,14 @@ export default function Profile() {
                     onClick={() => setIsEditing(!isEditing)}
                   >
                     <Edit3 className="w-4 h-4 mr-2" />
-                    {isEditing ? 'Cancel' : 'Edit Profile'}
+                    {isEditing ? t('profile.cancel') : t('profile.editProfile')}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleSignOut}
                   >
-                    Sign Out
+                    {t('profile.signOut')}
                   </Button>
                 </div>
               </div>
@@ -286,46 +288,46 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Settings className="w-5 h-5" />
-                Edit Profile
+                {t('profile.editProfile')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Display Name</label>
+                <label className="text-sm font-medium mb-2 block">{t('profile.displayName')}</label>
                 <Input
                   value={editForm.display_name}
                   onChange={(e) => setEditForm(prev => ({ ...prev, display_name: e.target.value }))}
-                  placeholder="Your name"
+                  placeholder={t('profile.yourName')}
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Biography</label>
+                <label className="text-sm font-medium mb-2 block">{t('profile.biography')}</label>
                 <Textarea
                   value={editForm.bio}
                   onChange={(e) => setEditForm(prev => ({ ...prev, bio: e.target.value }))}
-                  placeholder="Tell us a little about yourself..."
+                  placeholder={t('profile.bioPlaceholder')}
                   rows={3}
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Organization</label>
+                <label className="text-sm font-medium mb-2 block">{t('profile.organization')}</label>
                 <Input
                   value={editForm.organization}
                   onChange={(e) => setEditForm(prev => ({ ...prev, organization: e.target.value }))}
-                  placeholder="University, company, or institution"
+                  placeholder={t('profile.orgPlaceholder')}
                 />
               </div>
 
               <div className="flex gap-2 pt-4">
                 <Button onClick={handleSave} disabled={saving}>
                   <Save className="w-4 h-4 mr-2" />
-                  {saving ? 'Saving...' : 'Save'}
+                  {saving ? t('profile.saving') : t('profile.save')}
                 </Button>
                 <Button variant="outline" onClick={() => setIsEditing(false)}>
                   <X className="w-4 h-4 mr-2" />
-                  Cancel
+                  {t('profile.cancel')}
                 </Button>
               </div>
             </CardContent>
@@ -335,8 +337,8 @@ export default function Profile() {
         {/* Profile Tabs */}
         <Tabs defaultValue="stats" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="stats">Statistics</TabsTrigger>
-            <TabsTrigger value="achievements">Achievements</TabsTrigger>
+            <TabsTrigger value="stats">{t('profile.statistics')}</TabsTrigger>
+            <TabsTrigger value="achievements">{t('profile.achievements.title')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="stats" className="mt-6">
@@ -346,34 +348,34 @@ export default function Profile() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-amber" />
-                    Quiz Statistics
+                    {t('profile.stats.quizStatistics')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span>Best Score:</span>
+                        <span>{t('profile.stats.bestScore')}:</span>
                         <span className="font-bold text-amber">
                           {(profile.quiz_scores as any)?.best_score || 0}%
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span>Latest Score:</span>
+                        <span>{t('profile.stats.latestScore')}:</span>
                         <span className="font-semibold">
                           {(profile.quiz_scores as any)?.latest_score || 0}%
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span>Total Quizzes:</span>
+                        <span>{t('profile.stats.totalQuizzes')}:</span>
                         <span className="font-semibold">
                           {(profile.quiz_scores as any)?.total_quizzes || 0}
                         </span>
                       </div>
                       {(profile.quiz_scores as any)?.last_quiz_date && (
                         <div className="flex justify-between items-center">
-                          <span>Last Quiz:</span>
+                          <span>{t('profile.stats.lastQuiz')}:</span>
                           <span className="text-sm text-muted-foreground">
-                            {new Date((profile.quiz_scores as any).last_quiz_date).toLocaleDateString('en-US')}
+                            {new Date((profile.quiz_scores as any).last_quiz_date).toLocaleDateString()}
                           </span>
                         </div>
                       )}
@@ -386,7 +388,7 @@ export default function Profile() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-green-500" />
-                    Knowledge Level
+                    {t('profile.stats.knowledgeLevel')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -399,11 +401,11 @@ export default function Profile() {
                             {level}
                           </div>
                           <p className="text-muted-foreground mb-4">
-                            Based on your best score
+                            {t('profile.stats.basedOnScore')}
                           </p>
                           <Button variant="outline" onClick={() => navigate('/education')}>
                             <BookOpen className="w-4 h-4 mr-2" />
-                            Take a New Quiz
+                            {t('profile.stats.takeNewQuiz')}
                           </Button>
                         </>
                       );
@@ -419,10 +421,10 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-amber" />
-                  Achievements
+                  {t('profile.achievements.title')}
                 </CardTitle>
                 <CardDescription>
-                  Your achievements and milestones in learning about dinosaurs
+                  {t('profile.achievements.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -433,9 +435,9 @@ export default function Profile() {
                       <User className="w-6 h-6 text-amber" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">Welcome!</h4>
+                      <h4 className="font-semibold">{t('profile.achievements.welcome')}</h4>
                       <p className="text-sm text-muted-foreground">
-                        Created your Dino Library account
+                        {t('profile.achievements.welcomeDesc')}
                       </p>
                     </div>
                   </div>
@@ -446,9 +448,9 @@ export default function Profile() {
                         <BookOpen className="w-6 h-6 text-green-500" />
                       </div>
                       <div>
-                        <h4 className="font-semibold">First Quiz</h4>
+                        <h4 className="font-semibold">{t('profile.achievements.firstQuiz')}</h4>
                         <p className="text-sm text-muted-foreground">
-                          Completed your first quiz
+                          {t('profile.achievements.firstQuizDesc')}
                         </p>
                       </div>
                     </div>
@@ -460,9 +462,9 @@ export default function Profile() {
                         <Trophy className="w-6 h-6 text-blue-500" />
                       </div>
                       <div>
-                        <h4 className="font-semibold">Expert</h4>
+                        <h4 className="font-semibold">{t('profile.achievements.expert')}</h4>
                         <p className="text-sm text-muted-foreground">
-                          Scored over 80% on a quiz
+                          {t('profile.achievements.expertDesc')}
                         </p>
                       </div>
                     </div>
@@ -470,7 +472,7 @@ export default function Profile() {
 
                   <div className="text-center py-8 text-muted-foreground">
                     <Award className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Keep learning to unlock more achievements!</p>
+                    <p>{t('profile.achievements.keepLearning')}</p>
                   </div>
                 </div>
               </CardContent>

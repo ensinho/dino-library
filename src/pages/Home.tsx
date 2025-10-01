@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Search, Map, Clock, GraduationCap, Zap, Globe, Book, Crown, Sparkles, Star } from 'lucide-react';
@@ -49,31 +50,33 @@ const favoriteDinosaurs: FavoriteDinosaur[] = [
 ];
 
 export default function Home() {
+  const { t } = useTranslation();
+  
   const features = [
     {
-      title: 'Species Collection',
-      description: 'Explore our vast collection of dinosaurs with detailed information about each species.',
+      title: t('home.features.collection.title'),
+      description: t('home.features.collection.description'),
       icon: Search,
       href: '/catalog',
       color: 'bg-gradient-forest'
     },
     {
-      title: 'Interactive Maps',
-      description: 'Discover where fossils were found and explore prehistoric habitats.',
+      title: t('home.features.maps.title'),
+      description: t('home.features.maps.description'),
       icon: Map,
       href: '/map',
       color: 'bg-gradient-amber'
     },
     {
-      title: 'Archaeological Timeline',
-      description: 'Follow the evolution of paleontological discoveries over time.',
+      title: t('home.features.timeline.title'),
+      description: t('home.features.timeline.description'),
       icon: Clock,
       href: '/timeline',
       color: 'bg-gradient-prehistoric'
     },
     {
-      title: 'Learning Area',
-      description: 'Participate in interactive quizzes and learn in a fun way.',
+      title: t('home.features.education.title'),
+      description: t('home.features.education.description'),
       icon: GraduationCap,
       href: '/education',
       color: 'bg-gradient-hero'
@@ -81,9 +84,9 @@ export default function Home() {
   ];
 
   const stats = [
-    { label: 'Species Cataloged', value: '1000', icon: Zap },
-    { label: 'Discoveries Mapped', value: '500+', icon: Globe },
-    { label: 'Educational Resources', value: '5+', icon: Book }
+    { label: t('home.stats.cataloged'), value: '1000', icon: Zap },
+    { label: t('home.stats.discoveries'), value: '500+', icon: Globe },
+    { label: t('home.stats.resources'), value: '5+', icon: Book }
   ];
 
   return (
@@ -108,23 +111,22 @@ export default function Home() {
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 animate-fade-in">
             <span className="bg-gradient-amber bg-clip-text text-transparent">
-              Dino Library
+              {t('home.hero.title')}
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 animate-fade-in">
-            Explore the fascinating world of dinosaurs through archaeological discoveries, 
-            interactive maps, and immersive educational experiences.
+            {t('home.hero.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
             <Link to="/catalog">
               <Button size="lg" className="w-full sm:w-auto shadow-amber hover:shadow-glow transition-all">
-                Explore Collection
+                {t('home.hero.exploreCollection')}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
             <Link to="/education">
               <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                Start Quiz
+                {t('home.hero.startQuiz')}
                 <GraduationCap className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -137,11 +139,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Discovering the Prehistoric Past
+              {t('home.features.title')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our platform offers a complete dinosaur learning experience,
-              combining science, technology, and education.
+              {t('home.features.subtitle')}
             </p>
           </div>
 
@@ -176,10 +177,10 @@ export default function Home() {
           <div className="text-center mb-12">
             <Crown className="w-12 h-12 mx-auto mb-4 text-amber animate-pulse" />
             <h2 className="text-4xl font-bold mb-4 bg-gradient-amber bg-clip-text text-transparent">
-              Some of My Favorite Dinosaurs
+              {t('home.favorites.title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Meet three of the most fascinating giants of the Mesozoic era.
+              {t('home.favorites.subtitle')}
             </p>
           </div>
           
@@ -211,11 +212,11 @@ export default function Home() {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-muted/50 p-3 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Period</div>
+                      <div className="text-xs text-muted-foreground">{t('home.favorites.period')}</div>
                       <div className="font-semibold text-sm text-primary">{dino.period}</div>
                     </div>
                     <div className="bg-muted/50 p-3 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Diet</div>
+                      <div className="text-xs text-muted-foreground">{t('home.favorites.diet')}</div>
                       <div className="font-semibold text-sm text-primary">{dino.diet}</div>
                     </div>
                   </div>
@@ -223,7 +224,7 @@ export default function Home() {
                   <div className="bg-gradient-to-r from-amber/10 to-primary/10 p-4 rounded-lg border border-amber/20">
                     <div className="text-xs text-amber-light font-semibold mb-2 flex items-center gap-2">
                       <Sparkles className="w-4 h-4" />
-                      Fun Fact
+                      {t('home.favorites.funFact')}
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {dino.funFact}

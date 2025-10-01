@@ -196,5 +196,295 @@
     "geological": "Geological Service",
     "discovery": "Discovery Service",
     "analytics": "Analytics Service"
+  },
+  "news": {
+    "title": "Paleontology News",
+    "subtitle": "Stay updated with the latest discoveries, research, and breakthroughs in paleontology",
+    "loading": "Loading articles...",
+    "search": "Search articles...",
+    "categories": {
+      "all": "All Categories",
+      "discoveries": "New Discoveries",
+      "research": "Research & Studies",
+      "technology": "Technology & Methods",
+      "exhibitions": "Exhibitions & Museums",
+      "conservation": "Conservation",
+      "education": "Education"
+    },
+    "filters": {
+      "category": "Category",
+      "date": "Date",
+      "author": "Author",
+      "clear": "Clear Filters"
+    },
+    "card": {
+      "readMore": "Read More",
+      "minutes": "min read",
+      "published": "Published",
+      "by": "by"
+    },
+    "detail": {
+      "backToNews": "Back to News",
+      "share": "Share Article",
+      "relatedArticles": "Related Articles",
+      "tags": "Tags",
+      "author": "Author",
+      "publishedOn": "Published on",
+      "lastUpdated": "Last updated"
+    },
+    "noResults": {
+      "title": "No articles found",
+      "subtitle": "Try adjusting your search or filters",
+      "action": "Clear all filters"
+    },
+    "loadMore": "Load More Articles"
+  },
+  "home": {
+    "hero": {
+      "title": "Dino Library",
+      "subtitle": "Explore the fascinating world of dinosaurs through archaeological discoveries, interactive maps, and immersive educational experiences.",
+      "exploreCollection": "Explore Collection",
+      "startQuiz": "Start Quiz"
+    },
+    "features": {
+      "title": "Discovering the Prehistoric Past",
+      "subtitle": "Our platform offers a complete dinosaur learning experience, combining science, technology, and education.",
+      "collection": {
+        "title": "Species Collection",
+        "description": "Explore our vast collection of dinosaurs with detailed information about each species."
+      },
+      "maps": {
+        "title": "Interactive Maps",
+        "description": "Discover where fossils were found and explore prehistoric habitats."
+      },
+      "timeline": {
+        "title": "Archaeological Timeline",
+        "description": "Follow the evolution of paleontological discoveries over time."
+      },
+      "education": {
+        "title": "Learning Area",
+        "description": "Participate in interactive quizzes and learn in a fun way."
+      }
+    },
+    "favorites": {
+      "title": "Some of My Favorite Dinosaurs",
+      "subtitle": "Meet three of the most fascinating giants of the Mesozoic era.",
+      "period": "Period",
+      "diet": "Diet",
+      "funFact": "Fun Fact"
+    },
+    "stats": {
+      "cataloged": "Species Cataloged",
+      "discoveries": "Discoveries Mapped",
+      "resources": "Educational Resources"
+    }
+  },
+  "timeline": {
+    "title": "Paleontological Timeline",
+    "subtitle": "Journey through Earth's history - from geological events that shaped our planet to the archaeological discoveries that revealed the dinosaur world.",
+    "tabs": {
+      "discoveries": "Archaeological Discoveries",
+      "geological": "Geological Timeline"
+    },
+    "filters": {
+      "searchPlaceholder": "Search discoveries...",
+      "allYears": "All years",
+      "clear": "Clear"
+    },
+    "discovery": {
+      "significance": "Scientific Significance",
+      "researcher": "Researcher",
+      "viewMore": "View More Discoveries",
+      "remaining": "remaining",
+      "noDiscoveries": "No discoveries found",
+      "adjustFilters": "Try adjusting your search filters."
+    },
+    "geological": {
+      "millionYearsAgo": "Million Years Ago",
+      "period": "Period",
+      "event": "Event",
+      "mesozoicEra": "Mesozoic Era",
+      "eraOverview": "Mesozoic Era Overview",
+      "triassic": "Triassic",
+      "jurassic": "Jurassic",
+      "cretaceous": "Cretaceous",
+      "mya": "MYA",
+      "triassicDesc": "Early dinosaur evolution",
+      "jurassicDesc": "Golden age of dinosaurs",
+      "cretaceousDesc": "Peak diversity & extinction"
+    }
+  },
+  "education": {
+    "title": "Educational Area",
+    "subtitle": "Learn about dinosaurs in a fun and interactive way",
+    "activities": "Learning Activities",
+    "quiz": {
+      "general": {
+        "title": "General Quiz",
+        "description": "Test your dinosaur knowledge with varied questions",
+        "start": "Start Quiz"
+      },
+      "easy": {
+        "title": "Easy Quiz",
+        "description": "Basic questions, ideal for beginners",
+        "start": "Start Easy"
+      },
+      "medium": {
+        "title": "Medium Quiz",
+        "description": "An intermediate challenge to deepen your knowledge",
+        "start": "Start Medium"
+      },
+      "hard": {
+        "title": "Hard Quiz",
+        "description": "For true paleontology experts",
+        "start": "Start Hard"
+      },
+      "exitQuiz": "Exit Quiz",
+      "correct": "Correct",
+      "streak": "Streak",
+      "speed": "Speed",
+      "totalScore": "Total Score",
+      "question": "Question",
+      "of": "of",
+      "currentStreak": "Current streak",
+      "confirmAnswer": "Confirm Answer",
+      "explanation": "Explanation",
+      "completed": "Quiz Completed!",
+      "answered": "You answered",
+      "questionsCorrectly": "questions correctly",
+      "tryAgain": "Try Again",
+      "newQuiz": "New Quiz"
+    },
+    "lessons": {
+      "title": "Interactive Lessons",
+      "description": "Coming soon: Structured learning modules",
+      "inDevelopment": "In Development"
+    },
+    "simulations": {
+      "title": "3D Simulations",
+      "description": "Coming soon: Immersive experiences with dinosaurs"
+    },
+    "tips": {
+      "title": "Study Tips",
+      "tip1": "Start with the easy quiz to build a solid knowledge base",
+      "tip2": "Read the answer explanations to learn from your mistakes",
+      "tip3": "Explore the species catalog to learn more about each dinosaur",
+      "tip4": "Use the interactive map to understand habitats and discoveries",
+      "tip5": "Practice regularly to improve your score"
+    },
+    "session": {
+      "exitQuiz": "Exit Quiz",
+      "correct": "Correct",
+      "streak": "Streak",
+      "speed": "Speed",
+      "question": "Question",
+      "of": "of",
+      "totalScore": "Total Score",
+      "currentStreak": "Current streak",
+      "confirmAnswer": "Confirm Answer",
+      "explanation": "Explanation",
+      "quizCompleted": "Quiz Completed!",
+      "yourScore": "Your Score",
+      "answeredCorrectly": "You answered {score} of {total} questions correctly",
+      "tryAgain": "Try Again",
+      "newQuiz": "New Quiz"
+    }
+  },
+  "map": {
+    "title": "Interactive Fossil Map",
+    "subtitle": "Explore where dinosaur fossils have been discovered around the world",
+    "loading": "Loading map...",
+    "filters": {
+      "period": "Filter by Period",
+      "diet": "Filter by Diet",
+      "clear": "Clear Filters"
+    },
+    "stats": {
+      "discoveries": "Fossil Sites",
+      "species": "Species Mapped",
+      "countries": "Countries"
+    },
+    "legend": {
+      "title": "Legend",
+      "carnivore": "Carnivore",
+      "herbivore": "Herbivore",
+      "omnivore": "Omnivore",
+      "flying": "Flying Reptiles",
+      "aquatic": "Aquatic"
+    },
+    "popup": {
+      "species": "Species",
+      "period": "Period",
+      "discovered": "Discovered",
+      "location": "Location",
+      "viewDetails": "View Details"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "Track your learning progress and manage your account",
+    "memberSince": "Member since {date}",
+    "organization": "Organization",
+    "editProfile": "Edit Profile",
+    "cancel": "Cancel",
+    "signOut": "Sign Out",
+    "displayName": "Display Name",
+    "yourName": "Your name",
+    "biography": "Biography",
+    "bioPlaceholder": "Tell us a little about yourself...",
+    "orgPlaceholder": "University, company, or institution",
+    "save": "Save",
+    "saving": "Saving...",
+    "statistics": "Statistics",
+    "stats": {
+      "quizStatistics": "Quiz Statistics",
+      "bestScore": "Best Score",
+      "latestScore": "Latest Score",
+      "totalQuizzes": "Total Quizzes",
+      "lastQuiz": "Last Quiz",
+      "knowledgeLevel": "Knowledge Level",
+      "basedOnScore": "Based on your best score",
+      "takeNewQuiz": "Take a New Quiz",
+      "quizzesTaken": "Quizzes Taken",
+      "speciesViewed": "Species Viewed",
+      "articlesRead": "Articles Read"
+    },
+    "settings": {
+      "title": "Account Settings",
+      "email": "Email",
+      "password": "Password",
+      "language": "Preferred Language",
+      "theme": "Theme",
+      "notifications": "Notifications",
+      "save": "Save Changes"
+    },
+    "achievements": {
+      "title": "Achievements",
+      "description": "Your achievements and milestones in learning about dinosaurs",
+      "welcome": "Welcome!",
+      "welcomeDesc": "Created your Dino Library account",
+      "firstQuiz": "First Quiz",
+      "firstQuizDesc": "Completed your first quiz",
+      "expert": "Expert",
+      "expertDesc": "Scored over 80% on a quiz",
+      "keepLearning": "Keep learning to unlock more achievements!",
+      "locked": "Locked",
+      "unlocked": "Unlocked"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "discover": "Discover",
+    "map": "Map",
+    "timeline": "Timeline",
+    "education": "Education",
+    "news": "News",
+    "profile": "Profile",
+    "auth": "Sign In"
   }
 }
