@@ -13,6 +13,7 @@ import { ZoomIn, Camera, Image as ImageIcon } from 'lucide-react';
 import { DinosaurSpecies } from '@/services/dinosaurService';
 import { dinoPicturesService, type DinoPicturesImage } from '@/services/dinoPicturesService';
 import type { CarouselApi } from '@/components/ui/carousel';
+import SmartImage from '@/components/SmartImage';
 
 interface SpeciesGalleryProps {
   species: DinosaurSpecies;
@@ -176,10 +177,12 @@ export default function SpeciesGallery({ species }: SpeciesGalleryProps) {
                         }}
                         aria-label={t('species.gallery.viewLarge')}
                       >
-                        <img
+                        <SmartImage
                           src={image.url}
                           alt={image.title}
-                          className="w-full h-80 object-cover rounded-xl shadow-fossil cursor-pointer transition-transform group-hover:scale-105"
+                          className="w-full h-80"
+                          skeletonClassName="rounded-xl"
+                          imgClassName="object-cover rounded-xl shadow-fossil cursor-pointer transition-transform group-hover:scale-105"
                         />
 
                         {/* Overlay with zoom icon */}
@@ -199,10 +202,12 @@ export default function SpeciesGallery({ species }: SpeciesGalleryProps) {
                     <DialogContent className="max-w-5xl w-full h-[80vh]">
                       <div className="h-full flex flex-col">
                         <div className="flex-1 relative">
-                          <img
+                          <SmartImage
                             src={images[selectedImageIndex]?.url}
                             alt={images[selectedImageIndex]?.title}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full"
+                            skeletonClassName="rounded-md"
+                            imgClassName="object-contain rounded-md"
                           />
                         </div>
 

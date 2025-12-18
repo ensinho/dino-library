@@ -327,7 +327,7 @@
     "quiz": {
       "general": {
         "title": "Quiz Geral",
-        "description": "Teste seus conhecimentos sobre dinossauros com perguntas variadas",
+        "description": "Teste seus conhecimentos sobre dinossauros!",
         "start": "Iniciar Quiz"
       },
       "easy": {
@@ -337,7 +337,7 @@
       },
       "medium": {
         "title": "Quiz Médio",
-        "description": "Um desafio intermediário para aprofundar seus conhecimentos",
+        "description": "Um desafio intermediário de conhecimentos",
         "start": "Iniciar Médio"
       },
       "hard": {

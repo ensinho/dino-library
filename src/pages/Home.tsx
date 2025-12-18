@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Search, Map, Clock, GraduationCap, Zap, Globe, Book, Crown, Sparkles, Star } from 'lucide-react';
 import heroImage from '@/assets/backgrounds/JurassicBackground.jpg';
 import allosaurusImage from '@/assets/dinosaur-images/alossauro.jpg';
 import brachiosaurusImage from '@/assets/dinosaur-images/braquiossauro.jpg';
 import oxalaiaImage from '@/assets/dinosaur-images/oxalaia.jpg';
+import SmartImage from '@/components/SmartImage';
 
 interface FavoriteDinosaur {
   name: string;
@@ -89,10 +91,28 @@ export default function Home() {
     { label: t('home.stats.resources'), value: '5+', icon: Book }
   ];
 
+  const credibility = [
+    {
+      title: t('home.features.maps.title'),
+      description: t('home.features.maps.description'),
+      icon: Map,
+    },
+    {
+      title: t('home.features.timeline.title'),
+      description: t('home.features.timeline.description'),
+      icon: Clock,
+    },
+    {
+      title: t('home.features.education.title'),
+      description: t('home.features.education.description'),
+      icon: GraduationCap,
+    },
+  ];
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
         <div 
           className="absolute inset-0 z-0"
@@ -108,28 +128,102 @@ export default function Home() {
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 animate-fade-in">
-            <span className="bg-gradient-amber bg-clip-text text-transparent">
-              {t('home.hero.title')}
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 animate-fade-in">
-            {t('home.hero.subtitle')}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-            <Link to="/catalog">
-              <Button size="lg" className="w-full sm:w-auto shadow-amber hover:shadow-glow transition-all">
-                {t('home.hero.exploreCollection')}
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
-            <Link to="/education">
-              <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                {t('home.hero.startQuiz')}
-                <GraduationCap className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-7 text-center lg:text-left">
+              <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 animate-fade-in leading-tight">
+                <span className="bg-gradient-amber bg-clip-text text-transparent">
+                  {t('home.hero.title')}
+                </span>
+              </h1>
+              <p className="text-lg md:text-2xl text-muted-foreground mb-8 animate-fade-in">
+                {t('home.hero.subtitle')}
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in">
+                <Link to="/catalog">
+                  <Button size="lg" className="w-full sm:w-auto shadow-amber hover:shadow-glow transition-all">
+                    {t('home.hero.exploreCollection')}
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link to="/education">
+                  <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+                    {t('home.hero.startQuiz')}
+                    <GraduationCap className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Credibility row (museums/labs feel) */}
+              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {credibility.map((c) => (
+                  <div
+                    key={c.title}
+                    className="rounded-xl border bg-background/60 backdrop-blur-sm px-4 py-3 flex items-start gap-3"
+                  >
+                    <div className="mt-0.5 h-9 w-9 rounded-lg bg-gradient-amber flex items-center justify-center shrink-0">
+                      <c.icon className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">{c.title}</div>
+                      <div className="text-xs text-muted-foreground leading-snug">{c.description}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right column: a "featured" card to anchor familiarity */}
+            <div className="lg:col-span-5">
+              <Card className="shadow-fossil border-amber/20 bg-background/70 backdrop-blur-sm overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-primary/10 to-amber/10">
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-amber" />
+                    {t('home.favorites.title')}
+                  </CardTitle>
+                  <CardDescription>{t('home.favorites.subtitle')}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="aspect-video bg-muted">
+                    <SmartImage
+                      src={favoriteDinosaurs[0]?.imageUrl}
+                      alt={favoriteDinosaurs[0]?.name || 'Dinosaur'}
+                      className="w-full h-full"
+                      skeletonClassName="rounded-none"
+                      imgClassName="object-cover w-full h-full rounded-none"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-lg font-bold text-foreground">{favoriteDinosaurs[0]?.name}</div>
+                        <div className="text-sm italic text-muted-foreground">{favoriteDinosaurs[0]?.scientificName}</div>
+                      </div>
+                      <Badge variant="secondary" className="bg-amber/15 text-amber border-amber/20">
+                        {favoriteDinosaurs[0]?.period}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                      {favoriteDinosaurs[0]?.description}
+                    </p>
+                    <div className="flex gap-2">
+                      <Link to="/catalog" className="w-full">
+                        <Button className="w-full" variant="outline">
+                          {t('home.hero.exploreCollection')}
+                        </Button>
+                      </Link>
+                      <Link to="/education" className="w-full">
+                        <Button className="w-full">
+                          {t('home.hero.startQuiz')}
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </section>
@@ -171,6 +265,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Quiz callout (kids-friendly) */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="rounded-2xl border bg-gradient-to-br from-amber/10 via-background to-primary/10 p-8 md:p-10 shadow-fossil">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 text-amber font-semibold">
+                  <GraduationCap className="h-5 w-5" />
+                  {t('home.features.education.title')}
+                </div>
+                <h3 className="mt-2 text-2xl md:text-3xl font-bold text-foreground">
+                  {t('home.hero.startQuiz')}
+                </h3>
+                <p className="mt-2 text-muted-foreground max-w-2xl">
+                  {t('home.features.education.description')}
+                </p>
+              </div>
+              <Link to="/education" className="shrink-0 w-full md:w-auto">
+                <Button size="lg" className="w-full md:w-auto shadow-amber hover:shadow-glow transition-all">
+                  {t('home.hero.startQuiz')}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Favorite Dinosaurs Section */}
       <section className="py-16 bg-card/50">    
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -192,8 +314,15 @@ export default function Home() {
               >
                 <div className="aspect-video bg-gradient-to-br from-primary/20 to-amber/20 flex items-center justify-center relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-amber/10 to-primary/10 group-hover:from-amber/20 group-hover:to-primary/20 transition-all duration-500" />
-                  <div className="text-6xl group-hover:scale-110 transition-transform duration-500">
-                    <img src={dino.imageUrl} alt={dino.name} className='object-cover' />
+                  <div className="w-full h-full p-0">
+                    <SmartImage
+                      src={dino.imageUrl}
+                      alt={dino.name}
+                      className="w-full h-full"
+                      skeletonClassName="rounded-none"
+                      imgClassName="object-cover w-full h-full rounded-none"
+                      loading="lazy"
+                    />
                   </div>
                 </div>
                 <CardHeader className="bg-gradient-to-r from-primary/5 to-amber/5">

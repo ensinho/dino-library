@@ -13,6 +13,7 @@ import { useAnalytics } from '@/services/analyticsService';
 import LanguageSwitcher from '@/components/ui/language-switcher';
 import PeriodTimeline from '@/components/PeriodTimeline';
 import SizeFilter from '@/components/SizeFilter';
+import SmartImage from '@/components/SmartImage';
 
 // Using DinosaurSpecies type from the service
 
@@ -346,10 +347,12 @@ export default function Catalog() {
 
               {dino.image_url && (
                 <div className="h-48 w-full overflow-hidden rounded-t-xl bg-muted flex items-center justify-center">
-                  <img
+                  <SmartImage
                     src={dino.image_url}
                     alt={dino.scientific_name || dino.common_name || 'Dinosaur'}
-                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full"
+                    skeletonClassName="rounded-none"
+                    imgClassName="object-cover w-full h-full rounded-none transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>
