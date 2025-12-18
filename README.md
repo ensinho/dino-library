@@ -159,7 +159,6 @@ npm run build        # Production build
 npm run preview      # Preview production build
 npm run lint         # Run ESLint
 npm run vercel-build # Optimized build for Vercel
-```
 
 ## 📊 Project Structure
 

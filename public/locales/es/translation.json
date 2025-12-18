@@ -48,6 +48,8 @@
       "of": "de",
       "species": "especies",
       "page": "página",
+      "perPage": "Por página",
+      "grid": "Cuadrícula",
       "previous": "Anterior",
       "next": "Siguiente"
     },
@@ -55,6 +57,39 @@
       "title": "No se encontraron dinosaurios",
       "subtitle": "Intenta ajustar tus criterios de búsqueda o limpiar los filtros.",
       "action": "Limpiar todos los filtros"
+    }
+  },
+  "species": {
+    "loading": "Cargando detalles de la especie...",
+    "notFound": {
+      "title": "Especie no encontrada",
+      "message": "No pudimos encontrar la especie de dinosaurio que buscas."
+    },
+    "backToCatalog": "Volver al Catálogo",
+    "share": "Compartir",
+    "nameOrigin": "Origen del Nombre",
+    "noImage": "No hay imagen disponible",
+    "unknown": "Desconocido",
+    "tabs": {
+      "overview": "Visión General",
+      "gallery": "Galería",
+      "anatomy": "Anatomía",
+      "ecology": "Ecología",
+      "discovery": "Descubrimiento"
+    },
+    "gallery": {
+      "title": "Galería de Imágenes",
+      "description": "Representaciones visuales, reconstrucciones y evidencias fósiles de esta especie de dinosaurio.",
+      "noImages": "No hay imágenes disponibles para esta especie",
+      "loading": "Cargando imágenes...",
+      "primary": "Ilustración principal de la especie",
+      "image": "Imagen",
+      "externalSource": "Fuente externa",
+      "viewLarge": "Ver en grande",
+      "viewFullGallery": "Ver Galería Completa",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "of": "de"
     }
   },
   "common": {

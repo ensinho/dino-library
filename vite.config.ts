@@ -6,6 +6,14 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      // Dev-only proxy to avoid CORS. Use /ext/dinopics/... in fetch.
+      '/ext/dinopics': {
+        target: 'https://dinosaurpictures.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ext\/dinopics/, '/api'),
+      },
+    },
   },
   plugins: [
     react(),

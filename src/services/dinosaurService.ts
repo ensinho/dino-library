@@ -6,6 +6,7 @@
  */
 
 import config from '@/lib/config';
+import { dinoPicturesService } from '@/services/dinoPicturesService';
 import {
   col,
   getDocs,
@@ -41,6 +42,8 @@ export interface DinosaurSpecies {
   source_link: string | null;
   weight_kg: number | null;
   image_url?: string | null;
+  image_urls?: string[] | null;
+  image_thumbnails?: string[] | null;
 }
 
 export interface DinosaurFilters {
@@ -90,7 +93,12 @@ export class DinosaurService {
         console.log('🦕 Fetching dinosaurs from Firestore:', filters);
       }
       
-      const response = await this.getFromFirestore(filters);
+  const response = await this.getFromFirestore(filters);
+
+  // Best-effort: enrich missing images for the current page.
+  // Keeps requests bounded by page size and avoids spamming the public API.
+  await this.enrichImagesInPlace(response.data, 3);
+
       this.setCache(cacheKey, response);
       return response;
 
@@ -129,6 +137,24 @@ export class DinosaurService {
         throw new Error('Dinosaur not found');
       }
       const data = snap.data() as DinosaurSpecies;
+
+      // Enrich with public images when missing.
+      // This keeps Firestore as the source of truth but maximizes images in UI.
+      if (!data.image_url) {
+        const lookupName = (data.scientific_name || data.common_name || '').trim();
+        if (lookupName) {
+          try {
+            const enrichment = await dinoPicturesService.getDinosaur(lookupName);
+            const first = enrichment?.images?.[0]?.url;
+            if (first) data.image_url = first;
+          } catch (e) {
+            if (config.debugMode) {
+              console.warn('🖼️ DinoPictures enrichment failed:', e);
+            }
+          }
+        }
+      }
+
       this.setCache(cacheKey, data);
       return data;
 
@@ -391,6 +417,33 @@ export class DinosaurService {
         locations: ['North America', 'South America', 'Europe', 'Asia', 'Africa', 'Australia']
       };
     }
+  }
+
+  private async enrichImagesInPlace(items: DinosaurSpecies[], concurrency: number) {
+    const targets = items.filter((d) => !d.image_url && (d.scientific_name || d.common_name));
+    if (!targets.length) return;
+
+    // simple concurrency pool
+    let i = 0;
+    const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
+      while (i < targets.length) {
+        const current = targets[i++];
+        const name = (current.scientific_name || current.common_name || '').trim();
+        if (!name) continue;
+
+        try {
+          const enrichment = await dinoPicturesService.getDinosaur(name);
+          const first = enrichment?.images?.[0]?.url;
+          if (first) current.image_url = first;
+        } catch (e) {
+          if (config.debugMode) {
+            console.warn('🖼️ DinoPictures enrichment failed:', name, e);
+          }
+        }
+      }
+    });
+
+    await Promise.all(workers);
   }
 }
 

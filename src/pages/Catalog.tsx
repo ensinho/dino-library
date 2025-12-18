@@ -35,7 +35,8 @@ export default function Catalog() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const itemsPerPage = 12;
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [gridCols, setGridCols] = useState<'2' | '3' | '4' | '5'>('4');
 
   useEffect(() => {
     fetchSpecies();
@@ -44,11 +45,11 @@ export default function Catalog() {
 
   useEffect(() => {
     fetchSpecies();
-  }, [searchTerm, periodFilter, dietFilter, livedInFilter, lengthRange, heightRange, currentPage]);
+  }, [searchTerm, periodFilter, dietFilter, livedInFilter, lengthRange, heightRange, currentPage, itemsPerPage]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, periodFilter, dietFilter, livedInFilter, lengthRange, heightRange]);
+  }, [searchTerm, periodFilter, dietFilter, livedInFilter, lengthRange, heightRange, itemsPerPage]);
 
   // Removed client-side filtering - now handled by the service
 
@@ -273,14 +274,63 @@ export default function Catalog() {
 
         {/* Results Count */}
         <div className="mb-6">
-          <p className="text-muted-foreground">
-            {t('catalog.pagination.showing')} {Math.min(itemsPerPage, filteredSpecies.length)} {t('catalog.pagination.of')} {total} {t('catalog.pagination.species')}
-            ({t('catalog.pagination.page')} {currentPage} {t('catalog.pagination.of')} {totalPages})
-          </p>
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <p className="text-muted-foreground">
+              {t('catalog.pagination.showing')} {Math.min(itemsPerPage, filteredSpecies.length)} {t('catalog.pagination.of')} {total} {t('catalog.pagination.species')}
+              ({t('catalog.pagination.page')} {currentPage} {t('catalog.pagination.of')} {totalPages})
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Items per page */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">{t('catalog.pagination.perPage')}</span>
+                <Select
+                  value={String(itemsPerPage)}
+                  onValueChange={(v) => setItemsPerPage(Number(v))}
+                >
+                  <SelectTrigger className="w-[92px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="12">12</SelectItem>
+                    <SelectItem value="16">16</SelectItem>
+                    <SelectItem value="24">24</SelectItem>
+                    <SelectItem value="32">32</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Grid density */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">{t('catalog.pagination.grid')}</span>
+                <Select value={gridCols} onValueChange={(v) => setGridCols(v as any)}>
+                  <SelectTrigger className="w-[92px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Species Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div
+          className={
+            gridCols === '2'
+              ? 'grid grid-cols-1 md:grid-cols-2 gap-8'
+              : gridCols === '3'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
+                : gridCols === '5'
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8'
+                  : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'
+          }
+        >
           {filteredSpecies.map((dino) => (
             <Card
               key={dino.row_index}

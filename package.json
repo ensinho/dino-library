@@ -10,7 +10,8 @@
     "lint": "eslint .",
     
     "preview": "vite preview",
-    "vercel-build": "npx vite build"
+    "vercel-build": "npx vite build",
+    "enrich:images": "tsx scripts/enrich-dinosaur-images.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
