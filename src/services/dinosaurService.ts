@@ -2,14 +2,24 @@
  * Dinosaur Service
  * 
  * This service handles all dinosaur-related data operations.
- * It implements a hybrid architecture:
- * 1. First tries to use microservices for scalability
- * 2. Falls back to direct Supabase calls for reliability
- * 3. Provides caching and optimization features
+ * It reads from Firestore and includes caching/optimization.
  */
 
-import { supabase } from '@/integrations/supabase/client';
 import config from '@/lib/config';
+import {
+  col,
+  getDocs,
+  limit as fsLimit,
+  query as fsQuery,
+  where as fsWhere,
+} from '@/services/firestoreService';
+import {
+  doc,
+  getDoc,
+  orderBy,
+  startAfter,
+  type QueryDocumentSnapshot,
+} from 'firebase/firestore';
 
 // Type definitions matching your database schema
 export interface DinosaurSpecies {
@@ -55,9 +65,13 @@ export class DinosaurService {
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
   private cacheTimeout = 5 * 60 * 1000; // 5 minutes
 
+  // Firestore pagination uses cursor, but the UI expects page numbers.
+  // For now, we implement page-based pagination by paging in-memory after fetching.
+  // This is OK for ~1000 docs, and we can optimize later with index/cursors.
+
   /**
    * Get dinosaurs with filtering and pagination
-   * Uses Supabase directly for better performance and reliability
+  * Fetches from Firestore
    */
   async getDinosaurs(filters: DinosaurFilters = {}): Promise<DinosaurResponse> {
     const cacheKey = JSON.stringify(filters);
@@ -73,10 +87,10 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
-        console.log('🦕 Fetching dinosaurs directly from Supabase:', filters);
+        console.log('🦕 Fetching dinosaurs from Firestore:', filters);
       }
       
-      const response = await this.getDirectFromSupabase(filters);
+      const response = await this.getFromFirestore(filters);
       this.setCache(cacheKey, response);
       return response;
 
@@ -94,7 +108,7 @@ export class DinosaurService {
 
   /**
    * Get a specific dinosaur by ID
-   * Uses Supabase directly
+  * Fetches from Firestore
    */
   async getDinosaurById(id: string): Promise<DinosaurSpecies> {
     const cacheKey = `dinosaur-${id}`;
@@ -107,16 +121,14 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
-        console.log(`🦕 Fetching dinosaur ${id} from Supabase...`);
+        console.log(`🦕 Fetching dinosaur ${id} from Firestore...`);
       }
-      
-      const { data, error: supabaseError } = await supabase
-        .from('dinosaur_species2')
-        .select('*')
-        .eq('row_index', id)
-        .single();
-      
-      if (supabaseError) throw supabaseError;
+
+      const snap = await getDoc(doc(col('dinosaur_species2'), id));
+      if (!snap.exists()) {
+        throw new Error('Dinosaur not found');
+      }
+      const data = snap.data() as DinosaurSpecies;
       this.setCache(cacheKey, data);
       return data;
 
@@ -144,10 +156,10 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
-        console.log('📊 Fetching stats from Supabase...');
+        console.log('📊 Fetching stats from Firestore...');
       }
       
-      const stats = await this.calculateStatsFromSupabase();
+  const stats = await this.calculateStatsFromFirestore();
       this.setCache(cacheKey, stats);
       return stats;
 
@@ -176,10 +188,10 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
-        console.log('🔍 Searching dinosaurs in Supabase...');
+        console.log('🔍 Searching dinosaurs in Firestore...');
       }
       
-      const results = await this.searchInSupabase(query, limit);
+  const results = await this.searchInFirestore(query, limit);
       this.setCache(cacheKey, results);
       return results;
 
@@ -190,79 +202,95 @@ export class DinosaurService {
   }
 
   /**
-   * Direct Supabase implementation (fallback)
+   * Firestore implementation
    */
-  private async getDirectFromSupabase(filters: DinosaurFilters): Promise<DinosaurResponse> {
-    let query = supabase.from('dinosaur_species2').select('*', { count: 'exact' });
+  private async getFromFirestore(filters: DinosaurFilters): Promise<DinosaurResponse> {
+    // We'll fetch a superset and apply complex filters client-side.
+    // Firestore doesn't support OR/ILIKE easily without extra indexing/denormalization.
+    const base = col('dinosaur_species2');
+    const page = filters.page || 1;
+    const pageSize = filters.limit || 12;
 
-    // Apply filters
+    // Narrow down via equality filters where we can (cheap).
+    const wheres: any[] = [];
+    if (filters.period && filters.period !== 'all') wheres.push(fsWhere('geological_period', '==', filters.period));
+    if (filters.diet && filters.diet !== 'all') wheres.push(fsWhere('diet', '==', filters.diet));
+    if (filters.location && filters.location !== 'all') wheres.push(fsWhere('lived_in', '==', filters.location));
+
+    // Pull a reasonable slice for UX. Increase if needed.
+    const q = wheres.length
+      ? fsQuery(base, ...wheres, fsLimit(1000))
+      : fsQuery(base, fsLimit(1000));
+
+    const snap = await getDocs(q);
+    let data = snap.docs.map((d) => d.data() as DinosaurSpecies);
+
+    // Search (client-side containing). Mimics ilike %query%.
     if (filters.search) {
-      query = query.or(`common_name.ilike.%${filters.search}%,scientific_name.ilike.%${filters.search}%`);
+      const s = filters.search.toLowerCase();
+      data = data.filter((d) =>
+        (d.common_name || '').toLowerCase().includes(s) ||
+        (d.scientific_name || '').toLowerCase().includes(s)
+      );
     }
 
-    if (filters.period && filters.period !== 'all') {
-      query = query.eq('geological_period', filters.period);
-    }
-
-    if (filters.diet && filters.diet !== 'all') {
-      query = query.eq('diet', filters.diet);
-    }
-
-    if (filters.location && filters.location !== 'all') {
-      query = query.eq('lived_in', filters.location);
-    }
-
-    // Apply size filters
     if (filters.lengthRange) {
-      query = query.gte('length_m', filters.lengthRange[0]).lte('length_m', filters.lengthRange[1]);
+      data = data.filter((d) => {
+        const v = d.length_m ?? null;
+        if (v === null) return false;
+        return v >= filters.lengthRange![0] && v <= filters.lengthRange![1];
+      });
     }
 
     if (filters.heightRange) {
-      query = query.gte('height_m', filters.heightRange[0]).lte('height_m', filters.heightRange[1]);
+      data = data.filter((d) => {
+        const v = d.height_m ?? null;
+        if (v === null) return false;
+        return v >= filters.heightRange![0] && v <= filters.heightRange![1];
+      });
     }
 
-    // Apply pagination
-    const page = filters.page || 1;
-    const limit = filters.limit || 12;
-    const offset = (page - 1) * limit;
-    
-    query = query.range(offset, offset + limit - 1);
+    // Stable-ish ordering (by scientific_name then row_index)
+    data.sort((a, b) => {
+      const an = (a.scientific_name || a.common_name || '').toLowerCase();
+      const bn = (b.scientific_name || b.common_name || '').toLowerCase();
+      if (an < bn) return -1;
+      if (an > bn) return 1;
+      return String(a.row_index).localeCompare(String(b.row_index));
+    });
 
-    const { data, error, count } = await query;
-    
-    if (error) throw error;
+    const total = data.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const paged = data.slice(start, end);
 
-    return {
-      data: data || [],
-      total: count || 0,
-      page,
-      totalPages: Math.ceil((count || 0) / limit)
-    };
+    return { data: paged, total, page, totalPages };
   }
 
   /**
-   * Search implementation for Supabase fallback
+   * Search implementation for Firestore
    */
-  private async searchInSupabase(query: string, limit: number): Promise<DinosaurSpecies[]> {
-    const { data, error } = await supabase
-      .from('dinosaur_species2')
-      .select('*')
-      .or(`common_name.ilike.%${query}%,scientific_name.ilike.%${query}%,behavior_notes.ilike.%${query}%`)
-      .limit(limit);
-
-    if (error) throw error;
-    return data || [];
+  private async searchInFirestore(queryText: string, limitCount: number): Promise<DinosaurSpecies[]> {
+    const q = fsQuery(col('dinosaur_species2'), fsLimit(1000));
+    const snap = await getDocs(q);
+    const s = queryText.toLowerCase();
+    const all = snap.docs.map((d) => d.data() as DinosaurSpecies);
+    return all
+      .filter((d) =>
+        (d.common_name || '').toLowerCase().includes(s) ||
+        (d.scientific_name || '').toLowerCase().includes(s) ||
+        (d.behavior_notes || '').toLowerCase().includes(s)
+      )
+      .slice(0, limitCount);
   }
 
   /**
-   * Calculate statistics from Supabase (fallback)
+   * Calculate statistics from Firestore
    */
-  private async calculateStatsFromSupabase() {
-    const { data, error } = await supabase
-      .from('dinosaur_species2')
-      .select('geological_period, diet, lived_in');
-
-    if (error) throw error;
+  private async calculateStatsFromFirestore() {
+    const snap = await getDocs(fsQuery(col('dinosaur_species2'), fsLimit(1000)));
+    const data = snap.docs.map((d) => d.data() as Pick<DinosaurSpecies, 'geological_period' | 'diet' | 'lived_in'>);
 
     const stats = {
       totalSpecies: data?.length || 0,
@@ -323,7 +351,7 @@ export class DinosaurService {
 
   /**
    * Get unique values for filters
-   * Uses Supabase directly
+   * Uses Firestore
    */
   async getFilterOptions(): Promise<{
     periods: string[];
@@ -339,14 +367,11 @@ export class DinosaurService {
 
     try {
       if (config.debugMode) {
-        console.log('🦕 Fetching filter options from Supabase...');
+        console.log('🦕 Fetching filter options from Firestore...');
       }
 
-      const { data, error: supabaseError } = await supabase
-        .from('dinosaur_species2')
-        .select('geological_period, diet, lived_in');
-
-      if (supabaseError) throw supabaseError;
+      const snap = await getDocs(fsQuery(col('dinosaur_species2'), fsLimit(1000)));
+      const data = snap.docs.map((d) => d.data() as Pick<DinosaurSpecies, 'geological_period' | 'diet' | 'lived_in'>);
 
       const options = {
         periods: [...new Set(data?.map(d => d.geological_period).filter(Boolean))].sort() as string[],

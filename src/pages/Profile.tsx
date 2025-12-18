@@ -20,19 +20,12 @@ import {
   Award,
   TrendingUp
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
-import type { Database } from '@/integrations/supabase/types';
+import { getCurrentUser, signOutUser } from '@/services/firebaseAuthService';
+import { getOrCreateProfile, updateProfile, type ProfileDoc } from '@/services/profileService';
 
-type Profile = Database['public']['Tables']['profiles']['Row'] & {
-  quiz_scores?: {
-    latest_score?: number;
-    total_quizzes?: number;
-    best_score?: number;
-    last_quiz_date?: string;
-  } | null;
-};
+type Profile = ProfileDoc;
 
 export default function Profile() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -56,15 +49,15 @@ export default function Profile() {
 
   const checkAuth = async () => {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      
-      if (authError || !user) {
+      const user = await getCurrentUser();
+
+      if (!user) {
         navigate('/auth');
         return;
       }
 
       setUser(user);
-      await fetchProfile(user.id);
+      await fetchProfile(user.uid);
     } catch (error) {
       console.error('Authentication error:', error);
       navigate('/auth');
@@ -75,19 +68,9 @@ export default function Profile() {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (error) {
-        if (error.code === 'PGRST116') {
-          await createProfile(userId);
-          return;
-        }
-        throw error;
-      }
+      const data = await getOrCreateProfile(userId, {
+        display_name: user?.displayName || user?.email?.split('@')?.[0] || 'User',
+      });
 
       setProfile(data);
       setEditForm({
@@ -105,45 +88,16 @@ export default function Profile() {
     }
   };
 
-  const createProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: userId,
-          display_name: user?.email?.split('@')[0] || 'User'
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setProfile(data);
-      setEditForm({
-        display_name: data.display_name || '',
-        bio: data.bio || '',
-        organization: data.organization || ''
-      });
-    } catch (error) {
-      console.error('Error creating profile:', error);
-    }
-  };
-
   const handleSave = async () => {
     if (!profile) return;
 
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          display_name: editForm.display_name,
-          bio: editForm.bio,
-          organization: editForm.organization
-        })
-        .eq('user_id', profile.user_id);
-
-      if (error) throw error;
+      await updateProfile(profile.user_id, {
+        display_name: editForm.display_name,
+        bio: editForm.bio,
+        organization: editForm.organization,
+      });
 
       setProfile(prev => prev ? {
         ...prev,
@@ -170,7 +124,7 @@ export default function Profile() {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await signOutUser();
     navigate('/auth');
   };
 

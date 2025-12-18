@@ -20,18 +20,12 @@ import {
   Sparkles,
   Timer
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { fetchQuizQuestions, type QuizQuestion as FirestoreQuizQuestion } from '@/services/quizService';
+import { getCurrentUser } from '@/services/firebaseAuthService';
+import { updateProfile } from '@/services/profileService';
 
-interface QuizQuestion {
-  id: string;
-  question: string;
-  correct_answer: string;
-  wrong_answers: string[];
-  difficulty: string;
-  explanation?: string;
-  species_id?: string;
-}
+type QuizQuestion = FirestoreQuizQuestion & { id: string };
 
 interface QuizSession {
   questions: (QuizQuestion & { options: string[] })[];
@@ -64,15 +58,7 @@ export default function Education() {
   const startQuiz = async (difficulty?: string) => {
     setLoading(true);
     try {
-      let query = supabase.from('quiz_questions').select('*');
-      
-      if (difficulty) {
-        query = query.eq('difficulty', difficulty);
-      }
-      
-      const { data, error } = await query.limit(10);
-
-      if (error) throw error;
+      const data = await fetchQuizQuestions(difficulty, 10);
 
       if (!data || data.length === 0) {
         toast({
@@ -86,9 +72,10 @@ export default function Education() {
       const shuffledQuestions = data
         .sort(() => Math.random() - 0.5)
         .slice(0, Math.min(10, data.length))
-        .map(q => ({
+        .map((q) => ({
           ...q,
-          options: [q.correct_answer, ...q.wrong_answers].sort(() => Math.random() - 0.5)
+          id: q.id || crypto.randomUUID(),
+          options: [q.correct_answer, ...(q.wrong_answers || [])].sort(() => Math.random() - 0.5),
         }));
 
       setQuizSession({
@@ -188,24 +175,19 @@ export default function Education() {
 
   const saveQuizScore = async (score: number, total: number) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const user = await getCurrentUser();
+
       if (user) {
         const percentage = Math.round((score / total) * 100);
-        
-        const { error } = await supabase
-          .from('profiles')
-          .update({
-            quiz_scores: {
-              latest_score: percentage,
-              total_quizzes: 1,
-              best_score: percentage,
-              last_quiz_date: new Date().toISOString()
-            }
-          })
-          .eq('user_id', user.id);
 
-        if (error) throw error;
+        await updateProfile(user.uid, {
+          quiz_scores: {
+            latest_score: percentage,
+            total_quizzes: 1,
+            best_score: percentage,
+            last_quiz_date: new Date().toISOString(),
+          },
+        });
       }
     } catch (error) {
       // Silent fail on score save

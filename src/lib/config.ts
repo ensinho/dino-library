@@ -9,18 +9,15 @@ export interface AppConfig {
   enableServiceHealthCheck: boolean;
   debugMode: boolean;
   
-  // Microservices URLs
-  services: {
-    dinosaur: string;
-    geological: string;
-    discovery: string;
-    analytics: string;
-  };
   
-  // Supabase configuration
-  supabase: {
-    url: string;
-    anonKey: string;
+  // Firebase configuration (primary backend)
+  firebase?: {
+    apiKey: string;
+    authDomain: string;
+    projectId: string;
+    appId: string;
+    storageBucket?: string;
+    messagingSenderId?: string;
   };
   
   // Other settings
@@ -39,19 +36,22 @@ const config: AppConfig = {
   enableServiceHealthCheck: import.meta.env.VITE_ENABLE_SERVICE_HEALTH_CHECK !== 'false',
   debugMode: import.meta.env.VITE_DEBUG_MODE === 'true',
   
-  // Microservices URLs
-  services: {
-    dinosaur: import.meta.env.VITE_DINOSAUR_SERVICE_URL || (import.meta.env.PROD ? '/api/dinosaurs' : 'http://localhost:3001'),
-    geological: import.meta.env.VITE_GEOLOGICAL_SERVICE_URL || 'http://localhost:3002',
-    discovery: import.meta.env.VITE_DISCOVERY_SERVICE_URL || 'http://localhost:3003',
-    analytics: import.meta.env.VITE_ANALYTICS_SERVICE_URL || (import.meta.env.PROD ? '/api/analytics' : 'http://localhost:3004'),
-  },
   
-  // Supabase configuration
-  supabase: {
-    url: import.meta.env.VITE_SUPABASE_URL || '',
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
-  },
+  // Firebase configuration (primary backend)
+  firebase:
+    import.meta.env.VITE_FIREBASE_API_KEY &&
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN &&
+    import.meta.env.VITE_FIREBASE_PROJECT_ID &&
+    import.meta.env.VITE_FIREBASE_APP_ID
+      ? {
+          apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+          authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+          projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+          storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+          messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+          appId: import.meta.env.VITE_FIREBASE_APP_ID,
+        }
+      : undefined,
   
   // Logging
   logLevel: import.meta.env.VITE_LOG_LEVEL || 'info',
@@ -61,14 +61,11 @@ const config: AppConfig = {
 export function validateConfig(): boolean {
   const errors: string[] = [];
   
-  // Check required Supabase configuration
-  if (!config.supabase.url) {
-    errors.push('VITE_SUPABASE_URL is required');
-  }
-  
-  if (!config.supabase.anonKey) {
-    errors.push('VITE_SUPABASE_ANON_KEY is required');
-  }
+  // Check required Firebase configuration
+  if (!config.firebase?.apiKey) errors.push('VITE_FIREBASE_API_KEY is required');
+  if (!config.firebase?.authDomain) errors.push('VITE_FIREBASE_AUTH_DOMAIN is required');
+  if (!config.firebase?.projectId) errors.push('VITE_FIREBASE_PROJECT_ID is required');
+  if (!config.firebase?.appId) errors.push('VITE_FIREBASE_APP_ID is required');
   
   if (errors.length > 0) {
     return false;

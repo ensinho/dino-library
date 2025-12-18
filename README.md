@@ -9,7 +9,7 @@
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![React](https://img.shields.io/badge/React-18.3.1-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-orange?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
 
 [Live Demo](https://dino-library.vercel.app) • [Report Bug](https://github.com/ensinho/dino-library/issues) • [Request Feature](https://github.com/ensinho/dino-library/issues)
 
@@ -22,7 +22,7 @@
 ### 🔍 **Interactive Species Catalog**
 - **Complete database** with over 500 dinosaur species
 - **Advanced filters** by geological period, diet and location
-- **Smart search system** with real-time search via Supabase
+- **Smart search system** with real-time search via Firestore
 - **Optimized pagination** for efficient navigation
 - **Informative cards** with complete scientific details
 - **Intelligent caching** for better performance
@@ -44,7 +44,7 @@
 - **Gamified learning experiences**
 
 ### 👤 **Authentication and Profile System**
-- **Secure login/signup** via Supabase Auth
+- **Secure login/signup** via Firebase Auth
 - **Personalized profiles** with activity history
 - **Learning progress** saved in the cloud
 
@@ -71,10 +71,8 @@
 - **Recharts 2.15.4** - Charts and data visualizations
 
 ### **Backend & Database**
-- **Supabase** - Complete Backend-as-a-Service
-- **PostgreSQL** - Relational database via Supabase
-- **Supabase Auth** - Integrated authentication system
-- **Supabase Storage** - File storage
+- **Firebase Auth** - Authentication (Email/Password)
+- **Cloud Firestore** - Document database
 
 ### **Internationalization**
 - **i18next 25.5.2** - Translation system
@@ -90,19 +88,17 @@
 
 ```mermaid
 graph TB
-    A[Frontend React] --> B[Supabase Client]
-    B --> C[PostgreSQL Database]
-    B --> D[Supabase Auth]
-    B --> E[Supabase Storage]
+    A[Frontend React] --> B[Firebase SDK]
+    B --> C[Cloud Firestore]
+    B --> D[Firebase Auth]
     
     F[Leaflet Maps] --> A
     G[TanStack Query] --> A
     H[i18next] --> A
     
-    subgraph "Supabase Backend"
+    subgraph "Firebase Backend"
         C --> I[Dinosaur Data]
         D --> J[User Authentication]
-        E --> K[File Storage]
     end
     
     subgraph "Frontend Stack"
@@ -115,9 +111,9 @@ graph TB
 ## 📦 Installation and Setup
 
 ### **Prerequisites**
-- Node.js 18+ or Bun
+- Node.js 18+
 - Git
-- Supabase account
+- Firebase project (Auth + Firestore enabled)
 
 ### **1. Clone the repository**
 ```bash
@@ -130,8 +126,7 @@ cd dino-library
 # With npm
 npm install
 
-# Or with bun (recommended)
-bun install
+
 ```
 
 ### **3. Configure environment variables**
@@ -140,22 +135,18 @@ bun install
 cp .env.example .env
 
 # Configure your variables in the .env file
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_anonymous_key
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+VITE_FIREBASE_APP_ID=your_firebase_app_id
 VITE_ENABLE_ANALYTICS=true
-```
-
-### **4. Configure the database**
-```bash
-# Run Supabase migrations
-npx supabase db reset
 ```
 
 ### **5. Start the development server**
 ```bash
 npm run dev
 # or
-bun dev
+npm run dev
 ```
 
 The application will be available at `http://localhost:5173`
@@ -185,8 +176,7 @@ dino-library/
 │   └── 📁 integrations/      # External integrations
 ├── 📁 public/
 │   └── 📁 locales/           # Translation files
-└── 📁 supabase/              # Supabase configurations
-    └── 📁 migrations/        # Database migrations
+
 ```
 
 ## 🌐 Deployment

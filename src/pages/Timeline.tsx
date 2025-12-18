@@ -6,21 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, MapPin, Users, Search, Filter, Eye, Zap, Mountain, Skull, Globe } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { fetchDiscoveries as fetchDiscoveriesFromFirestore, type ArchaeologicalDiscovery as FirestoreDiscovery } from '@/services/discoveriesService';
 
-interface ArchaeologicalDiscovery {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  discovery_date: string;
-  researcher_name?: string;
-  organization?: string;
-  significance?: string;
-  image_url?: string;
-  latitude?: number;
-  longitude?: number;
-}
+type ArchaeologicalDiscovery = FirestoreDiscovery & { id: string };
 
 interface GeologicalEvent {
   id: string;
@@ -118,14 +106,11 @@ export default function Timeline() {
 
   const fetchDiscoveries = async () => {
     try {
-      const { data, error } = await supabase
-        .from('archaeological_discoveries')
-        .select('*')
-        .order('discovery_date', { ascending: false });
-
-      if (error) throw error;
-      
-      setDiscoveries(data || []);
+      const data = await fetchDiscoveriesFromFirestore();
+      setDiscoveries(data.map((d) => ({
+        ...d,
+        id: d.id || crypto.randomUUID(),
+      })));
     } catch (error) {
       console.error('Error loading discoveries:', error);
     } finally {
@@ -399,7 +384,7 @@ export default function Timeline() {
                       animationDelay: `${index * 150}ms`
                     }}
                   >
-                    <div className={`absolute left-3 w-8 h-8 bg-gradient-to-r ${event.color} rounded-full border-4 border-background shadow-lg group-hover:scale-125 transition-all duration-300 flex items-center justify-center text-white hidden md:flex`}>
+                    <div className={`absolute left-3 w-8 h-8 bg-gradient-to-r ${event.color} rounded-full border-4 border-background shadow-lg group-hover:scale-125 transition-all duration-300 hidden md:flex items-center justify-center text-white`}>
                       {event.icon}
                     </div>
 

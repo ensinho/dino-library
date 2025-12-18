@@ -7,13 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import type { User, Session } from '@supabase/supabase-js';
+import type { User } from 'firebase/auth';
+import {
+  listenToAuthChanges,
+  signInWithEmail,
+  signUpWithEmail,
+} from '@/services/firebaseAuthService';
 
 export default function Auth() {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,31 +26,19 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          navigate('/');
-          toast({
-            title: "Login successful!",
-            description: "Welcome to Dino Library ."
-          });
-        }
-      }
-    );
+    const unsub = listenToAuthChanges((u) => {
+      setUser(u);
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
+      if (u) {
         navigate('/');
+        toast({
+          title: 'Login successful!',
+          description: 'Welcome to Dino Library.',
+        });
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => unsub();
   }, [navigate, toast]);
 
   const signIn = async (e: React.FormEvent) => {
@@ -56,20 +47,16 @@ export default function Auth() {
     setError('');
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          setError('Incorrect email or password. Please check your credentials.');
-        } else {
-          setError(error.message);
-        }
-      }
+      await signInWithEmail(email, password);
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+      const msg = String(err?.message || '');
+      if (msg.toLowerCase().includes('auth/invalid-credential') || msg.toLowerCase().includes('auth/wrong-password')) {
+        setError('Incorrect email or password. Please check your credentials.');
+      } else if (msg.toLowerCase().includes('auth/user-not-found')) {
+        setError('No account found for this email. Please sign up.');
+      } else {
+        setError(msg || 'An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -81,39 +68,26 @@ export default function Auth() {
     setError('');
 
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            display_name: displayName || email
-          }
-        }
+      await signUpWithEmail(email, password, displayName || undefined);
+      toast({
+        title: 'Account created successfully!',
+        description: 'Your account is ready. You can start exploring now.',
       });
-
-      if (error) {
-        if (error.message.includes('User already registered')) {
-          setError('This email is already registered. Please try to sign in.');
-        } else {
-          setError(error.message);
-        }
-      } else {
-        toast({
-          title: "Account created successfully!",
-          description: "Please check your email to confirm your account."
-        });
-      }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+      const msg = String(err?.message || '');
+      if (msg.toLowerCase().includes('auth/email-already-in-use')) {
+        setError('This email is already registered. Please try to sign in.');
+      } else if (msg.toLowerCase().includes('auth/weak-password')) {
+        setError('Password is too weak. Please choose a stronger password.');
+      } else {
+        setError(msg || 'An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  if (session?.user) {
+  if (user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

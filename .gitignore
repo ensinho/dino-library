@@ -1,3 +1,9 @@
+# Firebase Admin service account files (NEVER commit)
+service-account*.json*
+
+# Local env files
+.env
+.env.*
 # Logs
 logs
 *.log

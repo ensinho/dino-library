@@ -20,29 +20,17 @@ import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import { Layout } from "./components/layout/Layout";
 import CallToAction from "./components/layout/CallToAction";
-import { supabase } from "@/integrations/supabase/client";
+import { listenToAuthChanges, type AuthUser } from "@/services/firebaseAuthService";
 
 const queryClient = new QueryClient();
 
 const App = () => { 
   // Mova os hooks para DENTRO do componente
-  const [session, setSession] = useState(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    // Busca a sessão inicial quando o app carrega
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    // Escuta por mudanças no estado de autenticação (login/logout)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-      }
-    );
-
-    // Limpa a inscrição quando o componente é desmontado
-    return () => subscription.unsubscribe();
+    const unsub = listenToAuthChanges((u) => setUser(u));
+    return () => unsub();
   }, []);
 
   // Adicione a declaração "return"
@@ -58,7 +46,7 @@ const App = () => {
               element={
                 <Layout>
                   <Home /> 
-                  <CallToAction user={{ isAuthenticated: !!session }} /> 
+                  <CallToAction user={{ isAuthenticated: !!user }} /> 
                   <Footer />
                 </Layout>
               } 

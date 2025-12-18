@@ -126,7 +126,13 @@ export default function Catalog() {
   };
 
   const handleSpeciesClick = (species: DinosaurSpecies) => {
-    analytics.trackSpeciesView(species.row_index, species.common_name);
+    // Never let analytics block navigation if it errors for any reason.
+    try {
+      const speciesId = Number(species.row_index);
+      analytics.trackSpeciesView(Number.isFinite(speciesId) ? speciesId : -1, species.common_name);
+    } catch (e) {
+      console.warn('Analytics trackSpeciesView failed:', e);
+    }
     navigate(`/species/${species.row_index}`);
   };
 
@@ -278,9 +284,16 @@ export default function Catalog() {
           {filteredSpecies.map((dino) => (
             <Card
               key={dino.row_index}
-              className="group hover:shadow-fossil transition-all duration-300 hover:-translate-y-2 cursor-pointer"
-              onClick={() => handleSpeciesClick(dino)}
+              className="group relative hover:shadow-fossil transition-all duration-300 hover:-translate-y-2"
             >
+              {/* Full-card clickable overlay (prevents inner elements/overlays from swallowing click) */}
+              <button
+                type="button"
+                onClick={() => handleSpeciesClick(dino)}
+                className="absolute inset-0 z-10 cursor-pointer rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label={`${t('catalog.viewSpecies', { name: dino.common_name || '' })}`}
+              />
+
               {dino.image_url && (
                 <div className="h-48 w-full overflow-hidden rounded-t-xl bg-muted flex items-center justify-center">
                   <img

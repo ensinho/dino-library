@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leafl
 import 'leaflet/dist/leaflet.css';
 import '../styles/leaflet.css';
 import { divIcon } from 'leaflet';
-import { supabase } from '@/integrations/supabase/client';
+import { getDocs, limit as fsLimit, query as fsQuery } from 'firebase/firestore';
+import { col } from '@/services/firestoreService';
 
 // Types for dinosaur data
 interface   DinoLocation {
@@ -16,7 +17,7 @@ interface   DinoLocation {
   behaviorNotes: string;
 }
 
-// Interface for actual Supabase data
+// Interface for Firestore data
 interface dinosaur_species2 {
   behavior_notes: string | null
   common_name: string | null
@@ -246,16 +247,15 @@ const MapPage = () => {
   const fetchDinosaurs = async (limit: number = 120, append: boolean = false) => {
     try {
       if (append) setLoadingMore(true);
-      
-      const { data, error } = await supabase
-        .from('dinosaur_species2')
-        .select('*')
-        .not('fossil_location', 'is', null)
-        .limit(limit);
 
-      if (error) throw error;
+      // Firestore doesn't support "IS NOT NULL" queries.
+      // We fetch a slice and filter client-side.
+      const snap = await getDocs(fsQuery(col('dinosaur_species2'), fsLimit(limit)));
+      const data = snap.docs.map((d) => d.data() as dinosaur_species2);
 
-      const mappedDinos: DinoLocation[] = data.map((dino) => ({
+      const mappedDinos: DinoLocation[] = data
+        .filter((dino) => !!dino.fossil_location)
+        .map((dino) => ({
         id: dino.row_index,
         name: dino.common_name || dino.scientific_name || 'Unknown Dinosaur',
         species: dino.scientific_name || 'Unknown Species',
