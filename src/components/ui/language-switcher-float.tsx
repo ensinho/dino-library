@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,17 +9,30 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Globe, Check } from 'lucide-react';
 
-const languages = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'pt-BR', name: 'Português', flag: '🇧🇷' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
+interface Language {
+  code: string;
+  short: string;
+  name: string;
+  flag: string;
+}
+
+const languages: Language[] = [
+  { code: 'en',    short: 'EN', name: 'English',    flag: '🇺🇸' },
+  { code: 'pt-BR', short: 'PT', name: 'Português',  flag: '🇧🇷' },
+  { code: 'es',    short: 'ES', name: 'Español',    flag: '🇪🇸' },
 ];
 
+/**
+ * Floating language switcher.
+ *
+ * Editorial pill-style trigger that matches the museum/monograph aesthetic of
+ * the rest of the site (hairline ring, jade accents, backdrop-blur, mono caps).
+ */
 export function LanguageSwitcherFloat() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  const current = languages.find((l) => l.code === i18n.language) || languages[0];
 
   const changeLanguage = (langCode: string) => {
     i18n.changeLanguage(langCode);
@@ -31,37 +44,59 @@ export function LanguageSwitcherFloat() {
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button
-            size="lg"
-            className="h-14 w-14 rounded-full shadow-2xl bg-gradient-primary hover:bg-gradient-primary/90 border-2 border-white/20 backdrop-blur-sm group"
-            aria-label="Change language"
+            variant="outline"
+            className="h-11 pl-4 pr-5 rounded-full bg-background/70 backdrop-blur-xl
+                       border border-foreground/10 shadow-[0_8px_30px_rgba(0,0,0,0.15)]
+                       hover:border-jade/40 hover:bg-background/90
+                       transition-all duration-300 ease-spring
+                       flex items-center gap-2.5 group"
+            aria-label={t('common.language')}
           >
-            <div className="flex flex-col items-center justify-center">
-              <Globe className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
-              <span className="text-xs mt-0.5 text-white/90">{currentLanguage.flag}</span>
-            </div>
+            <Globe className="w-4 h-4 text-jade transition-transform duration-500 ease-spring group-hover:rotate-[18deg]" />
+            <span className="text-base leading-none" aria-hidden="true">{current.flag}</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-foreground/75">
+              {current.short}
+            </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent 
-          align="end" 
-          className="w-56 bg-card/95 backdrop-blur-lg border-border/50 shadow-xl mb-2"
+
+        <DropdownMenuContent
+          align="end"
+          sideOffset={10}
+          className="w-56 p-1.5 rounded-2xl bg-background/85 backdrop-blur-xl
+                     border border-foreground/10 shadow-2xl"
         >
-          {languages.map((language) => (
-            <DropdownMenuItem
-              key={language.code}
-              onClick={() => changeLanguage(language.code)}
-              className="cursor-pointer py-3 px-4 hover:bg-amber/10 transition-colors"
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{language.flag}</span>
-                  <span className="font-medium">{language.name}</span>
+          <div className="px-3 py-2 text-[10px] font-mono uppercase tracking-[0.22em] text-foreground/40">
+            — {t('common.language')}
+          </div>
+          {languages.map((language) => {
+            const active = i18n.language === language.code;
+            return (
+              <DropdownMenuItem
+                key={language.code}
+                onClick={() => changeLanguage(language.code)}
+                className={`cursor-pointer rounded-xl px-3 py-2.5 my-0.5
+                            focus:bg-foreground/[0.04] hover:bg-foreground/[0.04]
+                            transition-colors duration-200
+                            ${active ? 'text-foreground' : 'text-foreground/70'}`}
+              >
+                <div className="flex items-center justify-between w-full gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-lg leading-none" aria-hidden="true">{language.flag}</span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-medium tracking-[-0.01em] truncate">
+                        {language.name}
+                      </span>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/40">
+                        {language.short}
+                      </span>
+                    </div>
+                  </div>
+                  {active && <Check className="w-4 h-4 text-jade shrink-0" />}
                 </div>
-                {i18n.language === language.code && (
-                  <Check className="w-5 h-5 text-amber" />
-                )}
-              </div>
-            </DropdownMenuItem>
-          ))}
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Footer from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,20 +19,47 @@ import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import { Layout } from "./components/layout/Layout";
 import CallToAction from "./components/layout/CallToAction";
+import { LoadingScreen } from "./components/loader";
 import { listenToAuthChanges, type AuthUser } from "@/services/firebaseAuthService";
 
 const queryClient = new QueryClient();
 
-const App = () => { 
-  // Mova os hooks para DENTRO do componente
+/** Minimum time the boot loader stays visible — avoids a jarring flash. */
+const BOOT_MIN_MS = 600;
+
+const App = () => {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [booted, setBooted] = useState(false);
 
   useEffect(() => {
-    const unsub = listenToAuthChanges((u) => setUser(u));
-    return () => unsub();
+    let authResolved = false;
+    let minElapsed = false;
+
+    const finish = () => {
+      if (authResolved && minElapsed) setBooted(true);
+    };
+
+    const unsub = listenToAuthChanges((u) => {
+      setUser(u);
+      authResolved = true;
+      finish();
+    });
+
+    const timer = window.setTimeout(() => {
+      minElapsed = true;
+      finish();
+    }, BOOT_MIN_MS);
+
+    return () => {
+      unsub();
+      window.clearTimeout(timer);
+    };
   }, []);
 
-  // Adicione a declaração "return"
+  if (!booted) {
+    return <LoadingScreen size="lg" />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -41,34 +67,32 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route 
-              path="/" 
+            <Route
+              path="/"
               element={
                 <Layout>
-                  <Home /> 
-                  <CallToAction user={{ isAuthenticated: !!user }} /> 
-                  <Footer />
+                  <Home />
+                  <CallToAction user={{ isAuthenticated: !!user }} />
                 </Layout>
-              } 
+              }
             />
-            {/* O resto das suas rotas continua aqui... */}
-            <Route path="/catalog" element={<Layout><Catalog /><Footer /></Layout>} />
-            <Route path="/discover" element={<Layout><Discover /><Footer /></Layout>} />
-            <Route path="/glossary" element={<Layout><Glossary /><Footer /></Layout>} />
-            <Route path="/species/:dinoId" element={<Layout><SpeciesDetail /><Footer /></Layout>} />
-            <Route path="/map" element={<Layout><Map /><Footer /></Layout>} />
-            <Route path="/timeline" element={<Layout><Timeline /><Footer /></Layout>} />
-            <Route path="/education" element={<Layout><Education /><Footer /></Layout>} />
-            <Route path="/news" element={<Layout><News /><Footer /></Layout>} />
-            <Route path="/news/:id" element={<Layout><NewsDetail /><Footer /></Layout>} />
-            <Route path="/profile" element={<Layout><Profile /><Footer /></Layout>} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/catalog"           element={<Layout><Catalog /></Layout>} />
+            <Route path="/discover"          element={<Layout><Discover /></Layout>} />
+            <Route path="/glossary"          element={<Layout><Glossary /></Layout>} />
+            <Route path="/species/:dinoId"   element={<Layout><SpeciesDetail /></Layout>} />
+            <Route path="/map"               element={<Layout><Map /></Layout>} />
+            <Route path="/timeline"          element={<Layout><Timeline /></Layout>} />
+            <Route path="/education"         element={<Layout><Education /></Layout>} />
+            <Route path="/news"              element={<Layout><News /></Layout>} />
+            <Route path="/news/:id"          element={<Layout><NewsDetail /></Layout>} />
+            <Route path="/profile"           element={<Layout><Profile /></Layout>} />
+            <Route path="/auth"              element={<Auth />} />
+            <Route path="*"                  element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
-}; 
+};
 
 export default App;

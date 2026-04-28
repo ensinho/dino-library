@@ -1,0 +1,21 @@
+{
+  "name": "DinoLibrary",
+  "short_name": "Dino",
+  "icons": [
+    {
+      "src": "/favicon_io_dino/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon_io_dino/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { DinoLoader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -95,7 +96,7 @@ export default function Discover() {
       title: t('discover.groups.armored.title'),
       description: t('discover.groups.armored.description'),
       icon: <Shield className="h-6 w-6" />,
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-jade to-jade/60',
       filter: (species) => species
         .filter(s => s.notable_features?.toLowerCase().includes('armor') ||
                      s.notable_features?.toLowerCase().includes('spikes') ||
@@ -119,7 +120,7 @@ export default function Discover() {
       title: t('discover.groups.aerial.title'),
       description: t('discover.groups.aerial.description'),
       icon: <Mountain className="h-6 w-6" />,
-      color: 'from-sky-500 to-blue-500',
+      color: 'from-jade to-jade/60',
       filter: (species) => species
         .filter(s => s.locomotion?.toLowerCase().includes('flying') ||
                      s.locomotion?.toLowerCase().includes('gliding') ||
@@ -144,9 +145,9 @@ export default function Discover() {
 
   const getDietIcon = (diet: string | null) => {
     switch (diet) {
-      case 'Carnivore': return '🥩';
-      case 'Herbivore': return '🌿';
-      case 'Omnivore': return '🍽️';
+      case 'Carnivore': return 'ðŸ¥©';
+      case 'Herbivore': return 'ðŸŒ¿';
+      case 'Omnivore': return 'ðŸ½ï¸';
       default: return '❓';
     }
   };
@@ -164,8 +165,8 @@ export default function Discover() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-bounce">🔍</div>
-          <div className="text-xl text-muted-foreground">{t('discover.loading')}</div>
+          <div className="text-caption text-jade mb-6">— {t('editorial.curating')}</div>
+          <DinoLoader size="lg" label={t('discover.loading')} />
         </div>
       </div>
     );
@@ -175,194 +176,185 @@ export default function Discover() {
   const filteredSpecies = activeGroupData ? activeGroupData.filter(allSpecies) : [];
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            <span className="bg-gradient-amber bg-clip-text text-transparent">{t('discover.title')}</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {t('discover.subtitle')}
-          </p>
+    <div className="min-h-screen bg-background">
+      {/* HEADER */}
+      <section className="pt-16 lg:pt-20 pb-6">
+        <div className="container-editorial">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-caption text-jade">— {t('editorial.rooms.discover')}</div>
+            <div className="text-caption text-foreground/40 hidden sm:block">{thematicGroups.length} {t('editorial.routes')}</div>
+          </div>
+          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+            <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
+              {t('discover.title')}
+            </h1>
+            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+              {t('discover.subtitle')}
+            </p>
+          </div>
         </div>
+      </section>
 
-        {/* Thematic Groups Tabs */}
-        <Tabs value={activeGroup} onValueChange={setActiveGroup} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-8">
+      {/* THEME PICKER */}
+      <section className="hairline-t hairline-b py-6 sticky top-0 bg-background/80 backdrop-blur-md z-30">
+        <div className="container-editorial">
+          <div className="flex flex-wrap gap-2">
             {thematicGroups.map((group) => (
-              <TabsTrigger key={group.id} value={group.id} className="flex flex-col items-center gap-1 p-3">
-                <div className={`p-2 rounded-lg bg-gradient-to-r ${group.color} text-white`}>
-                  {group.icon}
-                </div>
-                <span className="text-xs text-center leading-tight">{group.title}</span>
-              </TabsTrigger>
+              <button
+                key={group.id}
+                type="button"
+                onClick={() => setActiveGroup(group.id)}
+                className={`text-caption px-4 py-2 rounded-full ring-1 transition-all duration-300 ease-spring flex items-center gap-2 ${
+                  activeGroup === group.id
+                    ? 'bg-jade text-canvas ring-jade'
+                    : 'bg-surface-1 text-foreground/60 ring-foreground/10 hover:text-jade hover:ring-jade/40'
+                }`}
+              >
+                <span className={activeGroup === group.id ? 'text-canvas' : 'text-jade'}>{group.icon}</span>
+                {group.title}
+              </button>
             ))}
-          </TabsList>
+          </div>
+        </div>
+      </section>
 
-          {thematicGroups.map((group) => (
-            <TabsContent key={group.id} value={group.id} className="mt-6">
-              {/* Group Header */}
-              <Card className={`mb-8 bg-gradient-to-r ${group.color} text-white border-none`}>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-2xl">
-                    {group.icon}
-                    <span className="ml-3">{group.title}</span>
-                  </CardTitle>
-                  <CardDescription className="text-white/90 text-lg">
-                    {group.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center">
-                        <TrendingUp className="h-5 w-5 mr-2" />
-                        <span>{filteredSpecies.length} {t('discover.speciesFound')}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Globe className="h-5 w-5 mr-2" />
-                        <span>{t('discover.worldwide')}</span>
-                      </div>
-                    </div>
-                    <Button 
-                      variant="secondary" 
-                      onClick={() => handleViewAllClick(group.id)}
-                      className="text-black"
-                    >
-                      {t('discover.viewAll')}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+      {/* THEME OVERVIEW + GRID */}
+      <section className="py-16">
+        <div className="container-editorial">
+          {activeGroupData && (
+            <div className="grid lg:grid-cols-12 gap-y-6 gap-x-12 mb-16">
+              <div className="lg:col-span-2">
+                <div className="text-jade">{activeGroupData.icon}</div>
+              </div>
+              <div className="lg:col-span-7">
+                <h2 className="font-display text-display-xl text-foreground tracking-tighter mb-4">
+                  {activeGroupData.title}
+                </h2>
+                <p className="text-foreground/70 leading-relaxed text-lg max-w-[60ch]">
+                  {activeGroupData.description}
+                </p>
+              </div>
+              <div className="lg:col-span-3 lg:pt-3 flex flex-col gap-3 text-caption text-foreground/55">
+                <div className="hairline-t pt-3 flex items-center justify-between">
+                  <span className="flex items-center gap-2"><TrendingUp className="w-3 h-3 text-jade" />{t('discover.speciesFound')}</span>
+                  <span className="font-mono text-foreground">{filteredSpecies.length}</span>
+                </div>
+                <div className="hairline-t pt-3 flex items-center justify-between">
+                  <span className="flex items-center gap-2"><Globe className="w-3 h-3 text-jade" />{t('discover.worldwide')}</span>
+                  <span className="font-mono text-foreground/60">·</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleViewAllClick(activeGroupData.id)}
+                  className="hairline-t pt-3 text-left text-caption text-jade hover:text-foreground transition-colors duration-300 inline-flex items-center gap-2"
+                >
+                  {t('discover.viewAll')}
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          )}
 
-              {/* Species Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {filteredSpecies.map((species, index) => (
-                  <Card
-                    key={species.row_index}
-                    className="group hover:shadow-fossil transition-all duration-300 hover:-translate-y-2 cursor-pointer relative overflow-hidden"
-                    onClick={() => handleSpeciesClick(species)}
-                  >
-                    {/* Ranking Badge for some categories */}
-                    {(group.id === 'giants' || group.id === 'predators') && index < 3 && (
-                      <div className="absolute top-2 left-2 z-10">
-                        <Badge className="bg-amber text-black font-bold flex items-center">
-                          <Award className="h-3 w-3 mr-1" />
-                          #{index + 1}
-                        </Badge>
-                      </div>
-                    )}
-
-                    {species.image_url && (
-                      <div className="h-48 w-full overflow-hidden bg-muted flex items-center justify-center">
+          {/* SPECIES GRID */}
+          {filteredSpecies.length > 0 ? (
+            <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+              {filteredSpecies.map((species, index) => (
+                <li key={species.row_index}>
+                  <article className="group relative">
+                    <button
+                      type="button"
+                      onClick={() => handleSpeciesClick(species)}
+                      className="absolute inset-0 z-10"
+                      aria-label={species.common_name || 'Open species'}
+                    />
+                    <figure className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-surface-1 ring-1 ring-foreground/8 mb-4">
+                      {species.image_url ? (
                         <img
                           src={species.image_url}
-                          alt={species.scientific_name || species.common_name || 'Dinosaur'}
-                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                          alt={species.scientific_name || species.common_name || t('editorial.dinosaurAlt')}
+                          className="absolute inset-0 w-full h-full object-cover img-duotone-hover"
                           loading="lazy"
                         />
-                      </div>
-                    )}
-
-                    <CardHeader>
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg mb-1 line-clamp-1">
-                            {species.common_name || 'Unknown Species'}
-                          </CardTitle>
-                          <CardDescription className="italic text-amber line-clamp-1">
-                            {species.scientific_name}
-                          </CardDescription>
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-surface-2 to-surface-1" />
+                      )}
+                      {(activeGroup === 'giants' || activeGroup === 'predators') && index < 3 && (
+                        <div className="absolute top-3 left-3 z-10 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-2.5 py-1 rounded-full ring-1 ring-foreground/10 flex items-center gap-1.5">
+                          <Award className="w-3 h-3 text-jade" />
+                          Nº {index + 1}
                         </div>
-                        <Badge variant="secondary" className="ml-2 shrink-0">
+                      )}
+                      {species.geological_period && (
+                        <div className="absolute bottom-3 left-3 z-10 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-2.5 py-1 rounded-full ring-1 ring-foreground/10">
                           {species.geological_period}
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex flex-wrap gap-2">
-                        <Badge className={`${getDietColor(species.diet)} text-white text-xs`}>
-                          {getDietIcon(species.diet)} {species.diet}
-                        </Badge>
-                        {species.length_m && group.id === 'giants' && (
-                          <Badge variant="outline" className="text-xs">
-                            {species.length_m}m
-                          </Badge>
+                        </div>
+                      )}
+                    </figure>
+                    <div>
+                      <h3 className="font-display text-lg tracking-[-0.025em] text-foreground transition-colors duration-300 group-hover:text-jade truncate">
+                        {species.common_name || t('editorial.unknownSpecies')}
+                      </h3>
+                      <p className="font-mono text-xs italic text-foreground/50 truncate mt-0.5">
+                        {species.scientific_name}
+                      </p>
+                      <div className="hairline-t mt-3 pt-3 flex items-center justify-between text-caption text-foreground/55">
+                        <span>{dietLabel(species.diet)}</span>
+                        {activeGroup === 'giants' && species.length_m && (
+                          <span className="font-mono text-foreground/70">{species.length_m} m</span>
+                        )}
+                        {activeGroup === 'brazil' && species.fossil_location && (
+                          <span className="text-foreground/50 truncate max-w-[60%] text-right">{species.fossil_location}</span>
                         )}
                       </div>
-                    </CardHeader>
+                    </div>
+                  </article>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="py-24 text-center">
+              <div className="text-caption text-jade mb-4">— Empty case</div>
+              <h3 className="font-display text-display-lg text-foreground tracking-tighter mb-3">
+                {t('discover.noSpecies.title')}
+              </h3>
+              <p className="text-foreground/60 mb-8 max-w-[44ch] mx-auto">{t('discover.noSpecies.subtitle')}</p>
+              <Button onClick={() => navigate('/catalog')} variant="outline" size="lg">
+                {t('discover.noSpecies.action')}
+              </Button>
+            </div>
+          )}
 
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {species.behavior_notes || species.notable_features || t('discover.noDescription')}
-                      </p>
-                      
-                      {/* Special stats for certain groups */}
-                      {group.id === 'giants' && species.length_m && (
-                        <div className="mt-3 pt-3 border-t">
-                          <div className="flex items-center text-sm">
-                            <Crown className="h-4 w-4 text-amber mr-1" />
-                            <span className="font-semibold">{species.length_m}m</span>
-                            <span className="text-muted-foreground ml-1">{t('discover.length')}</span>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {group.id === 'brazil' && species.fossil_location && (
-                        <div className="mt-3 pt-3 border-t">
-                          <div className="flex items-center text-sm">
-                            <MapPin className="h-4 w-4 text-green-500 mr-1" />
-                            <span className="text-muted-foreground line-clamp-1">
-                              {species.fossil_location}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
+          {/* CTA */}
+          {filteredSpecies.length > 0 && activeGroupData && (
+            <div className="hairline-t mt-20 pt-16 grid lg:grid-cols-12 gap-y-6 gap-x-12 items-center">
+              <div className="lg:col-span-7">
+                <div className="text-caption text-jade mb-3">— Continue</div>
+                <h3 className="font-display text-display-lg text-foreground tracking-tighter mb-3">
+                  {t('discover.cta.title')}
+                </h3>
+                <p className="text-foreground/65 max-w-[55ch] leading-relaxed">{t('discover.cta.description')}</p>
               </div>
-
-              {/* Empty State */}
-              {filteredSpecies.length === 0 && (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    {t('discover.noSpecies.title')}
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    {t('discover.noSpecies.subtitle')}
-                  </p>
-                  <Button onClick={() => navigate('/catalog')} variant="outline">
-                    {t('discover.noSpecies.action')}
-                  </Button>
-                </div>
-              )}
-
-              {/* Call to Action */}
-              {filteredSpecies.length > 0 && (
-                <div className="mt-12 text-center">
-                  <Card className="bg-muted/50">
-                    <CardContent className="pt-6">
-                      <h3 className="text-xl font-semibold mb-2">{t('discover.cta.title')}</h3>
-                      <p className="text-muted-foreground mb-4">{t('discover.cta.description')}</p>
-                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <Button onClick={() => handleViewAllClick(group.id)}>
-                          {t('discover.cta.viewAll')}
-                        </Button>
-                        <Button variant="outline" onClick={() => navigate('/catalog')}>
-                          {t('discover.cta.exploreAll')}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
+              <div className="lg:col-span-5 flex flex-col sm:flex-row gap-3 lg:justify-end">
+                <Button onClick={() => handleViewAllClick(activeGroupData.id)} className="bg-jade text-canvas hover:bg-jade/90">
+                  {t('discover.cta.viewAll')}
+                </Button>
+                <Button variant="outline" onClick={() => navigate('/catalog')}>
+                  {t('discover.cta.exploreAll')}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }
+
+const dietLabel = (diet: string | null): string => {
+  switch (diet) {
+    case 'Carnivore': return 'Carnivore';
+    case 'Herbivore': return 'Herbivore';
+    case 'Omnivore': return 'Omnivore';
+    default: return diet || '—';
+  }
+};

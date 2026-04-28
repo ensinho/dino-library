@@ -142,7 +142,7 @@
   "discover": {
     "title": "Descubra Dinossauros",
     "subtitle": "Explore temas fascinantes e descubra dinossauros agrupados por suas características mais marcantes.",
-    "loading": "Descobrindo espécies...",
+    "loading": "",
     "speciesFound": "espécies encontradas",
     "worldwide": "Descobertas mundiais",
     "viewAll": "Ver Todos",
@@ -277,7 +277,27 @@
       "subtitle": "Conheça três dos gigantes mais fascinantes da era Mesozoica.",
       "period": "Período",
       "diet": "Dieta",
-      "funFact": "Curiosidade"
+      "funFact": "Curiosidade",
+      "items": {
+        "allosaurus": {
+          "description": "Um predador de topo do Jurássico, conhecido por seu crânio grande, dentes serrilhados afiados e garras poderosas. Era um caçador temido que provavelmente predava grandes herbívoros, como saurópodes.",
+          "period": "Final do Jurássico",
+          "diet": "Carnívoro",
+          "funFact": "Tinha braços relativamente longos comparados ao T-Rex, com garras de até 25 cm de comprimento!"
+        },
+        "oxalaia": {
+          "description": "Considerado o maior dinossauro carnívoro do Brasil, este espinossaurídeo era parente próximo do Espinossauro e vivia em ambientes semiaquáticos.",
+          "period": "Final do Cretáceo",
+          "diet": "Piscívoro",
+          "funFact": "Seu nome homenageia a divindade africana Oxalá e os quilombos da Ilha de Cajual, no Maranhão, onde seus fósseis foram encontrados."
+        },
+        "brachiosaurus": {
+          "description": "Um dos dinossauros mais reconhecíveis. Suas pernas dianteiras eram significativamente mais longas que as traseiras, criando uma postura inclinada que, somada ao seu pescoço imensamente longo, fazia dele um verdadeiro gigante de seu tempo.",
+          "period": "Final do Jurássico",
+          "diet": "Herbívoro",
+          "funFact": "Seu coração pesava cerca de 400 kg e bombeava sangue até 12 metros de altura!"
+        }
+      }
     },
     "stats": {
       "cataloged": "Espécies Catalogadas",
@@ -491,6 +511,141 @@
     "education": "Educação",
     "news": "Notícias",
     "profile": "Perfil",
-    "auth": "Entrar"
+    "auth": "Entrar",
+    "menu": "Menu"
+  },
+  "editorial": {
+    "rooms": {
+      "catalog": "Sala 02 · O catálogo",
+      "timeline": "Sala 03 · O registro",
+      "discover": "Sala 05 · Temas curados",
+      "news": "Sala 06 · A redação",
+      "glossary": "Sala 07 · Vocabulário de trabalho",
+      "tools": "Sala 02 · Ferramentas de investigação",
+      "learning": "Sala 03 · Aprendizado",
+      "featured": "Sala 04 · Espécimes em destaque",
+      "inNumbers": "Sala 05 · Em números",
+      "map": "Sala 04 · Onde foram encontrados",
+      "schoolroom": "Sala 08 · A sala de aula"
+    },
+    "pressDeskQuiet": "Mesa de imprensa em silêncio",
+    "pullingRecord": "Recuperando o registro",
+    "loadingTimeline": "Carregando linha do tempo",
+    "loadingMap": "Carregando o mapa",
+    "loadingShort": "Carregando…",
+    "loadMoreEntries": "Carregar mais registros →",
+    "specimensOnRecord": "espécimes registrados",
+    "routes": "rotas",
+    "dispatches": "despachos",
+    "entries": "verbetes",
+    "frontPage": "Manchete",
+    "loadingArchive": "Abrindo o arquivo",
+    "curating": "Curando",
+    "pressDesk": "Redação",
+    "loadingDispatch": "Carregando despacho",
+    "outOfFile": "Fora do arquivo",
+    "pullingSpecimen": "Recuperando ficha do espécime",
+    "specimenNotOnFile": "Espécime não arquivado",
+    "specimenFile": "Ficha do espécime",
+    "plate": "Prancha",
+    "plateOne": "Prancha I · Par de Carnotaurus",
+    "plateOneSub": "Final do Cretáceo · estudo a óleo",
+    "openLibrary": "Uma biblioteca aberta sobre a vida pré-histórica · curada com calma",
+    "takeYourTime": "Sem pressa ↓",
+    "unknownSpecies": "Espécie desconhecida",
+    "speciesPlaceholder": "Species scientificus",
+    "dinosaurAlt": "Dinossauro"
+  },
+  "footer": {
+    "tagline": "Um guia de campo silencioso para o mundo pré-histórico — feito para os curiosos, os cuidadosos, os maravilhados.",
+    "explore": "Explorar",
+    "collection": "Coleção",
+    "discover": "Descobrir",
+    "atlas": "Atlas",
+    "timeline": "Linha do Tempo",
+    "learning": "Aprendizado",
+    "fieldNotes": "Notas de Campo",
+    "sources": "Fontes",
+    "dataset": "Dataset Dinosaur Genera",
+    "glossary": "Glossário",
+    "elsewhere": "Em outros lugares",
+    "designedBy": "projetado e construído por"
+  },
+  "cta": {
+    "joinField": "Junte-se à expedição",
+    "headline": "A expedição começa onde a curiosidade termina.",
+    "begin": "Começar"
+  },
+  "notFound": {
+    "label": "Fora do guia",
+    "message": "Este corredor não está na planta do museu.",
+    "back": "← Voltar para a entrada"
+  },
+  "auth": {
+    "verified": "Verificado",
+    "redirecting": "Redirecionando…",
+    "plate": "Prancha I · Entrada",
+    "libraryOpensLine1": "A biblioteca",
+    "libraryOpensLine2": "se abre para você.",
+    "libraryDesc": "Entre para guardar sua lista de leitura, seus espécimes favoritos e seus cantinhos silenciosos do museu.",
+    "established": "DL · desde 2024",
+    "readingDesk": "Mesa de leitura",
+    "welcomeBack": "Bem-vindo de volta",
+    "welcomeDesc": "Entre na sua conta ou crie uma nova para começar a explorar o salão.",
+    "signIn": "Entrar",
+    "signUp": "Criar conta",
+    "email": "E-mail",
+    "password": "Senha",
+    "displayName": "Nome de exibição",
+    "displayNamePlaceholder": "Seu nome",
+    "emailPlaceholder": "seu@email.com",
+    "passwordPlaceholder": "Sua senha",
+    "loginSuccess": "Login realizado com sucesso!",
+    "welcomeToast": "Bem-vindo à Dino Library.",
+    "accountCreated": "Conta criada com sucesso!",
+    "accountReady": "Sua conta está pronta. Você já pode começar a explorar.",
+    "loading": "Aguarde…",
+    "errors": {
+      "invalidCredentials": "E-mail ou senha incorretos. Verifique suas credenciais.",
+      "userNotFound": "Nenhuma conta encontrada para este e-mail. Cadastre-se primeiro.",
+      "emailInUse": "Este e-mail já está cadastrado. Tente fazer login.",
+      "weakPassword": "A senha é muito fraca. Escolha uma senha mais forte.",
+      "generic": "Ocorreu um erro inesperado. Tente novamente."
+    }
+  },
+  "glossary": {
+    "title": "Glossário de paleontologia",
+    "subtitle": "Termos e conceitos essenciais para entender o mundo dos dinossauros e da paleontologia.",
+    "search": "Buscar termos…",
+    "examples": "Exemplos",
+    "seeAlso": "Veja também",
+    "nothingInIndex": "Nada no índice",
+    "noTermsFound": "Nenhum termo encontrado",
+    "noTermsHint": "Tente ajustar sua busca ou selecionar outra categoria.",
+    "clearSearch": "Limpar busca",
+    "readyToExplore": "Pronto para explorar",
+    "ctaTitle": "Agora que a linguagem é sua",
+    "ctaDesc": "Mergulhe no catálogo ou explore temas curados — a terminologia irá com você.",
+    "ctaExplore": "Explorar espécies",
+    "ctaDiscover": "Descobrir temas",
+    "categories": {
+      "all": "Todas as Categorias",
+      "anatomy": "Anatomia",
+      "geological": "Geológico",
+      "paleontology": "Paleontologia",
+      "diet": "Dieta"
+    }
+  },
+  "sizes": {
+    "tiny": "Minúsculo",
+    "small": "Pequeno",
+    "medium": "Médio",
+    "large": "Grande",
+    "giant": "Gigante",
+    "allTime": "Todas as eras",
+    "allPeriodsDesc": "Todos os períodos geológicos",
+    "earlyEvolution": "Evolução inicial dos dinossauros",
+    "goldenAge": "Era de ouro dos dinossauros",
+    "finalPeriod": "Último período dos dinossauros"
   }
 }

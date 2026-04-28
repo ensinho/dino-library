@@ -25,10 +25,10 @@ export default function SizeFilter({
   const maxHeight = 20; // Maximum height in meters
 
   const getSizeCategory = (length: number) => {
-    if (length < 3) return { name: 'Small', emoji: '🐕', color: 'text-blue-500' };
-    if (length < 10) return { name: 'Medium', emoji: '🐎', color: 'text-yellow-500' };
-    if (length < 20) return { name: 'Large', emoji: '🐘', color: 'text-orange-500' };
-    return { name: 'Giant', emoji: '🦕', color: 'text-red-500' };
+    if (length < 3)  return { name: t('sizes.small'),  emoji: '🐕', color: 'text-jade' };
+    if (length < 10) return { name: t('sizes.medium'), emoji: '🐎', color: 'text-yellow-500' };
+    if (length < 20) return { name: t('sizes.large'),  emoji: '🐘', color: 'text-orange-500' };
+    return { name: t('sizes.giant'), emoji: '🦕', color: 'text-red-500' };
   };
 
   const lengthCategory = getSizeCategory(lengthRange[1]);
@@ -114,23 +114,23 @@ export default function SizeFilter({
         <h4 className="text-xs font-medium mb-2">{t('catalog.filters.sizeComparison')}</h4>
         <div className="grid grid-cols-4 gap-2 text-center">
           <div className="text-xs">
-            <div className="text-lg text-blue-500">🐕</div>
-            <div className="text-muted-foreground">Small</div>
+            <div className="text-lg text-jade">🐕</div>
+            <div className="text-muted-foreground">{t('sizes.small')}</div>
             <div className="text-muted-foreground">&lt;3m</div>
           </div>
           <div className="text-xs">
             <div className="text-lg text-yellow-500">🐎</div>
-            <div className="text-muted-foreground">Medium</div>
+            <div className="text-muted-foreground">{t('sizes.medium')}</div>
             <div className="text-muted-foreground">3-10m</div>
           </div>
           <div className="text-xs">
             <div className="text-lg text-orange-500">🐘</div>
-            <div className="text-muted-foreground">Large</div>
+            <div className="text-muted-foreground">{t('sizes.large')}</div>
             <div className="text-muted-foreground">10-20m</div>
           </div>
           <div className="text-xs">
             <div className="text-lg text-red-500">🦕</div>
-            <div className="text-muted-foreground">Giant</div>
+            <div className="text-muted-foreground">{t('sizes.giant')}</div>
             <div className="text-muted-foreground">&gt;20m</div>
           </div>
         </div>

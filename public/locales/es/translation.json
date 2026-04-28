@@ -8,7 +8,11 @@
       "period": "Período Geológico",
       "diet": "Dieta",
       "location": "Vivió en",
+      "size": "Filtros de Tamaño",
+      "advanced": "Avanzado",
       "clear": "Limpiar Filtros",
+      "reset": "Restablecer",
+      "sizeComparison": "Comparación de Tamaño",
       "allPeriods": "Todos los Períodos",
       "allDiets": "Todas las Dietas",
       "allLocations": "Todas las Ubicaciones"
@@ -77,6 +81,49 @@
       "ecology": "Ecología",
       "discovery": "Descubrimiento"
     },
+    "factFile": {
+      "title": "Ficha Técnica",
+      "length": "Longitud",
+      "height": "Altura",
+      "weight": "Peso",
+      "diet": "Dieta",
+      "locomotion": "Locomoción",
+      "intelligence": "Inteligencia"
+    },
+    "diet": {
+      "title": "Dieta y Alimentación",
+      "carnivore": "Este dinosaurio era carnívoro, alimentaba principalmente de carne de otros animales. Probablemente usaba sus dientes afilados y mandíbulas poderosas para cazar y consumir presas.",
+      "herbivore": "Este dinosaurio era herbívoro, alimentaba exclusivamente de plantas. Tenía dientes especializados y sistemas digestivos adaptados para procesar material vegetal.",
+      "omnivore": "Este dinosaurio era omnívoro, con una dieta variada que incluía tanto plantas como carne. Esta flexibilidad probablemente le daba ventajas en distintos ambientes."
+    },
+    "features": {
+      "title": "Características Notables"
+    },
+    "anatomy": {
+      "title": "Anatomía y Apariencia",
+      "description": "Información anatómica detallada sobre esta especie de dinosaurio.",
+      "physicalCharacteristics": "Características Físicas",
+      "specialFeatures": "Características Especiales"
+    },
+    "ecology": {
+      "environment": "Ambiente",
+      "period": "Período Geológico",
+      "habitat": "Hábitat",
+      "behavior": "Comportamiento",
+      "noBehaviorInfo": "No hay información específica de comportamiento disponible para esta especie."
+    },
+    "discovery": {
+      "title": "Descubrimiento e Investigación",
+      "firstDiscovered": "Primer Descubrimiento",
+      "fossilLocation": "Ubicación del Fósil",
+      "source": "Más Información",
+      "learnMore": "Ver Fuente"
+    },
+    "relatedSpecies": {
+      "title": "Descubre Más Especies",
+      "description": "Explora nuestra colección completa de especies de dinosaurios y aprende sobre su mundo fascinante.",
+      "exploreCatalog": "Explorar Catálogo"
+    },
     "gallery": {
       "title": "Galería de Imágenes",
       "description": "Representaciones visuales, reconstrucciones y evidencias fósiles de esta especie de dinosaurio.",
@@ -90,6 +137,53 @@
       "previous": "Anterior",
       "next": "Siguiente",
       "of": "de"
+    }
+  },
+  "discover": {
+    "title": "Descubre Dinosaurios",
+    "subtitle": "Explora temas fascinantes y descubre dinosaurios agrupados por sus características más destacadas.",
+    "loading": "Descubriendo especies...",
+    "speciesFound": "especies encontradas",
+    "worldwide": "Descubrimientos por todo el mundo",
+    "viewAll": "Ver Todo",
+    "length": "de largo",
+    "noDescription": "Sin descripción disponible",
+    "groups": {
+      "giants": {
+        "title": "Gigantes",
+        "description": "Los dinosaurios más grandes que han caminado por la Tierra. Saurópodos masivos y otras criaturas colosales."
+      },
+      "predators": {
+        "title": "Depredadores",
+        "description": "Carnívoros rápidos y mortales. Los cazadores más temidos del mundo prehistórico."
+      },
+      "brazil": {
+        "title": "De Brasil",
+        "description": "Dinosaurios descubiertos en Brasil. Especies únicas de yacimientos fósiles sudamericanos."
+      },
+      "armored": {
+        "title": "Acorazados",
+        "description": "Dinosaurios fuertemente defendidos con armaduras, espinas y cuernos para protegerse."
+      },
+      "rare": {
+        "title": "Hallazgos Raros",
+        "description": "Especies de dinosaurios descubiertas recientemente o excepcionalmente raras con características únicas."
+      },
+      "aerial": {
+        "title": "Señores del Cielo",
+        "description": "Reptiles voladores y dinosaurios que dominaron los cielos prehistóricos."
+      }
+    },
+    "noSpecies": {
+      "title": "No se encontraron especies",
+      "subtitle": "No pudimos encontrar dinosaurios que coincidan con los criterios de esta categoría.",
+      "action": "Explorar Todas las Especies"
+    },
+    "cta": {
+      "title": "¿Quieres saber más?",
+      "description": "Sumergéte más a fondo en estas criaturas fascinantes y descubre sus historias completas.",
+      "viewAll": "Ver Todo en la Categoría",
+      "exploreAll": "Explorar Todas las Especies"
     }
   },
   "common": {
@@ -183,7 +277,27 @@
       "subtitle": "Conoce tres de los gigantes más fascinantes de la era Mesozoica.",
       "period": "Período",
       "diet": "Dieta",
-      "funFact": "Dato Curioso"
+      "funFact": "Dato Curioso",
+      "items": {
+        "allosaurus": {
+          "description": "Un superdepredador del Jurásico, conocido por su gran cráneo, dientes serrados afilados y poderosas garras. Era un cazador temible que probablemente cazaba grandes herbívoros como los saurópodos.",
+          "period": "Jurásico Tardío",
+          "diet": "Carnívoro",
+          "funFact": "Tenía brazos relativamente largos comparados con el T-Rex, ¡con garras de hasta 25 cm de largo!"
+        },
+        "oxalaia": {
+          "description": "Considerado el dinosaurio carnívoro más grande de Brasil, este espinosáurido era pariente cercano del Espinosaurio y vivía en ambientes semiacuáticos.",
+          "period": "Cretácico Tardío",
+          "diet": "Piscívoro",
+          "funFact": "Su nombre honra a la deidad africana Oxalá y a los quilombos de la Isla de Cajual, en Maranhão, donde se encontraron sus fósiles."
+        },
+        "brachiosaurus": {
+          "description": "Uno de los dinosaurios más reconocibles. Sus patas delanteras eran significativamente más largas que las traseras, creando una postura inclinada que, combinada con su cuello inmensamente largo, lo convertía en un verdadero gigante de su tiempo.",
+          "period": "Jurásico Tardío",
+          "diet": "Herbívoro",
+          "funFact": "¡Su corazón pesaba unos 400 kg y bombeaba sangre hasta 12 metros de altura!"
+        }
+      }
     },
     "stats": {
       "cataloged": "Especies Catalogadas",
@@ -397,6 +511,141 @@
     "education": "Educación",
     "news": "Noticias",
     "profile": "Perfil",
-    "auth": "Iniciar Sesión"
+    "auth": "Iniciar Sesión",
+    "menu": "Menú"
+  },
+  "editorial": {
+    "rooms": {
+      "catalog": "Sala 02 · El catálogo",
+      "timeline": "Sala 03 · El registro",
+      "discover": "Sala 05 · Temas curados",
+      "news": "Sala 06 · La redacción",
+      "glossary": "Sala 07 · Vocabulario de trabajo",
+      "tools": "Sala 02 · Herramientas de investigación",
+      "learning": "Sala 03 · Aprendizaje",
+      "featured": "Sala 04 · Especímenes destacados",
+      "inNumbers": "Sala 05 · En cifras",
+      "map": "Sala 04 · Dónde fueron encontrados",
+      "schoolroom": "Sala 08 · El aula"
+    },
+    "pressDeskQuiet": "Mesa de prensa en silencio",
+    "pullingRecord": "Recuperando el registro",
+    "loadingTimeline": "Cargando línea de tiempo",
+    "loadingMap": "Cargando el mapa",
+    "loadingShort": "Cargando…",
+    "loadMoreEntries": "Cargar más registros →",
+    "specimensOnRecord": "especímenes registrados",
+    "routes": "rutas",
+    "dispatches": "despachos",
+    "entries": "entradas",
+    "frontPage": "Portada",
+    "loadingArchive": "Abriendo el archivo",
+    "curating": "Curando",
+    "pressDesk": "Redacción",
+    "loadingDispatch": "Cargando despacho",
+    "outOfFile": "Fuera del archivo",
+    "pullingSpecimen": "Recuperando ficha del especímen",
+    "specimenNotOnFile": "Especímen no archivado",
+    "specimenFile": "Ficha del especímen",
+    "plate": "Lámina",
+    "plateOne": "Lámina I · Pareja de Carnotaurus",
+    "plateOneSub": "Cretácico Tardío · estudio al óleo",
+    "openLibrary": "Una biblioteca abierta sobre la vida prehistórica · curada con calma",
+    "takeYourTime": "Sin prisa ↓",
+    "unknownSpecies": "Especie desconocida",
+    "speciesPlaceholder": "Species scientificus",
+    "dinosaurAlt": "Dinosaurio"
+  },
+  "footer": {
+    "tagline": "Una guía de campo serena del mundo prehistórico — hecha para los curiosos, los cuidadosos, los maravillados.",
+    "explore": "Explorar",
+    "collection": "Colección",
+    "discover": "Descubrir",
+    "atlas": "Atlas",
+    "timeline": "Línea de Tiempo",
+    "learning": "Aprendizaje",
+    "fieldNotes": "Notas de Campo",
+    "sources": "Fuentes",
+    "dataset": "Dataset Dinosaur Genera",
+    "glossary": "Glosario",
+    "elsewhere": "En otros lugares",
+    "designedBy": "diseñado y construido por"
+  },
+  "cta": {
+    "joinField": "Únete a la expedición",
+    "headline": "La expedición comienza donde acaba la curiosidad.",
+    "begin": "Comenzar"
+  },
+  "notFound": {
+    "label": "Fuera de la guía",
+    "message": "Este corredor no está en el plano del museo.",
+    "back": "← Volver a la entrada"
+  },
+  "auth": {
+    "verified": "Verificado",
+    "redirecting": "Redirigiendo…",
+    "plate": "Lámina I · Entrada",
+    "libraryOpensLine1": "La biblioteca",
+    "libraryOpensLine2": "se abre para ti.",
+    "libraryDesc": "Inicia sesión para guardar tu lista de lectura, tus especímenes favoritos y tus rincones tranquilos del museo.",
+    "established": "DL · desde 2024",
+    "readingDesk": "Mesa de lectura",
+    "welcomeBack": "Bienvenido de nuevo",
+    "welcomeDesc": "Inicia sesión en tu cuenta o crea una nueva para empezar a explorar la sala.",
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "displayName": "Nombre para mostrar",
+    "displayNamePlaceholder": "Tu nombre",
+    "emailPlaceholder": "tu@email.com",
+    "passwordPlaceholder": "Tu contraseña",
+    "loginSuccess": "¡Inicio de sesión exitoso!",
+    "welcomeToast": "Bienvenido a Dino Library.",
+    "accountCreated": "¡Cuenta creada con éxito!",
+    "accountReady": "Tu cuenta está lista. Ya puedes empezar a explorar.",
+    "loading": "Por favor espera…",
+    "errors": {
+      "invalidCredentials": "Correo o contraseña incorrectos. Revisa tus credenciales.",
+      "userNotFound": "No se encontró una cuenta para este correo. Regístrate primero.",
+      "emailInUse": "Este correo ya está registrado. Intenta iniciar sesión.",
+      "weakPassword": "La contraseña es demasiado débil. Elige una más fuerte.",
+      "generic": "Ocurrió un error inesperado. Intenta de nuevo."
+    }
+  },
+  "glossary": {
+    "title": "Glosario de paleontología",
+    "subtitle": "Términos y conceptos esenciales para entender el mundo de los dinosaurios y la paleontología.",
+    "search": "Buscar términos…",
+    "examples": "Ejemplos",
+    "seeAlso": "Ver también",
+    "nothingInIndex": "Nada en el índice",
+    "noTermsFound": "No se encontraron términos",
+    "noTermsHint": "Intenta ajustar tu búsqueda o selecciona otra categoría.",
+    "clearSearch": "Limpiar búsqueda",
+    "readyToExplore": "Listo para explorar",
+    "ctaTitle": "Ahora que el lenguaje es tuyo",
+    "ctaDesc": "Sumergéte en el catálogo o explora temas curados — la terminología viajará contigo.",
+    "ctaExplore": "Explorar especies",
+    "ctaDiscover": "Descubrir temas",
+    "categories": {
+      "all": "Todas las Categorías",
+      "anatomy": "Anatomía",
+      "geological": "Geológico",
+      "paleontology": "Paleontología",
+      "diet": "Dieta"
+    }
+  },
+  "sizes": {
+    "tiny": "Diminuto",
+    "small": "Pequeño",
+    "medium": "Mediano",
+    "large": "Grande",
+    "giant": "Gigante",
+    "allTime": "Todas las eras",
+    "allPeriodsDesc": "Todos los períodos geológicos",
+    "earlyEvolution": "Evolución temprana de los dinosaurios",
+    "goldenAge": "Era dorada de los dinosaurios",
+    "finalPeriod": "Último período de los dinosaurios"
   }
 }

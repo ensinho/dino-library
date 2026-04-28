@@ -1,31 +1,40 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button'; // Example import path
-import { ArrowRight } from 'lucide-react';   // Example import path
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
-const CallToAction = ({ user }) => {
+interface CallToActionProps {
+  user: { isAuthenticated: boolean };
+}
+
+const CallToAction: React.FC<CallToActionProps> = ({ user }) => {
+  const { t } = useTranslation();
+  if (user.isAuthenticated) return null;
+
   return (
-    <>
-      {/* This entire section will only render if the user is not authenticated */}
-      {!user.isAuthenticated && (
-        <section className="py-20 bg-gradient-hero text-center">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Ready to Embark on a Prehistoric Journey?
+    <section className="relative py-32 overflow-hidden">
+      <div className="hero-halo" aria-hidden="true" />
+      <div className="hairline-t" />
+      <div className="container-editorial relative pt-20">
+        <div className="grid gap-12 md:grid-cols-12 items-end">
+          <div className="md:col-span-8">
+            <div className="text-caption text-jade mb-6 fade-rise">— {t('cta.joinField')}</div>
+            <h2 className="font-display text-display-xl text-foreground max-w-[14ch] fade-rise fade-rise-delay-1">
+              {t('cta.headline')}
             </h2>
-            <p className="text-xl text-white/90 mb-8">
-              Join our community of researchers, educators, and dinosaur enthusiasts.
-            </p>
+          </div>
+          <div className="md:col-span-4 flex md:justify-end fade-rise fade-rise-delay-2">
             <Link to="/auth">
-              <Button size="lg" variant="secondary" className="shadow-lg hover:scale-105 transition-all">
-                Get Started Now
-                <ArrowRight className="ml-2 w-5 h-5" />
+              <Button variant="accent" size="xl">
+                {t('cta.begin')}
+                <ArrowRight className="ml-1 w-5 h-5" />
               </Button>
             </Link>
           </div>
-        </section>
-      )}
-    </>
+        </div>
+      </div>
+    </section>
   );
 };
 

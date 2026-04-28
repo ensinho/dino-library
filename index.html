@@ -3,16 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/public/logoDinosaur.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon_io_dino/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon_io_dino/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon_io_dino/favicon-96x96.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io_dino/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicon_io_dino/site.webmanifest" />
     <title>DinoLibrary</title>
     <meta name="description" content="DinoLibrary - Biblioteca de Dinossauros" />
     <meta name="author" content="Enzo Esmeraldo" />
 
     <meta property="og:title" content="DinoLibrary" />
+
+    <!-- Editorial type stack: Bricolage Grotesque (display, variable opsz) + Geist (text/mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap"
+    />
+
+    <!--
+      Pre-React boot loader.
+      Painted instantly on F5 / hard refresh, before main.tsx parses.
+      React's createRoot() replaces #root contents on first render, so this
+      disappears as soon as the app mounts. Markup mirrors <DinoLoader />.
+    -->
+    <style>
+      html, body { margin: 0; padding: 0; }
+      #boot-loader {
+        position: fixed; inset: 0; z-index: 2147483647;
+        display: flex; align-items: center; justify-content: center;
+        background: transparent;
+      }
+      #boot-loader .logo {
+        width: 86px;
+        height: 86px;
+        background-image: url("/LogoCuteDino.png");
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        animation: boot-logo-pulse 1.7s infinite ease-in-out;
+      }
+      @keyframes boot-logo-pulse {
+        0%,
+        100% {
+          transform: scale(0.96);
+        }
+        50% {
+          transform: scale(1.04);
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="boot-loader" aria-label="Loading" role="status">
+        <span class="logo"></span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

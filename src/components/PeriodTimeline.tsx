@@ -16,9 +16,9 @@ export default function PeriodTimeline({ selectedPeriod, onPeriodChange }: Perio
       id: 'all',
       name: t('catalog.filters.allPeriods'),
       emoji: '🌍',
-      years: 'All Time',
+      years: t('sizes.allTime'),
       color: 'from-gray-400 to-gray-600',
-      description: 'All geological periods'
+      description: t('sizes.allPeriodsDesc')
     },
     {
       id: 'triassic',
@@ -26,7 +26,7 @@ export default function PeriodTimeline({ selectedPeriod, onPeriodChange }: Perio
       emoji: '🌋',
       years: '252-201 MYA',
       color: 'from-red-500 to-orange-500',
-      description: 'Early dinosaur evolution'
+      description: t('sizes.earlyEvolution')
     },
     {
       id: 'jurassic',
@@ -34,7 +34,7 @@ export default function PeriodTimeline({ selectedPeriod, onPeriodChange }: Perio
       emoji: '🌲',
       years: '201-145 MYA',
       color: 'from-green-500 to-emerald-500',
-      description: 'Golden age of dinosaurs'
+      description: t('sizes.goldenAge')
     },
     {
       id: 'cretaceous',
@@ -42,7 +42,7 @@ export default function PeriodTimeline({ selectedPeriod, onPeriodChange }: Perio
       emoji: '🌺',
       years: '145-66 MYA',
       color: 'from-purple-500 to-pink-500',
-      description: 'Final dinosaur period'
+      description: t('sizes.finalPeriod')
     }
   ];
 

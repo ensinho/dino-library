@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DinoLoader } from '@/components/loader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,7 +40,7 @@ interface QuizSession {
 }
 
 export default function Education() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [quizSession, setQuizSession] = useState<QuizSession | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -58,7 +59,7 @@ export default function Education() {
   const startQuiz = async (difficulty?: string) => {
     setLoading(true);
     try {
-      const data = await fetchQuizQuestions(difficulty, 10);
+      const data = await fetchQuizQuestions(difficulty, 10, i18n.language);
 
       if (!data || data.length === 0) {
         toast({
@@ -134,11 +135,11 @@ export default function Education() {
     
     if (isCorrect) {
       if (newStreak === 5) {
-        setCurrentReward('🔥 AWESOME! 5-in-a-row streak!');
+        setCurrentReward('ðŸ”¥ AWESOME! 5-in-a-row streak!');
       } else if (newStreak >= 3) {
         setCurrentReward('⚡ STREAK! +' + (newStreak * 10) + ' points!');
       } else if (timeBonus > 0) {
-        setCurrentReward('💨 SPEEDY ANSWER! +' + timeBonus + ' points!');
+        setCurrentReward('ðŸ’¨ SPEEDY ANSWER! +' + timeBonus + ' points!');
       } else {
         setCurrentReward('✅ CORRECT!');
       }
@@ -204,8 +205,11 @@ export default function Education() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-caption text-jade mb-6">— Preparing the questions</div>
+          <DinoLoader size="lg" label="Loading" />
+        </div>
       </div>
     );
   }
@@ -213,348 +217,320 @@ export default function Education() {
   if (quizSession && !quizSession.completed) {
     const currentQuestion = quizSession.questions[quizSession.currentQuestion];
     const progress = ((quizSession.currentQuestion + 1) / quizSession.questions.length) * 100;
+    const totalScore = quizSession.score + quizSession.bonusPoints + quizSession.timeBonus;
 
     return (
-      <div className="min-h-screen bg-gradient-subtle p-4 relative">
+      <div className="min-h-screen bg-background relative">
         {showReward && (
           <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-            <div className="bg-gradient-primary text-white px-8 py-4 rounded-lg text-2xl font-bold animate-bounce shadow-2xl">
+            <div className="bg-jade text-canvas px-8 py-4 rounded-full font-display text-xl tracking-tighter shadow-2xl animate-bounce">
               {currentReward}
             </div>
           </div>
         )}
-        
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <Button variant="outline" onClick={resetQuiz}>
-              <RotateCcw className="w-4 h-4 mr-2" />
-              {t('education.session.exitQuiz')}
-            </Button>
-            <div className="flex items-center gap-4">
-              <Badge variant="outline" className="flex items-center gap-2">
-                <Timer className="w-4 h-4" />
-                {timeLeft}s
-              </Badge>
-              <Badge className={difficultyColors[currentQuestion.difficulty as keyof typeof difficultyColors]}>
-                {currentQuestion.difficulty}
-              </Badge>
+
+        {/* Top rail */}
+        <section className="pt-20 lg:pt-24 pb-6 hairline-b">
+          <div className="container-editorial">
+            <div className="flex items-center justify-between gap-6">
+              <button
+                type="button"
+                onClick={resetQuiz}
+                className="text-caption text-foreground/55 hover:text-jade transition-colors duration-300 inline-flex items-center gap-2"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                {t('education.session.exitQuiz')}
+              </button>
+              <div className="flex items-center gap-6 text-caption">
+                <span className="flex items-center gap-2 text-foreground/55">
+                  <Timer className="w-3.5 h-3.5 text-jade" />
+                  <span className={`font-mono ${timeLeft <= 10 ? 'text-jade' : 'text-foreground'}`}>{timeLeft}s</span>
+                </span>
+                <span className="text-foreground/40">·</span>
+                <span className="text-jade">{currentQuestion.difficulty}</span>
+              </div>
+            </div>
+            {/* Progress hairline */}
+            <div className="mt-5 relative h-px bg-foreground/10 overflow-hidden">
+              <div
+                className="absolute inset-y-0 left-0 bg-jade transition-all duration-500 ease-spring"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
-          
-          <div className="grid lg:grid-cols-5 gap-6">
-            {/* Sidebar com estatísticas */}
-            <div className="lg:col-span-1 space-y-4">
-              <Card className="p-4 text-center bg-gradient-to-br from-primary/10 to-primary/5">
-                <Trophy className="w-6 h-6 mx-auto mb-2 text-amber" />
-                <div className="text-2xl font-bold text-primary">{quizSession.score}</div>
-                <div className="text-xs text-muted-foreground">{t('education.session.correct')}</div>
-              </Card>
-              <Card className="p-4 text-center bg-gradient-to-br from-orange-500/10 to-orange-500/5">
-                <Zap className="w-6 h-6 mx-auto mb-2 text-orange-500" />
-                <div className="text-2xl font-bold text-orange-500">{quizSession.streak}</div>
-                <div className="text-xs text-muted-foreground">{t('education.session.streak')}</div>
-              </Card>
-              <Card className="p-4 text-center bg-gradient-to-br from-green-500/10 to-green-500/5">
-                <Award className="w-6 h-6 mx-auto mb-2 text-green-500" />
-                <div className="text-2xl font-bold text-green-500">{quizSession.timeBonus}</div>
-                <div className="text-xs text-muted-foreground">{t('education.session.speed')}</div>
-              </Card>
-              
-              <div className="mt-6">  
-                <Progress value={progress} className="mb-4" />
-                <div className="text-center">
-                  <p className="text-muted-foreground text-sm">
-                    {t('education.session.question')} {quizSession.currentQuestion + 1} {t('education.session.of')} {quizSession.questions.length}
-                  </p>
-                </div>
-              </div>
-              
-              <Card className="p-4 bg-gradient-to-r from-amber/10 to-orange-500/10">
-                <p className="text-sm font-semibold text-primary text-center">
-                  🏆 {t('education.session.totalScore')}
-                </p>
-                <p className="text-xl font-bold text-center text-primary">
-                  {quizSession.score + quizSession.bonusPoints + quizSession.timeBonus} / {quizSession.questions.length}
-                </p>
-                {quizSession.streak > 0 && (
-                  <p className="text-xs text-orange-500 font-medium text-center mt-2">
-                    🔥 {t('education.session.currentStreak')}: {quizSession.streak}
-                  </p>
-                )}
-              </Card>
-            </div>
+        </section>
 
-            {/* Área principal do quiz */}
-            <div className="lg:col-span-4">
-              <Card className="mb-8 shadow-xl border-2 border-primary/20">
-            <CardHeader className="bg-gradient-to-r from-primary/5 to-amber/5">
-              <CardTitle className="text-xl mb-4 flex items-center gap-3">
-                <Sparkles className="w-6 h-6 text-amber animate-pulse" />
-                {currentQuestion.question}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 pt-5">
-                {currentQuestion.options.map((option, index) => (
+        {/* Quiz body */}
+        <section className="py-16 lg:py-20">
+          <div className="container-editorial">
+            <div className="grid lg:grid-cols-12 gap-12">
+              {/* Sidebar — fact-file */}
+              <aside className="lg:col-span-3">
+                <div className="text-caption text-jade mb-4">— In play</div>
+                <dl className="hairline-t divide-y divide-foreground/8">
+                  <div className="py-4 grid grid-cols-2 items-baseline">
+                    <dt className="text-caption text-foreground/55 flex items-center gap-2"><Trophy className="w-3 h-3 text-jade" />{t('education.session.correct')}</dt>
+                    <dd className="text-right font-mono text-foreground">{quizSession.score}</dd>
+                  </div>
+                  <div className="py-4 grid grid-cols-2 items-baseline">
+                    <dt className="text-caption text-foreground/55 flex items-center gap-2"><Zap className="w-3 h-3 text-jade" />{t('education.session.streak')}</dt>
+                    <dd className="text-right font-mono text-foreground">{quizSession.streak}</dd>
+                  </div>
+                  <div className="py-4 grid grid-cols-2 items-baseline">
+                    <dt className="text-caption text-foreground/55 flex items-center gap-2"><Award className="w-3 h-3 text-jade" />{t('education.session.speed')}</dt>
+                    <dd className="text-right font-mono text-foreground">+{quizSession.timeBonus}</dd>
+                  </div>
+                </dl>
+
+                <div className="hairline-t mt-8 pt-6">
+                  <div className="text-caption text-foreground/40 mb-2">{t('education.session.totalScore')}</div>
+                  <div className="font-display text-display-lg text-jade tracking-tighter leading-none">
+                    {totalScore}
+                  </div>
+                  <div className="text-caption text-foreground/40 font-mono mt-1">/ {quizSession.questions.length}</div>
+                </div>
+              </aside>
+
+              {/* Question */}
+              <div className="lg:col-span-9">
+                <div className="text-caption text-jade mb-4 flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  {t('education.session.question')} <span className="font-mono">{String(quizSession.currentQuestion + 1).padStart(2, '0')}</span> {t('education.session.of')} <span className="font-mono">{String(quizSession.questions.length).padStart(2, '0')}</span>
+                </div>
+                <h2 className="font-display text-display-xl text-foreground tracking-tighter leading-[1.05] mb-12 max-w-[28ch]">
+                  {currentQuestion.question}
+                </h2>
+
+                <div className="hairline-t divide-y divide-foreground/8">
+                  {currentQuestion.options.map((option, index) => {
+                    const isSelected = selectedAnswer === option;
+                    const isCorrect = option === currentQuestion.correct_answer;
+                    const isWrong = showResult && isSelected && !isCorrect;
+                    const showAsCorrect = showResult && isCorrect;
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => !showResult && setSelectedAnswer(option)}
+                        disabled={showResult}
+                        className={`w-full text-left py-6 grid grid-cols-12 gap-4 items-center transition-colors duration-300 ease-spring ${
+                          showAsCorrect
+                            ? 'text-jade'
+                            : isWrong
+                              ? 'text-destructive'
+                              : isSelected
+                                ? 'text-foreground'
+                                : showResult
+                                  ? 'text-foreground/30'
+                                  : 'text-foreground/75 hover:text-jade'
+                        }`}
+                      >
+                        <span className="col-span-1 font-mono text-caption text-foreground/40">
+                          {String.fromCharCode(65 + index)}
+                        </span>
+                        <span className="col-span-9 font-display text-xl md:text-2xl tracking-[-0.025em]">
+                          {option}
+                        </span>
+                        <span className="col-span-2 flex justify-end">
+                          {showAsCorrect && <CheckCircle className="w-5 h-5" />}
+                          {isWrong && <XCircle className="w-5 h-5" />}
+                          {!showResult && isSelected && <span className="w-2 h-2 rounded-full bg-jade" />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                  <div className="hairline-t" aria-hidden="true" />
+                </div>
+
+                {!showResult && (
                   <Button
-                    key={index}
-                    variant="outline"
-                    className={`w-full text-left justify-start p-6 h-auto transition-all duration-300 transform ${
-                      selectedAnswer === option 
-                        ? 'border-amber bg-amber/20 scale-105 shadow-lg border-2' 
-                        : showResult 
-                          ? option === currentQuestion.correct_answer
-                            ? 'border-green-500 bg-green-500/20 scale-105 shadow-lg border-2'
-                            : option === selectedAnswer
-                            ? 'border-red-500 bg-red-500/20 border-2'
-                            : 'opacity-50'
-                          : 'hover:bg-muted hover:scale-102 hover:shadow-md'
-                    }`}
-                    onClick={() => !showResult && setSelectedAnswer(option)}
-                    disabled={showResult}
+                    onClick={submitAnswer}
+                    disabled={!selectedAnswer}
+                    size="lg"
+                    className="mt-10 rounded-full bg-jade text-canvas hover:bg-jade/90 px-8"
                   >
-                    <span className="mr-4 font-bold text-lg bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center">
-                      {String.fromCharCode(65 + index)}
-                    </span>
-                    <span className="text-base">{option}</span>
-                    {showResult && option === currentQuestion.correct_answer && (
-                      <CheckCircle className="w-6 h-6 ml-auto text-green-500" />
-                    )}
-                    {showResult && option === selectedAnswer && option !== currentQuestion.correct_answer && (
-                      <XCircle className="w-6 h-6 ml-auto text-red-500 animate-shake" />
-                    )}
+                    {t('education.session.confirmAnswer')} →
                   </Button>
-                ))}
+                )}
+
+                {showResult && currentQuestion.explanation && (
+                  <div className="mt-10 hairline-t pt-8">
+                    <div className="text-caption text-jade mb-3 flex items-center gap-2">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      {t('education.session.explanation')}
+                    </div>
+                    <p className="text-foreground/75 leading-relaxed text-lg max-w-[60ch]">
+                      {currentQuestion.explanation}
+                    </p>
+                  </div>
+                )}
               </div>
-
-              {!showResult && (
-                <Button 
-                  onClick={submitAnswer}
-                  disabled={!selectedAnswer}
-                  className="w-full mt-6 h-12 text-lg font-semibold bg-gradient-primary hover:scale-105 transition-transform"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  {t('education.session.confirmAnswer')}
-                </Button>
-              )}
-
-              {showResult && currentQuestion.explanation && (
-                <div className="mt-6 p-6 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-500/20 animate-fade-in">
-                  <h4 className="font-semibold mb-3 flex items-center gap-2 text-blue-600">
-                    <BookOpen className="w-5 h-5" />
-                    {t('education.session.explanation')}:
-                  </h4>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {currentQuestion.explanation}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     );
   }
 
   if (quizSession && quizSession.completed) {
     const percentage = Math.round((quizSession.score / quizSession.questions.length) * 100);
-    const getScoreColor = () => {
-      if (percentage >= 80) return 'text-green-500';
-      if (percentage >= 60) return 'text-yellow-500';
-      return 'text-red-500';
-    };
 
     return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
-        <Card className="max-w-lg w-full text-center">
-          <CardHeader>
-            <Trophy className={`w-16 h-16 mx-auto mb-4 ${getScoreColor()}`} />
-            <CardTitle className="text-2xl">{t('education.session.quizCompleted')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-6">
-              <div className={`text-4xl font-bold mb-2 ${getScoreColor()}`}>
-                {percentage}%
-              </div>
-              <p className="text-muted-foreground">
+      <div className="min-h-screen bg-background flex items-center justify-center py-20">
+        <div className="container-editorial">
+          <div className="grid lg:grid-cols-12 gap-y-10 gap-x-12 items-center">
+            <div className="lg:col-span-5">
+              <div className="text-caption text-jade mb-6">— Quiz closed</div>
+              <h1 className="font-display text-[clamp(5rem,15vw,12rem)] leading-[0.85] text-jade tracking-tighter">
+                {percentage}<span className="text-foreground/40 text-[0.3em] align-top">%</span>
+              </h1>
+            </div>
+            <div className="lg:col-span-7 lg:pl-12">
+              <h2 className="font-display text-display-xl text-foreground tracking-tighter mb-4">
+                {t('education.session.quizCompleted')}
+              </h2>
+              <p className="text-foreground/65 text-lg leading-relaxed mb-10 max-w-[44ch]">
                 {t('education.session.answeredCorrectly', { score: quizSession.score, total: quizSession.questions.length })}
               </p>
+              <div className="hairline-t pt-8 flex flex-col sm:flex-row gap-3">
+                <Button onClick={() => startQuiz()} size="lg" className="bg-jade text-canvas hover:bg-jade/90 rounded-full">
+                  {t('education.session.newQuiz')}
+                </Button>
+                <Button onClick={resetQuiz} variant="outline" size="lg" className="rounded-full">
+                  {t('education.session.tryAgain')}
+                </Button>
+              </div>
             </div>
-
-            <div className="space-y-4">
-              <Button onClick={resetQuiz} variant="outline" className="w-full">
-                {t('education.session.tryAgain')}
-              </Button>
-              <Button onClick={() => startQuiz()} className="w-full">
-                {t('education.session.newQuiz')}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
+  // ============================================================
+  // LANDING — quiz selection
+  // ============================================================
+  const activities: Array<{ key: string; icon: any; difficulty?: string; disabled?: boolean }> = [
+    { key: 'general', icon: Brain },
+    { key: 'easy', icon: Target, difficulty: 'easy' },
+    { key: 'medium', icon: Target, difficulty: 'medium' },
+    { key: 'hard', icon: Target, difficulty: 'hard' }
+  ];
+  const upcoming: Array<{ titleKey: string; descKey: string; icon: any }> = [
+    { titleKey: 'education.lessons.title', descKey: 'education.lessons.description', icon: BookOpen },
+    { titleKey: 'education.simulations.title', descKey: 'education.simulations.description', icon: Trophy }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <div className="bg-gradient-primary text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl text-amber font-bold mb-6 animate-fade-in">
-            {t('education.title')}
-          </h1>
-          <p className="text-xl md:text-xl text-white/90 max-w-3xl mx-auto animate-fade-in">
-            {t('education.subtitle')}
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-8 text-center">{t('education.activities')}</h2>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader >
-
-                <div className="flex items-center justify-start mb-4 space-x-2">
-                  <Brain className="w-12 h-12 text-amber" />
-                  <CardTitle>{t('education.quiz.general.title')}</CardTitle>
-                </div>
-
-                <CardDescription>
-                  {t('education.quiz.general.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => startQuiz()} className="w-full" disabled={loading}>
-                  <PlayCircle className="w-4 h-4 mr-2" />
-                  {t('education.quiz.general.start')}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader>
-                <div className="flex items-center justify-start mb-4 space-x-2">
-                  <Target className="w-12 h-12 text-green-500" />
-                  <CardTitle>{t('education.quiz.easy.title')}</CardTitle>
-                </div>
-                <CardDescription>
-                  {t('education.quiz.easy.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  onClick={() => startQuiz('easy')} 
-                  className="w-full bg-green-500 hover:bg-green-600" 
-                  disabled={loading}
-                >
-                  <PlayCircle className="w-4 h-4 mr-2" />
-                  {t('education.quiz.easy.start')}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader>
-                <div className="flex items-center justify-start mb-4 space-x-2">
-                  <Target className="w-12 h-12 text-yellow-500" />
-                  <CardTitle>{t('education.quiz.medium.title')}</CardTitle>
-                </div>
-                <CardDescription>
-                  {t('education.quiz.medium.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  onClick={() => startQuiz('medium')} 
-                  className="w-full bg-yellow-500 hover:bg-yellow-600" 
-                  disabled={loading}
-                >
-                  <PlayCircle className="w-4 h-4 mr-2" />
-                  {t('education.quiz.medium.start')}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="cursor-pointer hover:shadow-xl transition-all duration-300 animate-fade-in">
-              <CardHeader>
-                <div className="flex items-center justify-start mb-4 space-x-2">
-                  <Target className="w-12 h-12 text-red-500" />
-                  <CardTitle>{t('education.quiz.hard.title')}</CardTitle>
-                </div>
-                <CardDescription>
-                  {t('education.quiz.hard.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  onClick={() => startQuiz('hard')} 
-                  className="w-full bg-red-500 hover:bg-red-600" 
-                  disabled={loading}
-                >
-                  <PlayCircle className="w-4 h-4 mr-2" />
-                  {t('education.quiz.hard.start')}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="opacity-75">
-              <CardHeader>
-                <div className="flex items-center justify-start mb-4 space-x-2">
-                  <BookOpen className="w-12 h-12 text-muted-foreground" />
-                  <CardTitle className="text-muted-foreground">{t('education.lessons.title')}</CardTitle>
-                </div>
-                <CardDescription>
-                  {t('education.lessons.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button variant="outline" disabled className="w-full">
-                  {t('education.lessons.inDevelopment')}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="opacity-75">
-              <CardHeader>
-                <div className="flex items-center justify-start mb-4 space-x-2">
-                  <Trophy className="w-12 h-12 text-muted-foreground" />
-                  <CardTitle className="text-muted-foreground">{t('education.simulations.title')}</CardTitle>
-                </div>
-                <CardDescription>
-                  {t('education.simulations.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button variant="outline" disabled className="w-full">
-                  {t('education.lessons.inDevelopment')}
-                </Button>
-              </CardContent>
-            </Card>
+    <div className="min-h-screen bg-background">
+      {/* HEADER */}
+      <section className="pt-16 lg:pt-20 pb-6">
+        <div className="container-editorial">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-caption text-jade">— {t('editorial.rooms.schoolroom')}</div>
+            <div className="text-caption text-foreground/40 hidden sm:block">{activities.length} {t('editorial.routes')}</div>
+          </div>
+          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+            <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
+              {t('education.title')}
+            </h1>
+            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+              {t('education.subtitle')}
+            </p>
           </div>
         </div>
+      </section>
 
-        <Card className="bg-gradient-to-r from-amber/10 to-forest/10">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <BookOpen className="w-6 h-6 text-amber" />
-              {t('education.tips.title')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-muted-foreground">
-              <li>• {t('education.tips.tip1')}</li>
-              <li>• {t('education.tips.tip2')}</li>
-              <li>• {t('education.tips.tip3')}</li>
-              <li>• {t('education.tips.tip4')}</li>
-              <li>• {t('education.tips.tip5')}</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
+      {/* ACTIVITIES */}
+      <section className="hairline-t pt-16 pb-20">
+        <div className="container-editorial">
+          <div className="text-caption text-jade mb-10">— {t('education.activities')}</div>
+          <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
+            {activities.map((a, i) => {
+              const Icon = a.icon;
+              return (
+                <li key={a.key}>
+                  <button
+                    type="button"
+                    onClick={() => startQuiz(a.difficulty)}
+                    disabled={loading}
+                    className="group w-full text-left hairline-t py-8 grid grid-cols-12 gap-4 items-center transition-colors duration-300"
+                  >
+                    <div className="col-span-1 font-mono text-caption text-foreground/40">
+                      {String(i + 1).padStart(2, '0')}
+                    </div>
+                    <div className="col-span-2"><Icon className="w-6 h-6 text-jade" /></div>
+                    <div className="col-span-7">
+                      <h3 className="font-display text-2xl tracking-[-0.025em] text-foreground transition-colors duration-300 group-hover:text-jade mb-1">
+                        {t(`education.quiz.${a.key}.title`)}
+                      </h3>
+                      <p className="text-sm text-foreground/60 leading-relaxed line-clamp-2">
+                        {t(`education.quiz.${a.key}.description`)}
+                      </p>
+                    </div>
+                    <div className="col-span-2 text-right text-caption text-foreground/40 group-hover:text-jade transition-colors duration-300">
+                      <PlayCircle className="w-4 h-4 inline" />
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+            <li className="hairline-t md:col-span-2" aria-hidden="true" />
+          </ol>
+        </div>
+      </section>
+
+      {/* IN DEVELOPMENT */}
+      <section className="hairline-t py-16">
+        <div className="container-editorial">
+          <div className="grid lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-3">
+              <div className="text-caption text-jade mb-3">— Coming to the floor</div>
+            </div>
+            <ol className="lg:col-span-9 grid sm:grid-cols-2 gap-x-12 gap-y-2">
+              {upcoming.map((u, i) => {
+                const Icon = u.icon;
+                return (
+                  <li key={i} className="hairline-t py-6 grid grid-cols-12 gap-4 items-start opacity-60">
+                    <div className="col-span-2"><Icon className="w-5 h-5 text-foreground/40" /></div>
+                    <div className="col-span-7">
+                      <h4 className="font-display text-lg tracking-[-0.025em] text-foreground/70 mb-1">{t(u.titleKey)}</h4>
+                      <p className="text-sm text-foreground/45">{t(u.descKey)}</p>
+                    </div>
+                    <div className="col-span-3 text-right text-caption text-foreground/40">
+                      {t('education.lessons.inDevelopment')}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      {/* TIPS */}
+      <section className="hairline-t py-16 pb-32">
+        <div className="container-editorial">
+          <div className="grid lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-4">
+              <div className="text-caption text-jade mb-3">— Notes from the docent</div>
+              <h3 className="font-display text-display-lg text-foreground tracking-tighter">
+                {t('education.tips.title')}
+              </h3>
+            </div>
+            <ol className="lg:col-span-8 hairline-t divide-y divide-foreground/8">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <li key={n} className="py-5 grid grid-cols-12 gap-4">
+                  <div className="col-span-1 font-mono text-caption text-jade pt-1">0{n}</div>
+                  <p className="col-span-11 text-foreground/75 leading-relaxed">
+                    {t(`education.tips.tip${n}`)}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

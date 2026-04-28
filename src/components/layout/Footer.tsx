@@ -1,87 +1,116 @@
 import React from 'react';
-import { Github, Linkedin, Mail, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Github, Linkedin, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const Footer: React.FC = () => (
-  <footer className="relative bg-gradient-prehistoric text-white overflow-hidden">
-    {/* Animated dinosaur footprints */}
-    <div className="absolute inset-0 opacity-20 pointer-events-none">
-      <div className="dino-footprint footprint-1"></div>
-      <div className="dino-footprint footprint-2"></div>
-      <div className="dino-footprint footprint-3"></div>
-      <div className="dino-footprint footprint-4"></div>
-      <div className="dino-footprint footprint-5"></div>
-    </div>
-    {/* Floating amber particles */}
-    <div className="amber-particles pointer-events-none">
-      <div className="amber-particle particle-1"></div>
-      <div className="amber-particle particle-2"></div>
-      <div className="amber-particle particle-3"></div>
-      <div className="amber-particle particle-4"></div>
-    </div>
-    <div className="relative z-10 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand Column */}
-          <div className="md:col-span-2">
-            <h3 className="text-2xl font-bold bg-gradient-amber bg-clip-text text-transparent mb-4">
-              Dino Library
-            </h3>
-            <p className="text-white/80 mb-6 max-w-md">
-              Exploring the prehistoric world through science, education, and discovery. 
-              Join this fascinating journey through Jurassic times.
+/**
+ * Editorial colophon — three columns, hairline dividers, oversized caption labels.
+ * Designed to feel like the back-page of a museum monograph.
+ */
+const Footer: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <footer className="relative bg-background text-foreground">
+      <div className="hairline-t" />
+
+      <div className="container-editorial pt-20 pb-10">
+        <div className="grid gap-12 md:grid-cols-12 mb-16">
+          <div className="md:col-span-6">
+            <Link to="/" className="inline-flex items-baseline gap-1 group">
+              <span className="font-display text-3xl lowercase tracking-[-0.04em] text-foreground">
+                dino<span className="text-jade">.</span>library
+              </span>
+            </Link>
+            <p className="mt-6 max-w-md font-display text-2xl leading-tight tracking-[-0.025em] text-foreground/80">
+              {t('footer.tagline')}
             </p>
-            <div className="flex space-x-4">
-              <a href="https://www.github.com/ensinho" target="_blank" rel="noopener noreferrer" className="social-link text-white/60 hover:text-amber transition-colors">
-                <Github className="w-6 h-6" />
+          </div>
+
+          <div className="md:col-span-3">
+            <div className="text-caption text-foreground/40 mb-4">{t('footer.explore')}</div>
+            <ul className="space-y-3 font-sans text-base">
+              <li><Link to="/catalog"   className="text-foreground/70 hover:text-jade transition-colors duration-300">{t('footer.collection')}</Link></li>
+              <li><Link to="/discover"  className="text-foreground/70 hover:text-jade transition-colors duration-300">{t('footer.discover')}</Link></li>
+              <li><Link to="/map"       className="text-foreground/70 hover:text-jade transition-colors duration-300">{t('footer.atlas')}</Link></li>
+              <li><Link to="/timeline"  className="text-foreground/70 hover:text-jade transition-colors duration-300">{t('footer.timeline')}</Link></li>
+              <li><Link to="/education" className="text-foreground/70 hover:text-jade transition-colors duration-300">{t('footer.learning')}</Link></li>
+              <li><Link to="/news"      className="text-foreground/70 hover:text-jade transition-colors duration-300">{t('footer.fieldNotes')}</Link></li>
+            </ul>
+          </div>
+
+          <div className="md:col-span-3">
+            <div className="text-caption text-foreground/40 mb-4">{t('footer.sources')}</div>
+            <ul className="space-y-3 font-sans text-base">
+              <li>
+                <a
+                  href="https://www.kaggle.com/datasets/canozensoy/dinosaur-genera-dataset"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 hover:text-jade transition-colors duration-300"
+                >
+                  {t('footer.dataset')} ↗
+                </a>
+              </li>
+              <li><Link to="/glossary" className="text-foreground/70 hover:text-jade transition-colors duration-300">{t('footer.glossary')}</Link></li>
+            </ul>
+
+            <div className="text-caption text-foreground/40 mt-8 mb-4">{t('footer.elsewhere')}</div>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://www.github.com/ensinho"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="social-link text-foreground/60"
+              >
+                <Github className="w-5 h-5" />
               </a>
-              <a href="https://www.linkedin.com/in/enzoesmeraldo" target="_blank" rel="noopener noreferrer" className="social-link text-white/60 hover:text-amber transition-colors">
-                <Linkedin className="w-6 h-6" />
+              <a
+                href="https://www.linkedin.com/in/enzoesmeraldo"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="social-link text-foreground/60"
+              >
+                <Linkedin className="w-5 h-5" />
               </a>
-              <a href="mailto:enzopo625@gmail.com" className="social-link text-white/60 hover:text-amber transition-colors">
-                <Mail className="w-6 h-6" />
+              <a
+                href="mailto:enzopo625@gmail.com"
+                aria-label="Email"
+                className="social-link text-foreground/60"
+              >
+                <Mail className="w-5 h-5" />
               </a>
             </div>
           </div>
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Explore</h4>
-            <ul className="space-y-2">
-              <li><Link to="/catalog" className="text-white/80 hover:text-amber transition-colors">Collection</Link></li>
-              <li><Link to="/map" className="text-white/80 hover:text-amber transition-colors">Maps</Link></li>
-              <li><Link to="/timeline" className="text-white/80 hover:text-amber transition-colors">Timeline</Link></li>
-              <li><Link to="/education" className="text-white/80 hover:text-amber transition-colors">Learning</Link></li>
-            </ul>
-          </div>
-          {/* Resources */}
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li><a href="https://www.kaggle.com/datasets/canozensoy/dinosaur-genera-dataset?" target='_blank' className="text-white/80 hover:text-amber transition-colors">Used Data</a></li>
-              {/* <li><a href="#" className="text-white/80 hover:text-amber transition-colors">API</a></li> */}
-              {/* <li><a href="#" className="text-white/80 hover:text-amber transition-colors">Support</a></li> */}
-              {/* <li><a href="#" className="text-white/80 hover:text-amber transition-colors">Contact</a></li> */}
-            </ul>
-          </div>
         </div>
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-white/60 text-sm mb-4 md:mb-0">
-            © 2025 Dino Library. Made with <Heart className="w-4 h-4 inline text-amber mx-1" /> for paleontology lovers by
-            <a href="https://www.github.com/ensinho" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-amber transition-colors"> Enzo Esmeraldo</a>
-          </p>
-         {/* <div className="flex space-x-6 text-sm">
-            <a href="#" className="text-white/60 hover:text-amber transition-colors">Privacy</a>
-            <a href="#" className="text-white/60 hover:text-amber transition-colors">Terms</a>
-            <a href="#" className="text-white/60 hover:text-amber transition-colors">Licenses</a>
-          </div> */}
+
+        <div className="hairline-t pt-8">
+          <div className="font-display text-display-lg lowercase tracking-[-0.04em] text-foreground/10 leading-none select-none">
+            dino.library — mmxxvi
+          </div>
+
+          <div className="mt-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <p className="text-caption text-foreground/40">
+              © 2026 · {t('footer.designedBy')}{' '}
+              <a
+                href="https://www.github.com/ensinho"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground/70 hover:text-jade transition-colors"
+              >
+                Enzo Esmeraldo
+              </a>
+            </p>
+            <p className="text-caption text-foreground/40">
+              Bricolage Grotesque · Geist · Geist Mono
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-    {/* Animated ground layer */}
-    <div className="jurassic-ground"></div>
-  </footer>
-);
+    </footer>
+  );
+};
 
 export default Footer;

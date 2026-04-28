@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DinoLoader } from '@/components/loader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -163,302 +164,237 @@ export default function Timeline() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-caption text-jade mb-6">— {t('editorial.pullingRecord')}</div>
+          <DinoLoader size="lg" label={t('editorial.loadingTimeline')} />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <div className="bg-gradient-primary text-white py-10 md:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="relative">
-            <div className="absolute inset-0 bg-amber/20 rounded-full blur-xl animate-pulse"></div>
+    <div className="min-h-screen bg-background">
+      {/* ============================================================
+           HEADER — wall plaque
+           ============================================================ */}
+      <section className="pt-16 lg:pt-20 pb-6">
+        <div className="container-editorial">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-caption text-jade">— {t('editorial.rooms.timeline')}</div>
+            <div className="text-caption text-foreground/40 hidden sm:block">252 — present · MYA</div>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-amber to-amber-glow bg-clip-text text-transparent">
-            {t('timeline.title')}
-          </h1>
-          <p className="text-lg md:text-base text-white/90 max-w-3xl mx-auto">
-            {t('timeline.subtitle')}
-          </p>
+
+          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+            <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
+              {t('timeline.title')}
+            </h1>
+            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+              {t('timeline.subtitle')}
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="discoveries" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {t('timeline.tabs.discoveries')}
-            </TabsTrigger>
-            <TabsTrigger value="geological" className="flex items-center gap-2">
-              <Mountain className="w-4 h-4" />
-              {t('timeline.tabs.geological')}
-            </TabsTrigger>
-          </TabsList>
+      <section className="pb-32">
+        <div className="container-editorial">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="bg-transparent p-0 h-auto gap-1 hairline-b w-full justify-start rounded-none">
+              <TabsTrigger
+                value="discoveries"
+                className="rounded-none px-4 py-3 text-caption text-foreground/50 data-[state=active]:bg-transparent data-[state=active]:text-jade data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-jade -mb-px flex items-center gap-2"
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                {t('timeline.tabs.discoveries')}
+              </TabsTrigger>
+              <TabsTrigger
+                value="geological"
+                className="rounded-none px-4 py-3 text-caption text-foreground/50 data-[state=active]:bg-transparent data-[state=active]:text-jade data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-jade -mb-px flex items-center gap-2"
+              >
+                <Mountain className="w-3.5 h-3.5" />
+                {t('timeline.tabs.geological')}
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Archaeological Discoveries Tab */}
-          <TabsContent value="discoveries">
-            <div className="mb-6 flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder={t('timeline.filters.searchPlaceholder')}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-amber/50"
-                />
-              </div>
-              <div className="flex gap-2">
+            {/* ============================================================
+                 DISCOVERIES — chronological column
+                 ============================================================ */}
+            <TabsContent value="discoveries" className="mt-12">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-10">
+                <div className="md:col-span-7 relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+                  <Input
+                    placeholder={t('timeline.filters.searchPlaceholder')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-11 h-11 rounded-full bg-surface-1 border-foreground/10"
+                  />
+                </div>
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="px-3 py-2 border border-border rounded-md bg-card text-foreground transition-all duration-200 hover:border-amber/50 focus:border-amber focus:ring-2 focus:ring-amber/30"
+                  className="md:col-span-3 h-11 px-4 rounded-full bg-surface-1 border border-foreground/10 text-sm text-foreground"
                 >
                   <option value="">{t('timeline.filters.allYears')}</option>
                   {getUniqueYears().map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
-                <Button
-                  variant="outline"
+                <button
+                  type="button"
                   onClick={() => {
                     setSearchTerm('');
                     setSelectedYear('');
                     setVisibleItems(6);
                   }}
-                  className="hover:bg-amber/10 hover:border-amber transition-all duration-200"
+                  className="md:col-span-2 text-caption text-foreground/50 hover:text-jade transition-colors duration-300 flex items-center justify-center gap-2"
                 >
-                  <Filter className="w-4 h-4 mr-2" />
+                  <Filter className="w-3.5 h-3.5" />
                   {t('timeline.filters.clear')}
-                </Button>
+                </button>
               </div>
-            </div>
 
-            <div className="relative">
-              <div className="absolute left-6 top-0 w-0.5 h-full bg-gradient-to-b from-amber/30 via-amber/50 to-amber/30"></div>
+              <ol className="relative">
+                {filteredDiscoveries.slice(0, visibleItems).map((discovery) => {
+                  const expanded = expandedCard === discovery.id;
+                  return (
+                    <li key={discovery.id} className="hairline-t py-10 grid grid-cols-12 gap-6 group">
+                      <div className="col-span-12 md:col-span-2">
+                        <div className="font-display text-display-lg text-jade tracking-tighter leading-none">
+                          {new Date(discovery.discovery_date).getFullYear()}
+                        </div>
+                        <div className="mt-2 text-caption text-foreground/40">
+                          {formatDate(discovery.discovery_date)}
+                        </div>
+                      </div>
 
-              <div className="space-y-4">
-                {filteredDiscoveries.slice(0, visibleItems).map((discovery, index) => (
-                  <div 
-                    key={discovery.id} 
-                    className="relative group animate-slideInUp"
-                    style={{
-                      animationDelay: `${index * 100}ms`
-                    }}
-                  >
-                    <div className="absolute left-4 w-4 h-4 bg-gradient-to-r from-amber to-amber-glow rounded-full border-2 border-background shadow-lg group-hover:scale-125 transition-all duration-300 hidden md:block">
-                      <div className="absolute inset-0 bg-amber/30 rounded-full animate-ping"></div>
-                    </div>
+                      <div className={discovery.image_url ? 'col-span-12 md:col-span-7' : 'col-span-12 md:col-span-10'}>
+                        <h3 className="font-display text-2xl tracking-[-0.025em] text-foreground mb-3 transition-colors duration-300 group-hover:text-jade">
+                          {discovery.title}
+                        </h3>
+                        <div className="text-caption text-foreground/50 mb-4 flex items-center gap-2">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {discovery.location}
+                        </div>
+                        <p className={`text-foreground/70 leading-relaxed ${expanded ? '' : 'line-clamp-3'}`}>
+                          {discovery.description}
+                        </p>
 
-                    <div className="md:ml-12">
-                      <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 bg-card/80 backdrop-blur-sm border-border/50 hover:border-amber/30">
-                        <CardHeader className="bg-gradient-to-r from-amber/5 to-forest/5 pb-3 pt-4">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <CardTitle className="text-lg mb-2 group-hover:text-amber transition-colors duration-300">
-                                {discovery.title}
-                              </CardTitle>
-                              <CardDescription className="flex flex-wrap items-center gap-3 text-sm">
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="w-4 h-4 text-amber/70" />
-                                  {formatDate(discovery.discovery_date)}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <MapPin className="w-4 h-4 text-amber/70" />
-                                  {discovery.location}
-                                </span>
-                              </CardDescription>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="secondary" className="bg-amber/20 text-amber-dark text-xs">
-                                {new Date(discovery.discovery_date).getFullYear()}
-                              </Badge>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => toggleCardExpansion(discovery.id)}
-                                className="p-1 h-auto hover:bg-amber/10"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="p-4">
-                          <div className={`grid ${discovery.image_url ? 'md:grid-cols-3' : 'grid-cols-1'} gap-4`}>
-                            <div className={discovery.image_url ? 'md:col-span-2' : 'col-span-1'}>
-                              <p className={`text-muted-foreground leading-relaxed text-sm ${
-                                expandedCard === discovery.id ? '' : 'line-clamp-3'
-                              }`}>
-                                {discovery.description}
-                              </p>
-
-                              {expandedCard === discovery.id && (
-                                <div className="mt-4 space-y-3 animate-fadeIn">
-                                  {discovery.significance && (
-                                    <div>
-                                      <h4 className="font-semibold mb-1 text-amber text-sm">{t('timeline.discovery.significance')}:</h4>
-                                      <p className="text-xs text-muted-foreground">
-                                        {discovery.significance}
-                                      </p>
-                                    </div>
-                                  )}
-
-                                  {(discovery.researcher_name || discovery.organization) && (
-                                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 p-2 rounded-md">
-                                      <Users className="w-3 h-3 text-amber/70" />
-                                      <div>
-                                        {discovery.researcher_name && (
-                                          <span>{t('timeline.discovery.researcher')}: {discovery.researcher_name}</span>
-                                        )}
-                                        {discovery.organization && (
-                                          <span className={discovery.researcher_name ? " • " : ""}>
-                                            {discovery.organization}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-
-                            {discovery.image_url && (
-                              <div className="md:col-span-1">
-                                <div className="relative overflow-hidden rounded-lg group">
-                                  <img
-                                    src={discovery.image_url}
-                                    alt={discovery.title}
-                                    className="w-full h-32 md:h-40 object-cover transition-transform duration-500 group-hover:scale-110"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                </div>
+                        {expanded && (
+                          <div className="mt-6 space-y-5 hairline-t pt-6">
+                            {discovery.significance && (
+                              <div>
+                                <div className="text-caption text-jade mb-2">— {t('timeline.discovery.significance')}</div>
+                                <p className="text-sm text-foreground/65 leading-relaxed">{discovery.significance}</p>
+                              </div>
+                            )}
+                            {(discovery.researcher_name || discovery.organization) && (
+                              <div className="text-caption text-foreground/50 flex items-center gap-2">
+                                <Users className="w-3.5 h-3.5 text-jade" />
+                                {discovery.researcher_name && <span>{discovery.researcher_name}</span>}
+                                {discovery.organization && <span className="opacity-60">· {discovery.organization}</span>}
                               </div>
                             )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => toggleCardExpansion(discovery.id)}
+                          className="mt-5 text-caption text-jade hover:text-foreground transition-colors duration-300 flex items-center gap-2"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          {expanded ? 'Less' : 'More'}
+                        </button>
+                      </div>
+
+                      {discovery.image_url && (
+                        <figure className="col-span-12 md:col-span-3 relative overflow-hidden rounded-2xl ring-1 ring-foreground/8 aspect-[4/5] bg-surface-1">
+                          <img
+                            src={discovery.image_url}
+                            alt={discovery.title}
+                            className="absolute inset-0 w-full h-full object-cover img-duotone-hover"
+                          />
+                        </figure>
+                      )}
+                    </li>
+                  );
+                })}
+                <li className="hairline-t" aria-hidden="true" />
+              </ol>
 
               {visibleItems < filteredDiscoveries.length && (
-                <div className="text-center mt-8">
-                  <Button
-                    onClick={loadMoreItems}
-                    className="bg-gradient-to-r from-amber to-amber-glow hover:from-amber-glow hover:to-amber text-black font-semibold px-8 py-3 transition-all duration-300 hover:scale-105"
-                  >
+                <div className="text-center mt-12">
+                  <Button onClick={loadMoreItems} variant="outline" size="lg">
                     {t('timeline.discovery.viewMore')} ({filteredDiscoveries.length - visibleItems} {t('timeline.discovery.remaining')})
                   </Button>
                 </div>
               )}
 
               {filteredDiscoveries.length === 0 && (
-                <div className="text-center py-12">
-                  <div className="bg-muted/20 rounded-2xl p-8 max-w-md mx-auto">
-                    <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-lg font-semibold mb-2">{t('timeline.discovery.noDiscoveries')}</h3>
-                    <p className="text-muted-foreground text-sm">
-                      {t('timeline.discovery.adjustFilters')}
-                    </p>
-                  </div>
+                <div className="py-24 text-center">
+                  <div className="text-caption text-jade mb-4">— Empty page</div>
+                  <h3 className="font-display text-display-lg text-foreground tracking-tighter mb-3">
+                    {t('timeline.discovery.noDiscoveries')}
+                  </h3>
+                  <p className="text-foreground/60 max-w-[44ch] mx-auto">{t('timeline.discovery.adjustFilters')}</p>
                 </div>
               )}
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          {/* Geological Timeline Tab */}
-          <TabsContent value="geological">
-            <div className="relative">
-              <div className="absolute left-6 top-0 w-1 h-full bg-gradient-to-b from-red-500 via-green-500 to-purple-500 opacity-20"></div>
-
-              <div className="space-y-6">
-                {geologicalEvents.map((event, index) => (
-                  <div 
-                    key={event.id} 
-                    className="relative group animate-slideInUp"
-                    style={{
-                      animationDelay: `${index * 150}ms`
-                    }}
-                  >
-                    <div className={`absolute left-3 w-8 h-8 bg-gradient-to-r ${event.color} rounded-full border-4 border-background shadow-lg group-hover:scale-125 transition-all duration-300 hidden md:flex items-center justify-center text-white`}>
-                      {event.icon}
+            {/* ============================================================
+                 GEOLOGICAL — era ledger
+                 ============================================================ */}
+            <TabsContent value="geological" className="mt-12">
+              <ol>
+                {geologicalEvents.map((event) => (
+                  <li key={event.id} className="hairline-t py-10 grid grid-cols-12 gap-6 group">
+                    <div className="col-span-12 md:col-span-2">
+                      <div className="font-display text-display-lg text-jade tracking-tighter leading-none">
+                        {event.years_ago}
+                      </div>
+                      <div className="mt-2 text-caption text-foreground/40">{t('timeline.geological.millionYearsAgo')}</div>
                     </div>
-
-                    <div className="md:ml-16">
-                      <Card className="overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 bg-card/80 backdrop-blur-sm border-border/50 hover:border-amber/30">
-                        <CardHeader className={`bg-gradient-to-r ${event.color} text-white pb-3 pt-4`}>
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <CardTitle className="text-xl mb-2 flex items-center gap-3">
-                                <span className="md:hidden">{event.icon}</span>
-                                {event.title}
-                              </CardTitle>
-                              <CardDescription className="text-white/90 text-sm">
-                                <Badge variant="secondary" className="bg-white/20 text-white mr-2">
-                                  {event.years_ago} {t('timeline.geological.millionYearsAgo')}
-                                </Badge>
-                                <Badge variant="secondary" className="bg-white/20 text-white">
-                                  {event.period} {t('timeline.geological.period')}
-                                </Badge>
-                              </CardDescription>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                          <p className="text-muted-foreground leading-relaxed">
-                            {event.description}
-                          </p>
-                          
-                          <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="capitalize">
-                              {event.type.replace('_', ' ')} {t('timeline.geological.event')}
-                            </span>
-                            <span>•</span>
-                            <span>{t('timeline.geological.mesozoicEra')}</span>
-                          </div>
-                        </CardContent>
-                      </Card>
+                    <div className="col-span-12 md:col-span-1 hidden md:flex md:justify-center md:pt-2">
+                      <div className="text-jade">{event.icon}</div>
                     </div>
-                  </div>
+                    <div className="col-span-12 md:col-span-9">
+                      <div className="text-caption text-foreground/40 mb-3 flex items-center gap-2">
+                        <span>{event.period} · {t('timeline.geological.period')}</span>
+                        <span className="opacity-30">·</span>
+                        <span className="capitalize">{event.type.replace('_', ' ')}</span>
+                      </div>
+                      <h3 className="font-display text-2xl tracking-[-0.025em] text-foreground mb-3 transition-colors duration-300 group-hover:text-jade">
+                        {event.title}
+                      </h3>
+                      <p className="text-foreground/70 leading-relaxed">{event.description}</p>
+                    </div>
+                  </li>
                 ))}
-              </div>
+                <li className="hairline-t" aria-hidden="true" />
+              </ol>
 
-              {/* Era Legend */}
-              <div className="mt-12">
-                <Card className="bg-gradient-to-r from-amber/10 to-orange/10 border-amber/20">
-                  <CardContent className="pt-6">
-                    <h3 className="text-lg font-semibold mb-4 text-center">{t('timeline.geological.eraOverview')}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="text-center p-4 bg-gradient-to-b from-red-100 to-red-50 rounded-lg">
-                        <div className="text-2xl mb-2">🌋</div>
-                        <h4 className="font-semibold text-red-700">{t('timeline.geological.triassic')}</h4>
-                        <p className="text-sm text-red-600">252-201 {t('timeline.geological.mya')}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{t('timeline.geological.triassicDesc')}</p>
-                      </div>
-                      <div className="text-center p-4 bg-gradient-to-b from-green-100 to-green-50 rounded-lg">
-                        <div className="text-2xl mb-2">🌲</div>
-                        <h4 className="font-semibold text-green-700">{t('timeline.geological.jurassic')}</h4>
-                        <p className="text-sm text-green-600">201-145 {t('timeline.geological.mya')}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{t('timeline.geological.jurassicDesc')}</p>
-                      </div>
-                      <div className="text-center p-4 bg-gradient-to-b from-purple-100 to-purple-50 rounded-lg">
-                        <div className="text-2xl mb-2">🌺</div>
-                        <h4 className="font-semibold text-purple-700">{t('timeline.geological.cretaceous')}</h4>
-                        <p className="text-sm text-purple-600">145-66 {t('timeline.geological.mya')}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{t('timeline.geological.cretaceousDesc')}</p>
-                      </div>
+              <div className="mt-20 pt-10 hairline-t">
+                <div className="text-caption text-jade mb-8">— {t('timeline.geological.eraOverview')}</div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-foreground/8 rounded-3xl overflow-hidden ring-1 ring-foreground/8">
+                  {[
+                    { name: t('timeline.geological.triassic'), range: `252–201 ${t('timeline.geological.mya')}`, desc: t('timeline.geological.triassicDesc') },
+                    { name: t('timeline.geological.jurassic'), range: `201–145 ${t('timeline.geological.mya')}`, desc: t('timeline.geological.jurassicDesc') },
+                    { name: t('timeline.geological.cretaceous'), range: `145–66 ${t('timeline.geological.mya')}`, desc: t('timeline.geological.cretaceousDesc') }
+                  ].map((era, i) => (
+                    <div key={era.name} className="bg-background p-8">
+                      <div className="text-caption text-foreground/30 mb-6">0{i + 1}</div>
+                      <h4 className="font-display text-2xl tracking-[-0.025em] text-foreground mb-2">{era.name}</h4>
+                      <div className="text-caption text-jade mb-4">{era.range}</div>
+                      <p className="text-sm text-foreground/60 leading-relaxed">{era.desc}</p>
                     </div>
-                  </CardContent>
-                </Card>
+                  ))}
+                </div>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
     </div>
   );
 }

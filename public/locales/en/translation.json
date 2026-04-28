@@ -277,7 +277,27 @@
       "subtitle": "Meet three of the most fascinating giants of the Mesozoic era.",
       "period": "Period",
       "diet": "Diet",
-      "funFact": "Fun Fact"
+      "funFact": "Fun Fact",
+      "items": {
+        "allosaurus": {
+          "description": "An apex predator of the Jurassic, known for its large skull, sharp serrated teeth, and powerful claws. It was a fearsome hunter that likely preyed on large herbivores like sauropods.",
+          "period": "Late Jurassic",
+          "diet": "Carnivore",
+          "funFact": "It had relatively long arms compared to T-Rex, with claws up to 25 cm long!"
+        },
+        "oxalaia": {
+          "description": "Considered the largest carnivorous dinosaur in Brazil, this spinosaurid was a close relative of Spinosaurus and lived in semi-aquatic environments.",
+          "period": "Late Cretaceous",
+          "diet": "Piscivore",
+          "funFact": "Its name honors the African deity Oxalá and the quilombos of Cajual Island, in Maranhão, where its fossils were found."
+        },
+        "brachiosaurus": {
+          "description": "One of the most recognizable dinosaurs. Its front legs were significantly longer than its hind legs, creating a steeply inclined posture that, combined with its immensely long neck, made it a true giant of its time.",
+          "period": "Late Jurassic",
+          "diet": "Herbivore",
+          "funFact": "Its heart weighed about 400 kg and pumped blood up to 12 metres high!"
+        }
+      }
     },
     "stats": {
       "cataloged": "Species Cataloged",
@@ -491,6 +511,141 @@
     "education": "Education",
     "news": "News",
     "profile": "Profile",
-    "auth": "Sign In"
+    "auth": "Sign In",
+    "menu": "Menu"
+  },
+  "editorial": {
+    "rooms": {
+      "catalog": "Room 02 · The catalogue",
+      "timeline": "Room 03 · The record",
+      "discover": "Room 05 · Curated themes",
+      "news": "Room 06 · The press desk",
+      "glossary": "Room 07 · Working vocabulary",
+      "tools": "Room 02 · Tools of inquiry",
+      "learning": "Room 03 · Learning",
+      "featured": "Room 04 · Featured specimens",
+      "inNumbers": "Room 05 · In numbers",
+      "map": "Room 04 · Where they were found",
+      "schoolroom": "Room 08 · The schoolroom"
+    },
+    "pressDeskQuiet": "Press desk quiet",
+    "pullingRecord": "Pulling the record",
+    "loadingTimeline": "Loading timeline",
+    "loadingMap": "Loading the map",
+    "loadingShort": "Loading…",
+    "loadMoreEntries": "Load more entries →",
+    "specimensOnRecord": "specimens on record",
+    "routes": "routes",
+    "dispatches": "dispatches",
+    "entries": "entries",
+    "frontPage": "Front page",
+    "loadingArchive": "Loading the archive",
+    "curating": "Curating",
+    "pressDesk": "Press desk",
+    "loadingDispatch": "Loading dispatch",
+    "outOfFile": "Out of file",
+    "pullingSpecimen": "Pulling specimen file",
+    "specimenNotOnFile": "Specimen not on file",
+    "specimenFile": "Specimen file",
+    "plate": "Plate",
+    "plateOne": "Plate I · Carnotaurus pair",
+    "plateOneSub": "Late Cretaceous · oil study",
+    "openLibrary": "An open library of prehistoric life · curated quietly",
+    "takeYourTime": "Take your time ↓",
+    "unknownSpecies": "Unknown Species",
+    "speciesPlaceholder": "Species scientificus",
+    "dinosaurAlt": "Dinosaur"
+  },
+  "footer": {
+    "tagline": "A quiet field guide to the prehistoric world — built for the curious, the careful, the awestruck.",
+    "explore": "Explore",
+    "collection": "Collection",
+    "discover": "Discover",
+    "atlas": "Atlas",
+    "timeline": "Timeline",
+    "learning": "Learning",
+    "fieldNotes": "Field Notes",
+    "sources": "Sources",
+    "dataset": "Dinosaur Genera Dataset",
+    "glossary": "Glossary",
+    "elsewhere": "Elsewhere",
+    "designedBy": "designed & built by"
+  },
+  "cta": {
+    "joinField": "Join the field",
+    "headline": "The expedition begins where curiosity ends.",
+    "begin": "Begin"
+  },
+  "notFound": {
+    "label": "Out of guide",
+    "message": "This corridor isn't on the floor plan.",
+    "back": "← Back to the entrance"
+  },
+  "auth": {
+    "verified": "Verified",
+    "redirecting": "Redirecting…",
+    "plate": "Plate I · Entrance",
+    "libraryOpensLine1": "The library",
+    "libraryOpensLine2": "opens to you.",
+    "libraryDesc": "Sign in to keep your reading list, your favourite specimens, and your quiet corners of the museum.",
+    "established": "DL · est. 2024",
+    "readingDesk": "Reading desk",
+    "welcomeBack": "Welcome back",
+    "welcomeDesc": "Sign in to your account, or open a new one to start exploring the floor.",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "Your name",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "Your password",
+    "loginSuccess": "Login successful!",
+    "welcomeToast": "Welcome to Dino Library.",
+    "accountCreated": "Account created successfully!",
+    "accountReady": "Your account is ready. You can start exploring now.",
+    "loading": "Please wait…",
+    "errors": {
+      "invalidCredentials": "Incorrect email or password. Please check your credentials.",
+      "userNotFound": "No account found for this email. Please sign up.",
+      "emailInUse": "This email is already registered. Please try to sign in.",
+      "weakPassword": "Password is too weak. Please choose a stronger password.",
+      "generic": "An unexpected error occurred. Please try again."
+    }
+  },
+  "glossary": {
+    "title": "Paleontology glossary",
+    "subtitle": "Essential terms and concepts for understanding the world of dinosaurs and paleontology.",
+    "search": "Search terms…",
+    "examples": "Examples",
+    "seeAlso": "See also",
+    "nothingInIndex": "Nothing in the index",
+    "noTermsFound": "No terms found",
+    "noTermsHint": "Try adjusting your search or select a different category.",
+    "clearSearch": "Clear search",
+    "readyToExplore": "Ready to explore",
+    "ctaTitle": "Now that the language is yours",
+    "ctaDesc": "Dive into the catalogue or browse curated themes — the terminology will travel with you.",
+    "ctaExplore": "Explore species",
+    "ctaDiscover": "Discover themes",
+    "categories": {
+      "all": "All Categories",
+      "anatomy": "Anatomy",
+      "geological": "Geological",
+      "paleontology": "Paleontology",
+      "diet": "Diet"
+    }
+  },
+  "sizes": {
+    "tiny": "Tiny",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "giant": "Giant",
+    "allTime": "All Time",
+    "allPeriodsDesc": "All geological periods",
+    "earlyEvolution": "Early dinosaur evolution",
+    "goldenAge": "Golden age of dinosaurs",
+    "finalPeriod": "Final dinosaur period"
   }
 }

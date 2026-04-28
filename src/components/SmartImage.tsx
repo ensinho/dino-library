@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export type SmartImageStatus = 'loading' | 'loaded' | 'error';
 
@@ -49,12 +48,11 @@ export default function SmartImage({
   const showSkeleton = smooth && status === 'loading';
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn('relative overflow-hidden rounded-2xl ring-1 ring-foreground/8 bg-surface-1', className)}>
       {showSkeleton && (
-        <Skeleton
+        <div
           className={cn(
-            'absolute inset-0 h-full w-full rounded-md',
-            // if caller doesn't pass size, still cover the container
+            'absolute inset-0 h-full w-full img-shimmer',
             skeletonClassName
           )}
           aria-hidden="true"
@@ -65,8 +63,8 @@ export default function SmartImage({
         src={finalSrc}
         alt={alt}
         className={cn(
-          'h-full w-full rounded-md',
-          smooth ? 'transition-opacity duration-500' : '',
+          'h-full w-full',
+          smooth ? 'transition-opacity duration-700 ease-spring' : '',
           status === 'loaded' ? 'opacity-100' : 'opacity-0',
           imgClassName
         )}

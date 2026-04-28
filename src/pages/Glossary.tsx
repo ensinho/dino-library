@@ -105,11 +105,11 @@ export default function Glossary() {
   ];
 
   const categories = [
-    { id: 'all', name: 'All Categories', color: 'bg-gray-500' },
-    { id: 'anatomy', name: 'Anatomy', color: 'bg-blue-500' },
-    { id: 'geological', name: 'Geological', color: 'bg-green-500' },
-    { id: 'paleontology', name: 'Paleontology', color: 'bg-purple-500' },
-    { id: 'diet', name: 'Diet', color: 'bg-orange-500' }
+    { id: 'all',          name: t('glossary.categories.all'),          color: 'bg-gray-500' },
+    { id: 'anatomy',      name: t('glossary.categories.anatomy'),      color: 'bg-jade' },
+    { id: 'geological',   name: t('glossary.categories.geological'),   color: 'bg-green-500' },
+    { id: 'paleontology', name: t('glossary.categories.paleontology'), color: 'bg-purple-500' },
+    { id: 'diet',         name: t('glossary.categories.diet'),         color: 'bg-orange-500' }
   ];
 
   const filteredTerms = glossaryTerms.filter(term => {
@@ -124,144 +124,149 @@ export default function Glossary() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            <span className="bg-gradient-amber bg-clip-text text-transparent">Paleontology Glossary</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Essential terms and concepts for understanding the world of dinosaurs and paleontology.
-          </p>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="mb-8 space-y-4">
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search terms..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+    <div className="min-h-screen bg-background">
+      {/* HEADER */}
+      <section className="pt-16 lg:pt-20 pb-6">
+        <div className="container-editorial">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-caption text-jade">— {t('editorial.rooms.glossary')}</div>
+            <div className="text-caption text-foreground/40 hidden sm:block">{glossaryTerms.length} {t('editorial.entries')}</div>
           </div>
-
-          <div className="flex flex-wrap justify-center gap-2">
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category.id)}
-                className={selectedCategory === category.id ? `${category.color} text-white` : ''}
-              >
-                {category.name}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Glossary Terms */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredTerms.map((term) => (
-            <Card key={term.id} className="hover:shadow-fossil transition-all duration-300 hover:-translate-y-1">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-xl mb-2 flex items-center">
-                      <BookOpen className="mr-2 h-5 w-5 text-amber" />
-                      {term.term}
-                    </CardTitle>
-                  </div>
-                  <Badge className={`${getCategoryColor(term.category)} text-white text-xs`}>
-                    {categories.find(cat => cat.id === term.category)?.name}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  {term.definition}
-                </p>
-
-                {term.examples && term.examples.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="text-sm font-semibold text-amber mb-2">Examples:</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {term.examples.map((example, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {example}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {term.relatedTerms && term.relatedTerms.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-semibold text-amber mb-2 flex items-center">
-                      <LinkIcon className="mr-1 h-3 w-3" />
-                      Related Terms:
-                    </h4>
-                    <div className="flex flex-wrap gap-1">
-                      {term.relatedTerms.map((relatedTerm, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSearchTerm(relatedTerm)}
-                          className="text-xs text-amber hover:text-amber-dark underline"
-                        >
-                          {relatedTerm}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredTerms.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📖</div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              No terms found
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Try adjusting your search or select a different category.
+          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+            <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
+              {t('glossary.title')}
+            </h1>
+            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+              {t('glossary.subtitle')}
             </p>
-            <Button onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }} variant="outline">
-              Clear Search
-            </Button>
           </div>
-        )}
-
-        {/* Call to Action */}
-        <div className="mt-12 text-center">
-          <Card className="bg-gradient-to-r from-amber/10 to-orange/10 border-amber/20">
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-semibold mb-2">Ready to explore?</h3>
-              <p className="text-muted-foreground mb-4">
-                Now that you know the terminology, dive into our dinosaur collection and discover amazing species.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button asChild>
-                  <Link to="/catalog">
-                    Explore Species
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link to="/discover">
-                    Discover Themes
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
-      </div>
+      </section>
+
+      {/* FILTER BAR */}
+      <section className="hairline-t hairline-b py-6 sticky top-0 bg-background/80 backdrop-blur-md z-30">
+        <div className="container-editorial">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div className="md:col-span-5 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+              <Input
+                placeholder={t('glossary.search')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-11 h-11 rounded-full bg-surface-1 border-foreground/10"
+              />
+            </div>
+            <div className="md:col-span-7 flex flex-wrap gap-2 md:justify-end">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`text-caption px-4 py-2 rounded-full ring-1 transition-all duration-300 ease-spring ${
+                    selectedCategory === category.id
+                      ? 'bg-jade text-canvas ring-jade'
+                      : 'bg-surface-1 text-foreground/60 ring-foreground/10 hover:text-jade hover:ring-jade/40'
+                  }`}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* INDEX LIST */}
+      <section className="pb-24 pt-16">
+        <div className="container-editorial">
+          {filteredTerms.length > 0 ? (
+            <ol>
+              {filteredTerms.map((term) => (
+                <li key={term.id} className="hairline-t py-10 grid grid-cols-12 gap-6">
+                  <div className="col-span-12 md:col-span-3 lg:col-span-2">
+                    <div className="text-caption text-jade mb-2">— {categories.find(cat => cat.id === term.category)?.name}</div>
+                    <h2 className="font-display text-display-lg text-foreground tracking-tighter leading-[0.95]">
+                      {term.term}
+                    </h2>
+                  </div>
+                  <div className="col-span-12 md:col-span-9 lg:col-span-7">
+                    <p className="text-foreground/75 leading-relaxed text-base md:text-lg max-w-[60ch]">
+                      {term.definition}
+                    </p>
+                    {term.examples && term.examples.length > 0 && (
+                      <div className="mt-6 hairline-t pt-4">
+                        <div className="text-caption text-foreground/40 mb-2">{t('glossary.examples')}</div>
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs italic text-foreground/70">
+                          {term.examples.map((example, index) => (
+                            <span key={index}>{example}{index < term.examples!.length - 1 && <span className="text-foreground/25 ml-3">·</span>}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-span-12 lg:col-span-3">
+                    {term.relatedTerms && term.relatedTerms.length > 0 && (
+                      <div className="hairline-t lg:hairline-t pt-4 lg:pt-0 lg:border-t-0">
+                        <div className="text-caption text-foreground/40 mb-2 flex items-center gap-1.5">
+                          <LinkIcon className="w-3 h-3" />
+                          {t('glossary.seeAlso')}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          {term.relatedTerms.map((relatedTerm, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setSearchTerm(relatedTerm)}
+                              className="text-caption text-jade hover:text-foreground transition-colors duration-300 text-left"
+                            >
+                              → {relatedTerm}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+              <li className="hairline-t" aria-hidden="true" />
+            </ol>
+          ) : (
+            <div className="py-24 text-center">
+              <div className="text-caption text-jade mb-4">— {t('glossary.nothingInIndex')}</div>
+              <h3 className="font-display text-display-lg text-foreground tracking-tighter mb-3">
+                {t('glossary.noTermsFound')}
+              </h3>
+              <p className="text-foreground/60 mb-8 max-w-[44ch] mx-auto">{t('glossary.noTermsHint')}</p>
+              <Button onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }} variant="outline" size="lg">
+                {t('glossary.clearSearch')}
+              </Button>
+            </div>
+          )}
+
+          {/* CTA */}
+          <div className="hairline-t mt-20 pt-16 grid lg:grid-cols-12 gap-y-6 gap-x-12 items-center">
+            <div className="lg:col-span-7">
+              <div className="text-caption text-jade mb-3">— {t('glossary.readyToExplore')}</div>
+              <h3 className="font-display text-display-lg text-foreground tracking-tighter mb-3">
+                {t('glossary.ctaTitle')}
+              </h3>
+              <p className="text-foreground/65 max-w-[55ch] leading-relaxed">
+                {t('glossary.ctaDesc')}
+              </p>
+            </div>
+            <div className="lg:col-span-5 flex flex-col sm:flex-row gap-3 lg:justify-end">
+              <Button asChild className="bg-jade text-canvas hover:bg-jade/90">
+                <Link to="/catalog">
+                  {t('glossary.ctaExplore')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/discover">{t('glossary.ctaDiscover')}</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

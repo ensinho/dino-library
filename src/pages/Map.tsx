@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/leaflet.css';
 import { divIcon } from 'leaflet';
 import { getDocs, limit as fsLimit, query as fsQuery } from 'firebase/firestore';
 import { col } from '@/services/firestoreService';
+import { DinoLoader } from '@/components/loader';
 
 // Types for dinosaur data
 interface   DinoLocation {
@@ -87,7 +89,7 @@ const getDinosaurIcon = (dino: DinoLocation, isSelected: boolean = false) => {
     color = 'hsl(120, 70%, 45%)'; 
   } else if (behavior.includes('ceratopsian') || name.includes('tricerat') || name.includes('stegosaur') || name.includes('ankylosaur')) {
     emoji = '🛡️'; // Armored
-    color = 'hsl(200, 80%, 50%)';
+    color = 'hsl(158, 86%, 72%)'; // jade
   } else if (behavior.includes('pterosaur') || name.includes('pterano') || name.includes('ptero') || name.includes('flying')) {
     emoji = '🦇'; // Flying
     color = 'hsl(280, 70%, 55%)'; 
@@ -158,6 +160,7 @@ const getCardEmoji = (dino: DinoLocation) => {
 };
 
 const MapPage = () => {
+  const { t } = useTranslation();
   const [selectedDino, setSelectedDino] = useState<DinoLocation | null>(null);
   const [dinoLocations, setDinoLocations] = useState<DinoLocation[]>([]);
   const [filteredDinos, setFilteredDinos] = useState<DinoLocation[]>([]);
@@ -258,7 +261,7 @@ const MapPage = () => {
         .map((dino) => ({
         id: dino.row_index,
         name: dino.common_name || dino.scientific_name || 'Unknown Dinosaur',
-        species: dino.scientific_name || 'Unknown Species',
+        species: dino.scientific_name || t('editorial.unknownSpecies'),
         period: dino.geological_period || 'Unknown Period',
         coordinates: getCoordinatesFromLocation(dino.fossil_location),
         description: dino.behavior_notes || dino.notable_features || 'Information not available',
@@ -293,142 +296,165 @@ const MapPage = () => {
 
   if (loading) {
     return (
-      <div className="w-full h-screen p-4 bg-background flex items-center justify-center">
+      <div className="w-full h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🗺️</div>
-          <div className="text-xl text-muted-foreground">Loading dinosaur map...</div>
+          <div className="text-caption text-jade mb-6">— Plotting fossil sites</div>
+          <DinoLoader size="lg" label={t('editorial.loadingMap')} />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full p-4 bg-background">
-      <div className="mb-4 flex flex-col items-center">
-        <h1 className="text-4xl font-bold text-primary">Dinosaur Map</h1>
-        <p className="text-foreground/80">Discover where different dinosaur species were found ({dinoLocations.length} species mapped, {filteredDinos.length} displayed)</p>
-      </div>
-      <div className=" flex justify-center items-center mb-4">
-      <div className="w-[60%] h-[70vh] bg-card rounded-xl shadow-fossil rounded-lg overflow-hidden border-2 border-primary/30 shadow-amber">
-        <MapContainer
-          center={[20, 0]}
-          zoom={2}
-          minZoom={2}
-          className="z-0"
-          zoomControl={false}
-          ref={setMapRef}
-        >
-          <ZoomControl position="bottomright" />
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          
-          {filteredDinos.map((dino) => (
-            <Marker
-              key={dino.id}
-              position={dino.coordinates}
-              icon={getDinosaurIcon(dino, selectedDino?.id === dino.id)}
-              eventHandlers={{
-                click: () => {
-                  setSelectedDino(dino);
-                },
-              }}
-            >
-              <Popup>
-                <div className="p-3 max-w-xs bg-card text-foreground">
-                  <h3 className="text-lg font-bold text-primary">{dino.name}</h3>
-                  <p className="text-sm">
-                    <span className="font-semibold">Species:</span> {dino.species}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-semibold">Period:</span> {dino.period}
-                  </p>
-                  <p className="text-sm mt-2">{dino.description}</p>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-
-      <div className="bg-card rounded-xl shadow-fossil flex flex-col w-[25%] h-[70vh] rounded-lg border-2 border-primary/30 shadow-amber ml-4 p-4">
-        <div className="flex-1 overflow-y-auto grid grid-cols-1 gap-2 overflow-x-hidden">
-          {filteredDinos.map((dino) => (
-            <div
-              key={dino.id}
-              className={`p-3 bg-card rounded-lg border transition-all duration-300 cursor-pointer hover:scale-105 ${
-                selectedDino?.id === dino.id 
-                  ? 'border-primary bg-primary/20 shadow-xl ring-2 ring-primary/50 transform scale-105' 
-                  : 'border-border hover:border-primary/50 hover:bg-primary/5'
-              }`}
-              onClick={() => focusOnDinosaur(dino)}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg flex-shrink-0">{getCardEmoji(dino)}</span>
-                <h3 className="text-sm font-bold text-primary truncate flex-1">{dino.name}</h3>
-              </div>
-              <p className="text-xs text-foreground/80 truncate ml-6">{dino.species}</p>
-              <p className="text-xs text-muted-foreground ml-6">{dino.period}</p>
+    <div className="min-h-screen bg-background">
+      {/* ============================================================
+           HEADER
+           ============================================================ */}
+      <section className="pt-16 lg:pt-20 pb-6">
+        <div className="container-editorial">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-caption text-jade">— {t('editorial.rooms.map')}</div>
+            <div className="text-caption text-foreground/40 hidden sm:block">
+              {filteredDinos.length} of {dinoLocations.length} mapped
             </div>
-          ))}
-        </div>
-        
-        {currentLimit < 750 && (
-          <div className="mt-4 pt-4 border-t border-border">
-            <button
-              onClick={loadMoreDinosaurs}
-              disabled={loadingMore}
-              className="w-full p-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              {loadingMore ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                  Loading...
-                </div>
-              ) : (
-                `Load More Dinosaurs`
-              )}
-            </button>
           </div>
-        )}
-      </div>
 
-      </div>
-      
-      {/* Legenda dos ícones - agora abaixo do mapa */}
-      <div className="mt-6 max-w-6xl mx-auto p-4 bg-card rounded-lg border border-primary/20 shadow-sm">
-
-        <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
-          {legendCategories.map((category) => (
-            <button
-              key={category.filter}
-              onClick={() => handleFilterClick(category.filter)}
-              className={`flex items-center gap-2 p-2 rounded-lg border transition-all duration-200 hover:scale-105 ${
-                activeFilter === category.filter
-                  ? 'border-primary bg-primary/20 shadow-lg ring-2 ring-primary/50'
-                  : 'border-border hover:border-primary/50 hover:bg-primary/5'
-              }`}
-            >
-              <span className="text-lg">{category.emoji}</span>
-              <span className="text-xs font-medium text-center flex-1">{category.label}</span>
-            </button>
-            
-          ))}
-
-          <button
-            onClick={() => handleFilterClick('all')}
-            className={`px-1 py-1 rounded-md text-sm transition-colors ${
-              activeFilter === 'all' 
-                ? 'bg-primary text-primary-foreground' 
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            }`}
-          >
-            All
-          </button>
+          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+            <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
+              The fossil map
+            </h1>
+            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+              Sites of origin, plotted across the world. Filter by category, click a marker to focus.
+            </p>
+          </div>
         </div>
-      </div>
-      
+      </section>
+
+      {/* ============================================================
+           MAP + INDEX RAIL
+           ============================================================ */}
+      <section className="pb-12">
+        <div className="container-editorial">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Map canvas */}
+            <div className="lg:col-span-8 relative overflow-hidden rounded-3xl ring-1 ring-foreground/8 bg-surface-1 h-[70vh]">
+              <MapContainer
+                center={[20, 0]}
+                zoom={2}
+                minZoom={2}
+                className="z-0 h-full w-full"
+                zoomControl={false}
+                ref={setMapRef}
+              >
+                <ZoomControl position="bottomright" />
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {filteredDinos.map((dino) => (
+                  <Marker
+                    key={dino.id}
+                    position={dino.coordinates}
+                    icon={getDinosaurIcon(dino, selectedDino?.id === dino.id)}
+                    eventHandlers={{ click: () => setSelectedDino(dino) }}
+                  >
+                    <Popup>
+                      <div className="p-3 max-w-xs bg-card text-foreground">
+                        <h3 className="text-lg font-bold text-jade">{dino.name}</h3>
+                        <p className="text-sm"><span className="font-semibold">Species:</span> {dino.species}</p>
+                        <p className="text-sm"><span className="font-semibold">Period:</span> {dino.period}</p>
+                        <p className="text-sm mt-2">{dino.description}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
+            </div>
+
+            {/* Index rail */}
+            <div className="lg:col-span-4 flex flex-col rounded-3xl ring-1 ring-foreground/8 bg-surface-1/40 overflow-hidden h-[70vh]">
+              <div className="px-5 py-4 hairline-b text-caption text-jade">
+                — Index · {filteredDinos.length} entries
+              </div>
+              <div className="flex-1 overflow-y-auto divide-y divide-foreground/8">
+                {filteredDinos.map((dino) => {
+                  const active = selectedDino?.id === dino.id;
+                  return (
+                    <button
+                      key={dino.id}
+                      type="button"
+                      onClick={() => focusOnDinosaur(dino)}
+                      className={`w-full text-left px-5 py-4 transition-colors duration-300 ease-spring ${
+                        active ? 'bg-jade/10' : 'hover:bg-foreground/5'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <h3 className={`font-display text-base tracking-[-0.025em] truncate ${active ? 'text-jade' : 'text-foreground'}`}>
+                          {dino.name}
+                        </h3>
+                        <span className="text-base flex-shrink-0">{getCardEmoji(dino)}</span>
+                      </div>
+                      <p className="text-xs text-foreground/55 italic truncate">{dino.species}</p>
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/40 mt-1">{dino.period}</p>
+                    </button>
+                  );
+                })}
+              </div>
+              {currentLimit < 750 && (
+                <div className="px-5 py-4 hairline-t">
+                  <button
+                    type="button"
+                    onClick={loadMoreDinosaurs}
+                    disabled={loadingMore}
+                    className="w-full text-caption text-jade hover:text-foreground transition-colors duration-300 disabled:opacity-50"
+                  >
+                    {loadingMore ? t('editorial.loadingShort') : t('editorial.loadMoreEntries')}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+           LEGEND / FILTER STRIP
+           ============================================================ */}
+      <section className="pb-32">
+        <div className="container-editorial">
+          <div className="hairline-t pt-8">
+            <div className="text-caption text-jade mb-5">— Filter by category</div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => handleFilterClick('all')}
+                className={`text-caption px-4 py-2 rounded-full ring-1 transition-all duration-300 ease-spring ${
+                  activeFilter === 'all'
+                    ? 'bg-jade text-canvas ring-jade'
+                    : 'bg-surface-1 text-foreground/60 ring-foreground/10 hover:text-jade hover:ring-jade/40'
+                }`}
+              >
+                All
+              </button>
+              {legendCategories.map((category) => (
+                <button
+                  key={category.filter}
+                  type="button"
+                  onClick={() => handleFilterClick(category.filter)}
+                  className={`text-caption px-4 py-2 rounded-full ring-1 transition-all duration-300 ease-spring flex items-center gap-2 ${
+                    activeFilter === category.filter
+                      ? 'bg-jade text-canvas ring-jade'
+                      : 'bg-surface-1 text-foreground/60 ring-foreground/10 hover:text-jade hover:ring-jade/40'
+                  }`}
+                >
+                  <span>{category.emoji}</span>
+                  {category.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

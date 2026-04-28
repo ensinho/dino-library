@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { 
-  Home, 
-  Search, 
-  Map, 
-  Clock, 
-  GraduationCap, 
+import {
+  Home,
+  Search,
+  Map,
+  Clock,
+  GraduationCap,
   User,
   Menu,
   X,
@@ -39,46 +39,57 @@ export function Navigation({ className }: NavigationProps) {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className={cn("bg-card border-b border-border", className)}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center space-x-8">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-amber rounded-lg flex items-center justify-center">
-                {/* <span className="text-amber-foreground font-bold text-lg">🦕</span> */}
-                <img src="/logoDinosaur.svg" alt="Dino Library" className="w-6 h-6" />
-              </div>
-              <span className="font-bold text-xl text-foreground">Dino Library</span>
-            </Link>
+    <nav
+      className={cn(
+        // Sticky translucent shell — Awwwards-style hairline + jade-tinted blur
+        'sticky top-0 z-50 w-full border-b border-foreground/8 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50',
+        className
+      )}
+    >
+      <div className="container-editorial">
+        <div className="flex items-center justify-between h-16">
+          {/* Wordmark — display font, lowercase, tight tracking */}
+          <Link to="/" className="group flex items-center gap-2.5 shrink-0">
+            <span className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/[0.04] ring-1 ring-jade/30 overflow-hidden shadow-[0_0_18px_-4px_hsl(158_86%_72%/0.45)] transition-all duration-300 ease-spring group-hover:ring-jade/60">
+              <img src="/LogoCuteDino.png" alt="DinoLibrary logo" className="h-full w-full object-cover" />
+            </span>
+            <span className="font-display text-lg lowercase tracking-[-0.04em] text-foreground">
+              dino<span className="text-jade">.</span>library
+            </span>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex space-x-1">
-              {navigationItems.map((item) => (
+          {/* Desktop nav — text-only, jade underline on active */}
+          <div className="hidden lg:flex items-center gap-1">
+            {navigationItems.map((item) => {
+              const active = isActive(item.href);
+              return (
                 <Link
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                    isActive(item.href)
-                      ? "bg-amber text-white shadow-amber"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    'relative px-3.5 py-2 text-sm font-medium tracking-[-0.01em] transition-colors duration-300 ease-spring',
+                    active
+                      ? 'text-foreground'
+                      : 'text-foreground/60 hover:text-foreground'
                   )}
                 >
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.name}</span>
+                  {item.name}
+                  <span
+                    className={cn(
+                      'pointer-events-none absolute left-3.5 right-3.5 -bottom-px h-px origin-left scale-x-0 bg-jade transition-transform duration-500 ease-spring',
+                      active && 'scale-x-100'
+                    )}
+                  />
                 </Link>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          <div className="flex items-center space-x-4">
-            {/* Profile Button */}
-            <Link to="/profile">
+          <div className="flex items-center gap-2">
+            <Link to="/profile" className="hidden sm:block">
               <Button
-                variant={isActive('/profile') ? 'default' : 'ghost'}
+                variant={isActive('/profile') ? 'accent' : 'outline'}
                 size="sm"
-                className="flex items-center space-x-2"
               >
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">{t('navigation.profile')}</span>
@@ -86,42 +97,50 @@ export function Navigation({ className }: NavigationProps) {
             </Link>
 
             {/* Mobile menu button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
+                aria-label={t('navigation.menu')}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
-                {mobileMenuOpen ? (
-                  <X className="w-5 h-5" />
-                ) : (
-                  <Menu className="w-5 h-5" />
-                )}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center space-x-3 px-3 py-2 rounded-md text-base font-medium transition-colors",
-                    isActive(item.href)
-                      ? "bg-amber text-amber-foreground shadow-amber"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.name}</span>
-                </Link>
-              ))}
+          <div className="lg:hidden border-t border-foreground/8 py-4">
+            <div className="grid gap-1">
+              {navigationItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors duration-300',
+                      active
+                        ? 'bg-foreground/[0.04] text-foreground ring-1 ring-jade/30'
+                        : 'text-foreground/70 hover:bg-foreground/[0.04] hover:text-foreground'
+                    )}
+                  >
+                    <item.icon className="w-4 h-4 text-jade" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+              <Link
+                to="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-foreground/70 hover:bg-foreground/[0.04] hover:text-foreground"
+              >
+                <User className="w-4 h-4 text-jade" />
+                <span>{t('navigation.profile')}</span>
+              </Link>
             </div>
           </div>
         )}

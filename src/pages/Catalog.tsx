@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DinoLoader } from '@/components/loader';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -138,65 +139,68 @@ export default function Catalog() {
     navigate(`/species/${species.row_index}`);
   };
 
-  const getDietIcon = (diet: string | null) => {
-    switch (diet) {
-      case 'Carnivore': return '🥩';
-      case 'Herbivore': return '🌿';
-      case 'Omnivore': return '🍽️';
-      default: return '❓';
-    }
-  };
-
-  const getDietColor = (diet: string | null) => {
-    switch (diet) {
-      case 'Carnivore': return 'bg-destructive';
-      case 'Herbivore': return 'bg-forest-green';
-      case 'Omnivore': return 'bg-amber';
-      default: return 'bg-muted';
-    }
+  const dietLabel = (diet: string | null) => {
+    if (diet === 'Carnivore') return t('catalog.diet.carnivore');
+    if (diet === 'Herbivore') return t('catalog.diet.herbivore');
+    if (diet === 'Omnivore') return t('catalog.diet.omnivore');
+    return '—';
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🦕🦴</div>
-          <div className="text-xl text-muted-foreground">{t('catalog.loading')}</div>
+          <div className="text-caption text-jade mb-6">— {t('editorial.loadingArchive')}</div>
+          <DinoLoader size="lg" label={t('catalog.loading')} />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="max-w-[90%] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            <span className="bg-gradient-amber bg-clip-text text-transparent">{t('catalog.title')}</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {t('catalog.subtitle')}
-          </p>
-        </div>
+    <div className="min-h-screen bg-background">
+      {/* ============================================================
+           HEADER — wall plaque
+           ============================================================ */}
+      <section className="pt-16 lg:pt-20 pb-6">
+        <div className="container-editorial">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-caption text-jade">— {t('editorial.rooms.catalog')}</div>
+            <div className="text-caption text-foreground/40 hidden sm:block">
+              {total} {t('editorial.specimensOnRecord')}
+            </div>
+          </div>
 
-        {/* Filters */}
-        <div className="space-y-6 mb-8">
-          {/* Basic Filters Row */}
-          <div className="bg-card rounded-xl shadow-fossil p-6">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder={t('catalog.search')}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              
+          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+            <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
+              {t('catalog.title')}
+            </h1>
+            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+              {t('catalog.subtitle')}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+           FILTER RAIL — hairline-bound, no card chrome
+           ============================================================ */}
+      <section className="hairline-t hairline-b">
+        <div className="container-editorial py-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div className="md:col-span-5 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+              <Input
+                placeholder={t('catalog.search')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-11 h-11 rounded-full bg-surface-1 border-foreground/10"
+              />
+            </div>
+
+            <div className="md:col-span-3">
               <Select value={dietFilter} onValueChange={(value) => handleFilterChange('diet', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 rounded-full bg-surface-1 border-foreground/10">
                   <SelectValue placeholder={t('catalog.filters.diet')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -206,9 +210,11 @@ export default function Catalog() {
                   <SelectItem value="Omnivore">{t('catalog.diet.omnivore')}</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
 
+            <div className="md:col-span-3">
               <Select value={livedInFilter} onValueChange={(value) => handleFilterChange('location', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 rounded-full bg-surface-1 border-foreground/10">
                   <SelectValue placeholder={t('catalog.filters.location')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -222,301 +228,263 @@ export default function Catalog() {
                   <SelectItem value="Antarctica">{t('catalog.locations.antarctica')}</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
 
+            <div className="md:col-span-1 flex md:justify-end">
               <LanguageSwitcher />
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                  className="flex items-center space-x-2"
-                >
-                  <Filter className="w-4 h-4" />
-                  <span>{t('catalog.filters.advanced')}</span>
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={clearFilters}
-                  className="flex items-center space-x-2"
-                >
-                  <span>{t('catalog.filters.clear')}</span>
-                </Button>
-              </div>
             </div>
           </div>
 
-          {/* Advanced Filters */}
-          {showAdvancedFilters && (
-            <div className="bg-card rounded-xl shadow-fossil p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Period Timeline */}
-                <div>
-                  <PeriodTimeline 
-                    selectedPeriod={periodFilter}
-                    onPeriodChange={(period) => handleFilterChange('period', period)}
-                  />
-                </div>
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className="text-caption text-jade flex items-center gap-2 hover:text-foreground transition-colors duration-300"
+              >
+                <Filter className="w-3.5 h-3.5" />
+                {t('catalog.filters.advanced')} {showAdvancedFilters ? '−' : '+'}
+              </button>
+              <span className="text-caption text-foreground/30">/</span>
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-caption text-foreground/50 hover:text-jade transition-colors duration-300"
+              >
+                {t('catalog.filters.clear')}
+              </button>
+            </div>
+          </div>
 
-                {/* Size Filter */}
-                <div>
-                  <SizeFilter
-                    lengthRange={lengthRange}
-                    onLengthRangeChange={setLengthRange}
-                    heightRange={heightRange}
-                    onHeightRangeChange={setHeightRange}
-                    onReset={resetSizeFilters}
-                  />
-                </div>
+          {showAdvancedFilters && (
+            <div className="mt-8 pt-8 hairline-t grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div>
+                <PeriodTimeline
+                  selectedPeriod={periodFilter}
+                  onPeriodChange={(period) => handleFilterChange('period', period)}
+                />
+              </div>
+              <div>
+                <SizeFilter
+                  lengthRange={lengthRange}
+                  onLengthRangeChange={setLengthRange}
+                  heightRange={heightRange}
+                  onHeightRangeChange={setHeightRange}
+                  onReset={resetSizeFilters}
+                />
               </div>
             </div>
           )}
         </div>
+      </section>
 
-        {/* Results Count */}
-        <div className="mb-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <p className="text-muted-foreground">
-              {t('catalog.pagination.showing')} {Math.min(itemsPerPage, filteredSpecies.length)} {t('catalog.pagination.of')} {total} {t('catalog.pagination.species')}
-              ({t('catalog.pagination.page')} {currentPage} {t('catalog.pagination.of')} {totalPages})
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Items per page */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{t('catalog.pagination.perPage')}</span>
-                <Select
-                  value={String(itemsPerPage)}
-                  onValueChange={(v) => setItemsPerPage(Number(v))}
-                >
-                  <SelectTrigger className="w-[92px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="12">12</SelectItem>
-                    <SelectItem value="16">16</SelectItem>
-                    <SelectItem value="24">24</SelectItem>
-                    <SelectItem value="32">32</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Grid density */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{t('catalog.pagination.grid')}</span>
-                <Select value={gridCols} onValueChange={(v) => setGridCols(v as any)}>
-                  <SelectTrigger className="w-[92px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+      {/* ============================================================
+           META BAR — result count + density controls
+           ============================================================ */}
+      <section className="py-6">
+        <div className="container-editorial flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <p className="text-caption text-foreground/50">
+            {t('catalog.pagination.showing')} {Math.min(itemsPerPage, filteredSpecies.length)} {t('catalog.pagination.of')} {total} {t('catalog.pagination.species')} · {t('catalog.pagination.page')} {currentPage}/{totalPages}
+          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-caption text-foreground/40">{t('catalog.pagination.perPage')}</span>
+              <Select value={String(itemsPerPage)} onValueChange={(v) => setItemsPerPage(Number(v))}>
+                <SelectTrigger className="w-[78px] h-9 rounded-full bg-surface-1 border-foreground/10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="12">12</SelectItem>
+                  <SelectItem value="16">16</SelectItem>
+                  <SelectItem value="24">24</SelectItem>
+                  <SelectItem value="32">32</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-caption text-foreground/40">{t('catalog.pagination.grid')}</span>
+              <Select value={gridCols} onValueChange={(v) => setGridCols(v as any)}>
+                <SelectTrigger className="w-[78px] h-9 rounded-full bg-surface-1 border-foreground/10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Species Grid */}
-        <div
-          className={
-            gridCols === '2'
-              ? 'grid grid-cols-1 md:grid-cols-2 gap-8'
-              : gridCols === '3'
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
-                : gridCols === '5'
-                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8'
-                  : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'
-          }
-        >
-          {filteredSpecies.map((dino) => (
-            <Card
-              key={dino.row_index}
-              className="group relative hover:shadow-fossil transition-all duration-300 hover:-translate-y-2"
-            >
-              {/* Full-card clickable overlay (prevents inner elements/overlays from swallowing click) */}
-              <button
-                type="button"
-                onClick={() => handleSpeciesClick(dino)}
-                className="absolute inset-0 z-10 cursor-pointer rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                aria-label={`${t('catalog.viewSpecies', { name: dino.common_name || '' })}`}
-              />
+      {/* ============================================================
+           SPECIES GRID — plate-style cards
+           ============================================================ */}
+      <section className="pb-32">
+        <div className="container-editorial">
+          <div
+            className={
+              gridCols === '2'
+                ? 'grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10'
+                : gridCols === '3'
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8'
+                  : gridCols === '5'
+                    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6'
+                    : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7'
+            }
+          >
+            {filteredSpecies.map((dino) => (
+              <article key={dino.row_index} className="group relative flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => handleSpeciesClick(dino)}
+                  className="absolute inset-0 z-20 cursor-pointer rounded-3xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  aria-label={`${t('catalog.viewSpecies', { name: dino.common_name || '' })}`}
+                />
 
-              {dino.image_url && (
-                <div className="h-48 w-full overflow-hidden rounded-t-xl bg-muted flex items-center justify-center">
-                  <SmartImage
-                    src={dino.image_url}
-                    alt={dino.scientific_name || dino.common_name || 'Dinosaur'}
-                    className="w-full h-full"
-                    skeletonClassName="rounded-none"
-                    imgClassName="object-cover w-full h-full rounded-none transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <CardHeader>
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                  <CardTitle className="text-xl mb-1">{dino.common_name}</CardTitle>
-                    <CardDescription className="italic text-amber">
-                      {dino.scientific_name}
-                    </CardDescription>
+                <div className="relative aspect-[4/5] overflow-hidden rounded-3xl ring-1 ring-foreground/8 mb-5 bg-surface-1">
+                  {dino.image_url ? (
+                    <SmartImage
+                      src={dino.image_url}
+                      alt={dino.scientific_name || dino.common_name || t('editorial.dinosaurAlt')}
+                      className="absolute inset-0 w-full h-full"
+                      skeletonClassName="rounded-3xl"
+                      imgClassName="object-cover w-full h-full img-duotone-hover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-caption text-foreground/30">
+                      no plate
+                    </div>
+                  )}
+                  <div className="absolute top-4 left-4 z-10 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
+                    {dino.geological_period || '—'}
                   </div>
-                  <Badge variant="secondary" className="shrink-0">
-                    {dino.geological_period}
-                  </Badge>
                 </div>
-                <div className="flex space-x-2">
-                  <Badge className={`${getDietColor(dino.diet)} text-white`}>
-                    {getDietIcon(dino.diet)} {dino.diet === 'Carnivore' ? t('catalog.diet.carnivore') :
-                     dino.diet === 'Herbivore' ? t('catalog.diet.herbivore') : t('catalog.diet.omnivore')}
-                  </Badge>
+
+                <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <h3 className="font-display text-xl tracking-[-0.025em] text-foreground transition-colors duration-300 ease-spring group-hover:text-jade">
+                    {dino.common_name}
+                  </h3>
+                  <span className="font-mono text-xs uppercase tracking-widest text-jade">
+                    {dietLabel(dino.diet)}
+                  </span>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                 {dino.meaning} - {dino.behavior_notes}
+                <p className="font-mono text-xs uppercase tracking-widest text-foreground/40 mb-3 italic">
+                  {dino.scientific_name}
                 </p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between space-x-2">
-                    <div className="flex items-center space-x-2">
-                      <Ruler className="w-4 h-4 text-amber" />
-                      <span>{t('catalog.stats.length')}: {dino.length_m ? `${dino.length_m}${t('catalog.stats.meters')}` : t('catalog.stats.unknown')}</span>
-                    </div>
+                <p className="text-sm text-foreground/60 leading-relaxed line-clamp-2 mb-4">
+                  {dino.meaning}{dino.behavior_notes ? ` — ${dino.behavior_notes}` : ''}
+                </p>
 
-                    <div className="flex items-center space-x-2">
-                      <Ruler className="w-4 h-4 text-amber" />
-                      <span>{t('catalog.stats.height')}: {dino.height_m ? `${dino.height_m}${t('catalog.stats.meters')}` : t('catalog.stats.unknown')}</span>
-                    </div>
-                    
+                <dl className="mt-auto pt-4 hairline-t grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <dt className="text-caption text-foreground/40 mb-0.5">L</dt>
+                    <dd className="font-display text-foreground tracking-tight">
+                      {dino.length_m ? `${dino.length_m}m` : '—'}
+                    </dd>
                   </div>
-                  <div className="flex items-center justify-between space-x-2">
-                    <div className="flex items-center space-x-2">
-                      <Weight className="w-4 h-4 text-amber" />
-                      <span>{t('catalog.stats.weight')}: {dino.weight_kg ? `${dino.weight_kg}${t('catalog.stats.kilograms')}` : t('catalog.stats.unknown')}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-amber" />
-                      <span>{t('catalog.stats.found')}: {dino.first_discovered || t('catalog.stats.unknown')}</span>
-                    </div>
+                  <div>
+                    <dt className="text-caption text-foreground/40 mb-0.5">H</dt>
+                    <dd className="font-display text-foreground tracking-tight">
+                      {dino.height_m ? `${dino.height_m}m` : '—'}
+                    </dd>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                    <MapPin className="w-4 h-4 text-amber" />
-                    <span>{dino.lived_in || t('catalog.stats.unknown')}</span>
+                  <div>
+                    <dt className="text-caption text-foreground/40 mb-0.5">Wt</dt>
+                    <dd className="font-display text-foreground tracking-tight">
+                      {dino.weight_kg ? `${dino.weight_kg}kg` : '—'}
+                    </dd>
                   </div>
+                </dl>
+              </article>
+            ))}
+          </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Bone className="w-4 h-4 text-amber" />
-                    <span>{dino.fossil_location || t('catalog.stats.unknown')}</span>
-                  </div>
-                  </div>
-                </div>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-20 pt-10 hairline-t flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) setCurrentPage(currentPage - 1);
+                      }}
+                      className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                    />
+                  </PaginationItem>
+                  {currentPage > 3 && (
+                    <>
+                      <PaginationItem>
+                        <PaginationLink href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(1); }}>
+                          1
+                        </PaginationLink>
+                      </PaginationItem>
+                      {currentPage > 4 && <PaginationEllipsis />}
+                    </>
+                  )}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((page) => page >= currentPage - 2 && page <= currentPage + 2)
+                    .map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={page === currentPage}
+                          onClick={(e) => { e.preventDefault(); setCurrentPage(page); }}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                  {currentPage < totalPages - 2 && (
+                    <>
+                      {currentPage < totalPages - 3 && <PaginationEllipsis />}
+                      <PaginationItem>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => { e.preventDefault(); setCurrentPage(totalPages); }}
+                        >
+                          {totalPages}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </>
+                  )}
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                      }}
+                      className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
 
-                {dino.notable_features && (
-                  <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                    <h4 className="text-sm font-medium text-amber mb-2">Notable Feature:</h4>
-                    <p className="text-xs text-muted-foreground">
-                      {dino.notable_features}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+          {filteredSpecies.length === 0 && !loading && (
+            <div className="py-24 text-center">
+              <div className="text-caption text-jade mb-4">— No specimens match</div>
+              <h3 className="font-display text-display-lg text-foreground tracking-tighter mb-4">
+                {t('catalog.noResults.title')}
+              </h3>
+              <p className="text-foreground/60 mb-8 max-w-[44ch] mx-auto">
+                {t('catalog.noResults.subtitle')}
+              </p>
+              <Button onClick={clearFilters} variant="outline" size="lg">
+                {t('catalog.noResults.action')}
+              </Button>
+            </div>
+          )}
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-12 flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage > 1) setCurrentPage(currentPage - 1);
-                    }}
-                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                  />
-                </PaginationItem>
-                
-                {/* First page */}
-                {currentPage > 3 && (
-                  <>
-                    <PaginationItem>
-                      <PaginationLink href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(1); }}>
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    {currentPage > 4 && <PaginationEllipsis />}
-                  </>
-                )}
-                
-                {/* Nearby pages */}
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter(page => page >= currentPage - 2 && page <= currentPage + 2)
-                  .map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink 
-                        href="#" 
-                        isActive={page === currentPage}
-                        onClick={(e) => { e.preventDefault(); setCurrentPage(page); }}
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                
-                {/* Last page */}
-                {currentPage < totalPages - 2 && (
-                  <>
-                    {currentPage < totalPages - 3 && <PaginationEllipsis />}
-                    <PaginationItem>
-                      <PaginationLink 
-                        href="#" 
-                        onClick={(e) => { e.preventDefault(); setCurrentPage(totalPages); }}
-                      >
-                        {totalPages}
-                      </PaginationLink>
-                    </PaginationItem>
-                  </>
-                )}
-                
-                <PaginationItem>
-                  <PaginationNext 
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-                    }}
-                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
-
-        {filteredSpecies.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              {t('catalog.noResults.title')}
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              {t('catalog.noResults.subtitle')}
-            </p>
-            <Button onClick={clearFilters} variant="outline">
-              {t('catalog.noResults.action')}
-            </Button>
-          </div>
-        )}
-      </div>
+      </section>
     </div>
   );
 }
