@@ -4,6 +4,7 @@ service-account*.json*
 # Local env files
 .env
 .env.*
+!.env.example
 # Logs
 logs
 *.log
