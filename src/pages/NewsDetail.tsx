@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { DinoLoader } from '@/components/loader';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { 
   ArrowLeft, 
   Calendar, 
   User, 
   Clock, 
-  Share2, 
   Tag,
   Twitter,
   Facebook,
@@ -26,49 +23,37 @@ import remarkGfm from 'remark-gfm';
 
 export default function NewsDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  usePageTitle(article?.title);
 
   useEffect(() => {
-    if (id) {
-      loadArticle(id);
-    }
-  }, [id, i18n.language]);
-
-  const loadArticle = async (articleId: string) => {
-    try {
-      setLoading(true);
-      const [articleData, related] = await Promise.all([
-        getArticleById(articleId, i18n.language),
-        getRelatedArticles(articleId, i18n.language)
-      ]);
-      
-      if (!articleData) {
-        navigate('/news');
-        return;
-      }
-
-      setArticle(articleData);
-      setRelatedArticles(related);
-    } catch (error) {
-      console.error('Error loading article:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load article",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!id) return;
+    let cancelled = false;
+    setLoading(true);
+    Promise.all([getArticleById(id, i18n.language), getRelatedArticles(id, i18n.language)])
+      .then(([articleData, related]) => {
+        if (cancelled) return;
+        // Unknown ids fall through to the "out of file" state below.
+        setArticle(articleData ?? null);
+        setRelatedArticles(related);
+      })
+      .catch((error) => {
+        console.error('Error loading article:', error);
+        toast({ title: t('common.error'), description: t('common.errorMessage'), variant: 'destructive' });
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [id, i18n.language, t, toast]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -79,8 +64,8 @@ export default function NewsDetail() {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     toast({
-      title: "Link copied!",
-      description: "Article link has been copied to clipboard"
+      title: t('news.linkCopied'),
+      description: t('news.linkCopiedDesc')
     });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -118,7 +103,7 @@ export default function NewsDetail() {
         <div className="text-center">
           <div className="text-caption text-jade mb-3">— {t('editorial.outOfFile')}</div>
           <h2 className="font-display text-display-lg text-foreground tracking-tighter mb-6">{t('news.noResults.title')}</h2>
-          <Link to="/news"><Button variant="outline" size="lg">{t('news.detail.backToNews')}</Button></Link>
+          <Button asChild variant="outline" size="lg"><Link to="/news">{t('news.detail.backToNews')}</Link></Button>
         </div>
       </div>
     );
@@ -213,7 +198,7 @@ export default function NewsDetail() {
         <div className="container-editorial pb-24">
           <div className="hairline-t pt-10 lg:pl-[16.666%] grid grid-cols-12 gap-6 items-start">
             <div className="col-span-12 md:col-span-2">
-              <div className="text-caption text-jade">— Byline</div>
+              <div className="text-caption text-jade">— {t('news.byline')}</div>
             </div>
             <div className="col-span-12 md:col-span-9">
               <h3 className="font-display text-2xl tracking-[-0.025em] text-foreground mb-2">{article.author}</h3>

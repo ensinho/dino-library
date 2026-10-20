@@ -1,5 +1,6 @@
 import { getDocs, limit, query, where } from 'firebase/firestore';
 import { col } from './firestoreService';
+import { shuffle } from '@/lib/quiz';
 
 export interface QuizQuestion {
   id?: string;
@@ -145,6 +146,9 @@ export async function fetchQuizQuestions(
   language: string = 'en'
 ): Promise<QuizQuestion[]> {
   const candidates = buildLanguageCandidates(language);
+  // `en` is always a fallback candidate; it only counts as a match for English users.
+  const isEnglish = language.toLowerCase().startsWith('en');
+  const own = candidates.map((c) => c.toLowerCase()).filter((c) => isEnglish || c !== 'en');
   const base = col('quiz_questions');
   const q = difficulty
     ? query(base, where('difficulty', '==', difficulty), limit(200))
@@ -158,15 +162,15 @@ export async function fetchQuizQuestions(
       if (!parsed) return null;
 
       const lang = (parsed.language || '').toLowerCase();
-      const preferred = candidates.map((c) => c.toLowerCase());
-      const matchScore = lang && preferred.includes(lang) ? 2 : hasLocalizedContent(raw, candidates) ? 1 : 0;
+      const matchScore = lang && own.includes(lang) ? 2 : hasLocalizedContent(raw, own) ? 1 : 0;
 
       return { parsed, matchScore };
     })
-    .filter((x): x is { parsed: QuizQuestion; matchScore: number } => x !== null)
-    .sort((a, b) => b.matchScore - a.matchScore)
-    .map((x) => x.parsed);
+    .filter((x): x is { parsed: QuizQuestion; matchScore: number } => x !== null);
 
-  // Keep randomized behavior while preferring language-matching content first.
-  return normalized.sort(() => Math.random() - 0.5).slice(0, Math.min(amount, normalized.length));
+  // Prefer questions in the user's language, randomised within each tier.
+  const best = Math.max(0, ...normalized.map((x) => x.matchScore));
+  const preferred = shuffle(normalized.filter((x) => x.matchScore === best));
+  const rest = shuffle(normalized.filter((x) => x.matchScore !== best));
+  return [...preferred, ...rest].slice(0, amount).map((x) => x.parsed);
 }

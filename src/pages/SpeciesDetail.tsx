@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { DinoLoader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SpeciesGallery from '@/components/SpeciesGallery';
-import { 
-  ArrowLeft, 
-  Ruler, 
-  Calendar, 
-  MapPin, 
-  Weight, 
-  Bone, 
+import SpeciesCard from '@/components/SpeciesCard';
+import FavoriteButton from '@/components/FavoriteButton';
+import SmartImage from '@/components/SmartImage';
+import { PageLoader, PageMessage } from '@/components/PageState';
+import { useToast } from '@/hooks/use-toast';
+import { useAllDinosaurs, useDinosaur, useSpeciesImages } from '@/hooks/useDinosaurs';
+import { useDinoLabels } from '@/hooks/useDinoLabels';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { dietGroupOf } from '@/lib/taxonomy';
+import { displayName, relatedTo } from '@/services/dinosaurService';
+import {
+  ArrowLeft,
+  Ruler,
+  Calendar,
+  MapPin,
+  Weight,
+  Bone,
   Heart,
   Eye,
   Mountain,
@@ -23,117 +29,67 @@ import {
   Share2,
   Camera
 } from 'lucide-react';
-import { dinosaurService, DinosaurSpecies } from '@/services/dinosaurService';
-import { useAnalytics } from '@/services/analyticsService';
 
 export default function SpeciesDetail() {
   const { dinoId } = useParams<{ dinoId: string }>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const analytics = useAnalytics();
-  
-  const [species, setSpecies] = useState<DinosaurSpecies | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+  const labels = useDinoLabels();
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    if (dinoId) {
-      fetchSpeciesDetail(dinoId);
-      analytics.trackPageView(`/species/${dinoId}`);
-    }
-  }, [dinoId]);
-
-  const fetchSpeciesDetail = async (id: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await dinosaurService.getDinosaurById(id);
-      setSpecies(data);
-      analytics.trackSpeciesView(data.row_index, data.common_name || data.scientific_name || 'Unknown');
-    } catch (error) {
-      console.error('Error fetching species detail:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch species details');
-      analytics.trackError(error instanceof Error ? error : new Error('Failed to fetch species details'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getDietIcon = (diet: string | null) => {
-    switch (diet) {
-      case 'Carnivore': return 'ðŸ¥©';
-      case 'Herbivore': return 'ðŸŒ¿';
-      case 'Omnivore': return 'ðŸ½ï¸';
-      default: return '❓';
-    }
-  };
-
-  const getDietColor = (diet: string | null) => {
-    switch (diet) {
-      case 'Carnivore': return 'bg-destructive';
-      case 'Herbivore': return 'bg-forest-green';
-      case 'Omnivore': return 'bg-amber';
-      default: return 'bg-muted';
-    }
-  };
-
-  const getPeriodEmoji = (period: string | null) => {
-    switch (period?.toLowerCase()) {
-      case 'triassic': return 'ðŸŒ‹';
-      case 'jurassic': return 'ðŸŒ²';
-      case 'cretaceous': return 'ðŸŒº';
-      default: return 'ðŸ¦•';
-    }
-  };
+  const { data: species, isPending, isError } = useDinosaur(dinoId);
+  const { data: all } = useAllDinosaurs();
+  const related = useMemo(() => (species && all ? relatedTo(species, all, 4) : []), [species, all]);
+  const relatedImages = useSpeciesImages(related);
+  const heroImages = useSpeciesImages(useMemo(() => (species ? [species] : []), [species]));
+  usePageTitle(species ? displayName(species) : undefined);
 
   const shareSpecies = async () => {
-    if (navigator.share && species) {
+    if (!species) return;
+    const name = displayName(species);
+    const url = window.location.href;
+    if (navigator.share) {
       try {
-        await navigator.share({
-          title: `${species.common_name || species.scientific_name} - Dino Library`,
-          text: `Descubra mais sobre ${species.common_name || species.scientific_name} na Dino Library!`,
-          url: window.location.href,
-        });
-        analytics.track('species_shared', { species_id: species.row_index });
-      } catch (error) {
-        console.log('Error sharing:', error);
+        await navigator.share({ title: `${name} · Dino Library`, text: t('species.shareText', { name }), url });
+      } catch {
+        // User dismissed the share sheet — nothing to do.
       }
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      analytics.track('species_link_copied', { species_id: species?.row_index });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({ title: t('species.linkCopied') });
+    } catch {
+      toast({ title: t('common.error'), variant: 'destructive' });
     }
   };
 
-  if (loading) {
+  if (isPending) {
+    return <PageLoader caption={t('editorial.pullingSpecimen')} label={t('species.loading')} />;
+  }
+
+  if (isError || !species) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-caption text-jade mb-6">— {t('editorial.pullingSpecimen')}</div>
-          <DinoLoader size="lg" label={t('species.loading')} />
-        </div>
-      </div>
+      <PageMessage
+        caption={t('editorial.specimenNotOnFile')}
+        title={t('species.notFound.title')}
+        message={t('species.notFound.message')}
+        action={
+          <Button asChild variant="outline" size="lg">
+            <Link to="/catalog">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t('species.backToCatalog')}
+            </Link>
+          </Button>
+        }
+      />
     );
   }
 
-  if (error || !species) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="text-caption text-jade mb-4">— {t('editorial.specimenNotOnFile')}</div>
-          <h1 className="font-display text-display-lg text-foreground tracking-tighter mb-4">
-            {t('species.notFound.title')}
-          </h1>
-          <p className="text-foreground/60 mb-8">{error || t('species.notFound.message')}</p>
-          <Button onClick={() => navigate('/catalog')} variant="outline" size="lg">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t('species.backToCatalog')}
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const name = displayName(species);
+  const heroImage = heroImages[species.row_index] ?? species.image_url;
+  const dietGroup = dietGroupOf(species.diet);
+  const metric = (value: number | null, unit: string) => (value ? `${value.toLocaleString()} ${unit}` : '—');
 
   return (
     <div className="min-h-screen bg-background">
@@ -144,31 +100,33 @@ export default function SpeciesDetail() {
         <div className="container-editorial">
           {/* Back / Share bar */}
           <div className="flex items-center justify-between mb-12">
-            <button
-              type="button"
-              onClick={() => navigate('/catalog')}
+            <Link
+              to="/catalog"
               className="text-caption text-foreground/50 hover:text-jade transition-colors duration-300 flex items-center gap-2"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               {t('species.backToCatalog')}
-            </button>
-            <button
-              type="button"
-              onClick={shareSpecies}
-              className="text-caption text-foreground/50 hover:text-jade transition-colors duration-300 flex items-center gap-2"
-            >
-              <Share2 className="h-3.5 w-3.5" />
-              {t('species.share')}
-            </button>
+            </Link>
+            <div className="flex items-center gap-6">
+              <FavoriteButton speciesId={species.row_index} name={name} variant="inline" />
+              <button
+                type="button"
+                onClick={shareSpecies}
+                className="text-caption text-foreground/50 hover:text-jade transition-colors duration-300 flex items-center gap-2"
+              >
+                <Share2 className="h-3.5 w-3.5" />
+                {t('species.share')}
+              </button>
+            </div>
           </div>
 
           {/* Top label bar */}
           <div className="flex items-center justify-between mb-8 hairline-b pb-6">
-            <div className="text-caption text-jade">— Specimen file · Nº {species.row_index}</div>
+            <div className="text-caption text-jade">— {t('editorial.specimenFile')} · Nº {species.row_index}</div>
             <div className="text-caption text-foreground/40 hidden sm:flex gap-3">
-              <span>{species.geological_period || '—'}</span>
+              <span>{labels.period(species.geological_period)}</span>
               <span className="opacity-30">·</span>
-              <span>{species.diet || '—'}</span>
+              <span>{labels.diet(species.diet)}</span>
             </div>
           </div>
 
@@ -177,11 +135,13 @@ export default function SpeciesDetail() {
             {/* Plate */}
             <figure className="lg:col-span-7 relative overflow-hidden rounded-3xl ring-1 ring-foreground/8 bg-surface-1">
               <div className="aspect-[4/5]">
-                {species.image_url ? (
-                  <img
-                    src={species.image_url}
-                    alt={species.common_name || species.scientific_name || t('editorial.dinosaurAlt')}
-                    className="absolute inset-0 w-full h-full object-cover"
+                {heroImage ? (
+                  <SmartImage
+                    src={heroImage}
+                    alt={name || t('editorial.dinosaurAlt')}
+                    className="absolute inset-0 w-full h-full rounded-none ring-0"
+                    imgClassName="object-cover w-full h-full"
+                    loading="eager"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -190,14 +150,14 @@ export default function SpeciesDetail() {
                 )}
               </div>
               <figcaption className="absolute left-5 bottom-5 z-10 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
-                {t('editorial.plate')} · {species.common_name}
+                {t('editorial.plate')} · {name}
               </figcaption>
             </figure>
 
             {/* Wall text */}
             <div className="lg:col-span-5">
               <h1 className="font-display text-display-xl text-foreground tracking-tighter">
-                {species.common_name || t('editorial.unknownSpecies')}
+                {name || t('editorial.unknownSpecies')}
               </h1>
               <p className="mt-3 font-mono text-sm uppercase tracking-widest text-jade italic">
                 {species.scientific_name || t('editorial.speciesPlaceholder')}
@@ -221,24 +181,16 @@ export default function SpeciesDetail() {
 
               {/* Compact specimen index */}
               <dl className="mt-10 grid grid-cols-3 gap-x-6 gap-y-2 hairline-t pt-6">
-                <div>
-                  <dt className="text-caption text-foreground/40 mb-1">Length</dt>
-                  <dd className="font-display text-2xl text-foreground tracking-tight">
-                    {species.length_m ? `${species.length_m}m` : '—'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-caption text-foreground/40 mb-1">Height</dt>
-                  <dd className="font-display text-2xl text-foreground tracking-tight">
-                    {species.height_m ? `${species.height_m}m` : '—'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-caption text-foreground/40 mb-1">Weight</dt>
-                  <dd className="font-display text-2xl text-foreground tracking-tight">
-                    {species.weight_kg ? `${species.weight_kg}kg` : '—'}
-                  </dd>
-                </div>
+                {[
+                  [t('species.factFile.length'), metric(species.length_m, 'm')],
+                  [t('species.factFile.height'), metric(species.height_m, 'm')],
+                  [t('species.factFile.weight'), metric(species.weight_kg, 'kg')],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="text-caption text-foreground/40 mb-1">{label}</dt>
+                    <dd className="font-display text-2xl text-foreground tracking-tight">{value}</dd>
+                  </div>
+                ))}
               </dl>
             </div>
           </div>
@@ -279,10 +231,10 @@ export default function SpeciesDetail() {
                   </div>
                   <dl className="divide-y divide-foreground/8">
                     {[
-                      { icon: Ruler, label: t('species.factFile.length'), value: species.length_m ? `${species.length_m}m` : '—' },
-                      { icon: Ruler, label: t('species.factFile.height'), value: species.height_m ? `${species.height_m}m` : '—' },
-                      { icon: Weight, label: t('species.factFile.weight'), value: species.weight_kg ? `${species.weight_kg}kg` : '—' },
-                      { icon: Heart, label: t('species.factFile.diet'), value: species.diet || '—' },
+                      { icon: Ruler, label: t('species.factFile.length'), value: metric(species.length_m, 'm') },
+                      { icon: Ruler, label: t('species.factFile.height'), value: metric(species.height_m, 'm') },
+                      { icon: Weight, label: t('species.factFile.weight'), value: metric(species.weight_kg, 'kg') },
+                      { icon: Heart, label: t('species.factFile.diet'), value: labels.diet(species.diet) },
                       { icon: Bone, label: t('species.factFile.locomotion'), value: species.locomotion || '—' },
                       { icon: Eye, label: t('species.factFile.intelligence'), value: species.intelligence_level || '—' }
                     ].map((row, i) => (
@@ -300,14 +252,10 @@ export default function SpeciesDetail() {
                 </div>
 
                 <div className="lg:col-span-7 space-y-12">
-                  {species.diet && (
+                  {dietGroup && (
                     <div>
                       <div className="text-caption text-jade mb-4">— {t('species.diet.title')}</div>
-                      <p className="text-foreground/75 leading-relaxed">
-                        {species.diet === 'Carnivore' && t('species.diet.carnivore')}
-                        {species.diet === 'Herbivore' && t('species.diet.herbivore')}
-                        {species.diet === 'Omnivore' && t('species.diet.omnivore')}
-                      </p>
+                      <p className="text-foreground/75 leading-relaxed">{t(`species.diet.${dietGroup}`)}</p>
                     </div>
                   )}
 
@@ -347,9 +295,9 @@ export default function SpeciesDetail() {
                   <h4 className="font-display text-xl tracking-[-0.025em] text-foreground mb-6">{t('species.anatomy.physicalCharacteristics')}</h4>
                   <dl className="divide-y divide-foreground/8">
                     {[
-                      [t('species.factFile.length'), species.length_m ? `${species.length_m}m` : '—'],
-                      [t('species.factFile.height'), species.height_m ? `${species.height_m}m` : '—'],
-                      [t('species.factFile.weight'), species.weight_kg ? `${species.weight_kg}kg` : '—'],
+                      [t('species.factFile.length'), metric(species.length_m, 'm')],
+                      [t('species.factFile.height'), metric(species.height_m, 'm')],
+                      [t('species.factFile.weight'), metric(species.weight_kg, 'kg')],
                       [t('species.factFile.locomotion'), species.locomotion || '—']
                     ].map(([label, value], i) => (
                       <div key={i} className="grid grid-cols-2 py-3 text-sm">
@@ -383,7 +331,10 @@ export default function SpeciesDetail() {
                     </div>
                     <div className="grid grid-cols-2 py-3 text-sm">
                       <dt className="text-foreground/50">{t('species.ecology.habitat')}</dt>
-                      <dd className="text-right font-display text-foreground tracking-tight">{species.lived_in || '—'}</dd>
+                      <dd className="text-right font-display text-foreground tracking-tight">
+                        {species.lived_in || '—'}
+                        <span className="block text-caption text-foreground/40 mt-1">{labels.region(species.lived_in, species.fossil_location)}</span>
+                      </dd>
                     </div>
                   </dl>
                 </div>
@@ -435,19 +386,28 @@ export default function SpeciesDetail() {
             </TabsContent>
           </Tabs>
 
-          {/* Related CTA */}
-          <div className="mt-24 pt-10 hairline-t flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <div className="text-caption text-jade mb-3">— {t('species.relatedSpecies.title')}</div>
-              <p className="font-display text-display-lg text-foreground tracking-tighter max-w-[20ch]">
-                {t('species.relatedSpecies.description')}
-              </p>
+          {/* Related species */}
+          <div className="mt-24 pt-10 hairline-t">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+              <div>
+                <div className="text-caption text-jade mb-3">— {t('species.relatedSpecies.title')}</div>
+                <p className="font-display text-display-lg text-foreground tracking-tighter max-w-[20ch]">
+                  {t('species.relatedSpecies.description')}
+                </p>
+              </div>
+              <Button asChild variant="accent" size="lg">
+                <Link to="/catalog">{t('species.relatedSpecies.exploreCatalog')}</Link>
+              </Button>
             </div>
-            <Button asChild variant="accent" size="lg">
-              <Link to="/catalog">
-                {t('species.relatedSpecies.exploreCatalog')}
-              </Link>
-            </Button>
+            {related.length > 0 && (
+              <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+                {related.map((d) => (
+                  <li key={d.row_index}>
+                    <SpeciesCard species={d} imageUrl={relatedImages[d.row_index]} variant="compact" />
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </div>
       </section>

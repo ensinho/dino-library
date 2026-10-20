@@ -1,105 +1,108 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FirebaseError } from 'firebase/app';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { DinoLoader } from '@/components/loader';
 import { useToast } from '@/hooks/use-toast';
-import type { User } from 'firebase/auth';
-import {
-  listenToAuthChanges,
-  signInWithEmail,
-  signUpWithEmail,
-} from '@/services/firebaseAuthService';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { sendPasswordReset, signInWithEmail, signUpWithEmail } from '@/services/firebaseAuthService';
 import paleoArt from '@/assets/backgrounds/Paleoart2.jpg';
+
+/** Firebase error code → translation key. */
+const AUTH_ERRORS: Record<string, string> = {
+  'auth/invalid-credential': 'auth.errors.invalidCredentials',
+  'auth/wrong-password': 'auth.errors.invalidCredentials',
+  'auth/invalid-email': 'auth.errors.invalidEmail',
+  'auth/user-not-found': 'auth.errors.userNotFound',
+  'auth/email-already-in-use': 'auth.errors.emailInUse',
+  'auth/weak-password': 'auth.errors.weakPassword',
+  'auth/too-many-requests': 'auth.errors.tooManyRequests',
+  'auth/network-request-failed': 'auth.errors.network',
+};
+
+const INPUT_CLASS = 'h-12 rounded-full bg-surface-1 border-foreground/10 px-5';
 
 export default function Auth() {
   const { t } = useTranslation();
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
+  const location = useLocation();
+  const { toast } = useToast();
+  usePageTitle(t('auth.signIn'));
+
+  const [tab, setTab] = useState<'signin' | 'signup'>('signin');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const { toast } = useToast();
 
-  useEffect(() => {
-    const unsub = listenToAuthChanges((u) => {
-      setUser(u);
+  // Send people back to the page that asked them to sign in.
+  const from = (location.state as { from?: string } | null)?.from ?? '/';
 
-      if (u) {
-        navigate('/');
-        toast({
-          title: t('auth.loginSuccess'),
-          description: t('auth.welcomeToast'),
-        });
-      }
-    });
+  const describe = (err: unknown) =>
+    t(err instanceof FirebaseError && AUTH_ERRORS[err.code] ? AUTH_ERRORS[err.code] : 'auth.errors.generic');
 
-    return () => unsub();
-  }, [navigate, toast, t]);
-
-  const signIn = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const run = async (action: () => Promise<unknown>) => {
     setLoading(true);
     setError('');
-
     try {
+      await action();
+    } catch (err) {
+      setError(describe(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    run(async () => {
       await signInWithEmail(email, password);
-    } catch (err) {
-      const msg = String(err?.message || '');
-      if (msg.toLowerCase().includes('auth/invalid-credential') || msg.toLowerCase().includes('auth/wrong-password')) {
-        setError(t('auth.errors.invalidCredentials'));
-      } else if (msg.toLowerCase().includes('auth/user-not-found')) {
-        setError(t('auth.errors.userNotFound'));
-      } else {
-        setError(msg || t('auth.errors.generic'));
-      }
-    } finally {
-      setLoading(false);
-    }
+      toast({ title: t('auth.loginSuccess'), description: t('auth.welcomeToast') });
+    });
   };
 
-  const signUp = async (e: React.FormEvent) => {
+  const signUp = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      await signUpWithEmail(email, password, displayName || undefined);
-      toast({
-        title: t('auth.accountCreated'),
-        description: t('auth.accountReady'),
-      });
-    } catch (err) {
-      const msg = String(err?.message || '');
-      if (msg.toLowerCase().includes('auth/email-already-in-use')) {
-        setError(t('auth.errors.emailInUse'));
-      } else if (msg.toLowerCase().includes('auth/weak-password')) {
-        setError(t('auth.errors.weakPassword'));
-      } else {
-        setError(msg || t('auth.errors.generic'));
-      }
-    } finally {
-      setLoading(false);
-    }
+    run(async () => {
+      await signUpWithEmail(email, password, displayName.trim() || undefined);
+      toast({ title: t('auth.accountCreated'), description: t('auth.accountReady') });
+    });
   };
 
-  if (user) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-caption text-jade mb-3">— {t('auth.verified')}</div>
-          <div className="font-display text-2xl text-foreground/70">{t('auth.redirecting')}</div>
-        </div>
-      </div>
-    );
-  }
+  const resetPassword = () => {
+    if (!email) {
+      setError(t('auth.errors.emailRequired'));
+      return;
+    }
+    run(async () => {
+      await sendPasswordReset(email);
+      toast({ title: t('auth.resetSent'), description: t('auth.resetSentDesc', { email }) });
+    });
+  };
+
+  if (user) return <Navigate to={from} replace />;
+
+  const errorAlert = error && (
+    <Alert variant="destructive" className="bg-surface-1 border-destructive/40" role="alert">
+      <AlertCircle className="h-4 w-4" />
+      <AlertDescription className="text-foreground/80">{error}</AlertDescription>
+    </Alert>
+  );
+
+  const submitButton = (label: string) => (
+    <Button type="submit" size="lg" variant="accent" className="w-full h-12" disabled={loading}>
+      {loading && <DinoLoader size="sm" className="!h-6 !max-w-[120px] !border-0 mr-2" ariaLabel={t('auth.loading')} />}
+      {label}
+    </Button>
+  );
 
   return (
     <div className="min-h-screen bg-background grid lg:grid-cols-12">
@@ -135,6 +138,13 @@ export default function Auth() {
       {/* RIGHT — form */}
       <section className="lg:col-span-7 flex flex-col justify-center px-6 py-16 lg:py-24 lg:px-16 xl:px-24">
         <div className="w-full max-w-md mx-auto lg:mx-0">
+          <Link
+            to="/"
+            className="mb-12 inline-flex items-center gap-2 text-caption text-foreground/50 hover:text-jade transition-colors duration-300"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            {t('auth.backHome')}
+          </Link>
           <div className="mb-12">
             <div className="text-caption text-jade mb-4">— {t('auth.readingDesk')}</div>
             <h1 className="font-display text-display-xl text-foreground tracking-tighter mb-4">
@@ -145,7 +155,14 @@ export default function Auth() {
             </p>
           </div>
 
-          <Tabs defaultValue="signin" className="w-full">
+          <Tabs
+            value={tab}
+            onValueChange={(v) => {
+              setTab(v as 'signin' | 'signup');
+              setError('');
+            }}
+            className="w-full"
+          >
             <TabsList className="w-full bg-transparent justify-start gap-8 hairline-b rounded-none p-0 h-auto mb-10">
               <TabsTrigger
                 value="signin"
@@ -168,11 +185,12 @@ export default function Auth() {
                   <Input
                     id="signin-email"
                     type="email"
+                    autoComplete="email"
                     placeholder={t('auth.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="h-12 rounded-full bg-surface-1 border-foreground/10 px-5"
+                    className={INPUT_CLASS}
                   />
                 </div>
                 <div className="space-y-2">
@@ -180,30 +198,24 @@ export default function Auth() {
                   <Input
                     id="signin-password"
                     type="password"
+                    autoComplete="current-password"
                     placeholder={t('auth.passwordPlaceholder')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-12 rounded-full bg-surface-1 border-foreground/10 px-5"
+                    className={INPUT_CLASS}
                   />
                 </div>
-                {error && (
-                  <Alert variant="destructive" className="bg-surface-1 border-destructive/40">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="text-foreground/80">{error}</AlertDescription>
-                  </Alert>
-                )}
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full h-12 rounded-full bg-jade text-canvas hover:bg-jade/90"
+                {errorAlert}
+                {submitButton(t('auth.signIn'))}
+                <button
+                  type="button"
+                  onClick={resetPassword}
                   disabled={loading}
+                  className="w-full text-center text-caption text-foreground/50 hover:text-jade transition-colors duration-300"
                 >
-                  {loading ? (
-                    <DinoLoader size="md" className="!h-6 !max-w-[140px] !border-0 mr-2" ariaLabel={t('auth.loading')} />
-                  ) : null}
-                  {t('auth.signIn')}
-                </Button>
+                  {t('auth.forgotPassword')}
+                </button>
               </form>
             </TabsContent>
 
@@ -214,10 +226,11 @@ export default function Auth() {
                   <Input
                     id="signup-name"
                     type="text"
+                    autoComplete="name"
                     placeholder={t('auth.displayNamePlaceholder')}
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="h-12 rounded-full bg-surface-1 border-foreground/10 px-5"
+                    className={INPUT_CLASS}
                   />
                 </div>
                 <div className="space-y-2">
@@ -225,11 +238,12 @@ export default function Auth() {
                   <Input
                     id="signup-email"
                     type="email"
+                    autoComplete="email"
                     placeholder={t('auth.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="h-12 rounded-full bg-surface-1 border-foreground/10 px-5"
+                    className={INPUT_CLASS}
                   />
                 </div>
                 <div className="space-y-2">
@@ -237,31 +251,17 @@ export default function Auth() {
                   <Input
                     id="signup-password"
                     type="password"
+                    autoComplete="new-password"
                     placeholder={t('auth.passwordPlaceholder')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="h-12 rounded-full bg-surface-1 border-foreground/10 px-5"
+                    className={INPUT_CLASS}
                   />
                 </div>
-                {error && (
-                  <Alert variant="destructive" className="bg-surface-1 border-destructive/40">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription className="text-foreground/80">{error}</AlertDescription>
-                  </Alert>
-                )}
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full h-12 rounded-full bg-jade text-canvas hover:bg-jade/90"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <DinoLoader size="sm" className="!h-6 !max-w-[120px] !border-0 mr-2" ariaLabel={t('auth.loading')} />
-                  ) : null}
-                  {t('auth.signUp')}
-                </Button>
+                {errorAlert}
+                {submitButton(t('auth.signUp'))}
               </form>
             </TabsContent>
           </Tabs>

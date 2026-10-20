@@ -1,39 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { DinoLoader } from '@/components/loader';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Search, 
-  Calendar, 
   User, 
   Clock, 
-  ArrowRight, 
   Filter,
   Newspaper,
   TrendingUp,
   Microscope,
   Building2,
   Leaf,
-  BookOpen
+  BookOpen,
+  type LucideIcon,
 } from 'lucide-react';
 import { 
   getAllArticles, 
-  getArticlesByCategory, 
   getFeaturedArticles,
-  searchArticles,
   NewsArticle,
   NewsCategory
 } from '@/services/newsService';
 
 export default function News() {
   const { t, i18n } = useTranslation();
+  usePageTitle(t('navigation.news'));
   const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [filteredArticles, setFilteredArticles] = useState<NewsArticle[]>([]);
   const [featuredArticles, setFeaturedArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -41,50 +36,35 @@ export default function News() {
   const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
-    loadArticles();
+    let cancelled = false;
+    Promise.all([getAllArticles(i18n.language), getFeaturedArticles(i18n.language)])
+      .then(([allArticles, featured]) => {
+        if (cancelled) return;
+        setArticles(allArticles);
+        setFeaturedArticles(featured);
+      })
+      .catch((error) => console.error('Error loading articles:', error))
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
   }, [i18n.language]);
 
-  useEffect(() => {
-    filterArticles();
+  // Start from the first page of results whenever the query changes.
+  useEffect(() => setVisibleCount(6), [searchTerm, selectedCategory]);
+
+  const filteredArticles = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    return articles
+      .filter((a) => selectedCategory === 'all' || a.category === selectedCategory)
+      .filter(
+        (a) => !query || [a.title, a.subtitle, a.excerpt, a.author, ...a.tags].some((f) => f.toLowerCase().includes(query)),
+      )
+      .sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime());
   }, [articles, searchTerm, selectedCategory]);
 
-  const loadArticles = async () => {
-    try {
-      const [allArticles, featured] = await Promise.all([
-        getAllArticles(i18n.language),
-        getFeaturedArticles(i18n.language)
-      ]);
-      setArticles(allArticles);
-      setFeaturedArticles(featured);
-    } catch (error) {
-      console.error('Error loading articles:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterArticles = async () => {
-    let filtered = articles;
-
-    if (searchTerm) {
-      const searchResults = await searchArticles(searchTerm, i18n.language);
-      filtered = searchResults;
-    }
-
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(article => article.category === selectedCategory);
-    }
-
-    // Sort by date, most recent first
-    filtered = filtered.sort((a, b) => 
-      new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
-    );
-
-    setFilteredArticles(filtered);
-  };
-
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -101,18 +81,6 @@ export default function News() {
       education: BookOpen
     };
     return icons[category] || Newspaper;
-  };
-
-  const getCategoryColor = (category: NewsCategory) => {
-    const colors = {
-      discoveries: 'bg-amber/20 text-amber-dark border-amber/30',
-      research: 'bg-jade/20 text-jade border-jade/30',
-      technology: 'bg-purple-500/20 text-purple-700 border-purple-500/30',
-      exhibitions: 'bg-green-500/20 text-green-700 border-green-500/30',
-      conservation: 'bg-emerald-500/20 text-emerald-700 border-emerald-500/30',
-      education: 'bg-orange-500/20 text-orange-700 border-orange-500/30'
-    };
-    return colors[category] || 'bg-gray-500/20 text-gray-700 border-gray-500/30';
   };
 
   const loadMore = () => {
@@ -136,7 +104,7 @@ export default function News() {
     );
   }
 
-  const categories: Array<{ value: NewsCategory | 'all'; label: string; icon?: any }> = [
+  const categories: Array<{ value: NewsCategory | 'all'; label: string; icon?: LucideIcon }> = [
     { value: 'all', label: t('news.categories.all') },
     { value: 'discoveries', label: t('news.categories.discoveries'), icon: TrendingUp },
     { value: 'research', label: t('news.categories.research'), icon: Microscope },
@@ -327,7 +295,7 @@ export default function News() {
               {visibleCount < filteredArticles.length && (
                 <div className="text-center mt-12">
                   <Button onClick={loadMore} variant="outline" size="lg">
-                    {t('news.loadMore')} ({filteredArticles.length - visibleCount} {t('timeline.remaining')})
+                    {t('news.loadMore')} ({filteredArticles.length - visibleCount} {t('timeline.discovery.remaining')})
                   </Button>
                 </div>
               )}

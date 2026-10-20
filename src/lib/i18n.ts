@@ -13,7 +13,7 @@ i18n
     fallbackLng: 'en',
     
     // Enable debug mode in development
-    debug: process.env.NODE_ENV === 'development',
+    debug: import.meta.env.DEV && import.meta.env.VITE_DEBUG_MODE === 'true',
     
     // Interpolation options
     interpolation: {
@@ -45,5 +45,10 @@ i18n
     // Don't load a language if it's not in supportedLngs
     nonExplicitSupportedLngs: false,
   });
+
+// Keep <html lang> in sync for screen readers, hyphenation and translation tools.
+i18n.on('languageChanged', (lng) => {
+  document.documentElement.lang = lng;
+});
 
 export default i18n;

@@ -1,3 +1,4 @@
+import tailwindAnimate from "tailwindcss-animate";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			// Hairline tint used for rings, borders and dividers (`ring-foreground/8`).
+			opacity: {
+				8: '0.08',
+			},
 			fontFamily: {
 				display: ['"Bricolage Grotesque"', '"Inter Display"', 'system-ui', 'sans-serif'],
 				sans:    ['"Geist"', '"Inter"', 'system-ui', 'sans-serif'],
@@ -157,5 +162,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindAnimate],
 } satisfies Config;
