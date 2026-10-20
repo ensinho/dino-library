@@ -1,28 +1,29 @@
 /**
  * Dinosaur Service
- * 
- * This service handles all dinosaur-related data operations.
- * It reads from Firestore and includes caching/optimization.
+ *
+ * Firestore is the source of truth. The collection is small (~1.5k docs), so
+ * it is read once per session and every filter, sort, page and stat is then
+ * computed in memory. That turns each filter change from a 1 000-document
+ * read into a sub-millisecond array operation.
  */
 
-import config from '@/lib/config';
+import config, { localDataMode } from '@/lib/config';
 import { dinoPicturesService } from '@/services/dinoPicturesService';
+import { loadLocalDataset } from '@/services/localDataset';
+import { col, getDocs } from '@/services/firestoreService';
+import { doc, getCountFromServer, getDoc } from 'firebase/firestore';
 import {
-  col,
-  getDocs,
-  limit as fsLimit,
-  query as fsQuery,
-  where as fsWhere,
-} from '@/services/firestoreService';
-import {
-  doc,
-  getDoc,
-  orderBy,
-  startAfter,
-  type QueryDocumentSnapshot,
-} from 'firebase/firestore';
+  dietGroupOf,
+  periodGroupOf,
+  regionOf,
+  type DietGroup,
+  type PeriodGroup,
+  type Region,
+} from '@/lib/taxonomy';
+import { applyTheme, type ThemeId } from '@/lib/themes';
 
-// Type definitions matching your database schema
+const COLLECTION = 'dinosaur_species2';
+
 export interface DinosaurSpecies {
   behavior_notes: string | null;
   common_name: string | null;
@@ -46,408 +47,228 @@ export interface DinosaurSpecies {
   image_thumbnails?: string[] | null;
 }
 
+export type SortKey = 'name' | 'length' | 'weight' | 'discovered';
+
 export interface DinosaurFilters {
   search?: string;
-  period?: string;
-  diet?: string;
-  location?: string;
+  period?: PeriodGroup;
+  diet?: DietGroup;
+  region?: Region;
+  theme?: ThemeId;
   lengthRange?: [number, number];
   heightRange?: [number, number];
+  sort?: SortKey;
   page?: number;
   limit?: number;
 }
 
-export interface DinosaurResponse {
+export interface DinosaurPage {
   data: DinosaurSpecies[];
   total: number;
   page: number;
   totalPages: number;
 }
 
+export interface DinosaurStats {
+  totalSpecies: number;
+  periods: Record<PeriodGroup, number>;
+  diets: Record<DietGroup, number>;
+  regions: Partial<Record<Region, number>>;
+}
+
+/* ------------------------------------------------------------------ */
+/* Pure helpers — exported for tests and for components that already  */
+/* hold the full list in memory.                                       */
+/* ------------------------------------------------------------------ */
+
+export const displayName = (d: Pick<DinosaurSpecies, 'common_name' | 'scientific_name'>) =>
+  d.common_name || d.scientific_name || '';
+
+/** The CSV import left a duplicated header row behind; drop it and other empties. */
+const isRealRecord = (d: DinosaurSpecies) =>
+  Boolean(d.row_index !== undefined && displayName(d)) &&
+  d.scientific_name !== 'scientific_name' &&
+  d.geological_period !== 'Period';
+
+const inRange = (value: number | null, range?: [number, number]) =>
+  !range || (value !== null && value >= range[0] && value <= range[1]);
+
+const SORTERS: Record<SortKey, (a: DinosaurSpecies, b: DinosaurSpecies) => number> = {
+  name: (a, b) => displayName(a).localeCompare(displayName(b)),
+  length: (a, b) => (b.length_m ?? -1) - (a.length_m ?? -1),
+  weight: (a, b) => (b.weight_kg ?? -1) - (a.weight_kg ?? -1),
+  discovered: (a, b) =>
+    (Number.parseInt(b.first_discovered ?? '', 10) || 0) - (Number.parseInt(a.first_discovered ?? '', 10) || 0),
+};
+
+export function filterDinosaurs(all: DinosaurSpecies[], filters: DinosaurFilters = {}): DinosaurSpecies[] {
+  const search = filters.search?.trim().toLowerCase();
+
+  let result = all.filter((d) => {
+    if (filters.period && periodGroupOf(d.geological_period) !== filters.period) return false;
+    if (filters.diet && dietGroupOf(d.diet) !== filters.diet) return false;
+    if (filters.region && regionOf(d.lived_in, d.fossil_location) !== filters.region) return false;
+    if (!inRange(d.length_m, filters.lengthRange)) return false;
+    if (!inRange(d.height_m, filters.heightRange)) return false;
+    if (search) {
+      const haystack = `${d.common_name ?? ''} ${d.scientific_name ?? ''} ${d.meaning ?? ''}`.toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+
+  // A theme carries its own ordering (e.g. giants by length) unless the user picked one.
+  if (filters.theme) result = applyTheme(result, filters.theme);
+  if (filters.sort || !filters.theme) result = [...result].sort(SORTERS[filters.sort ?? 'name']);
+
+  return result;
+}
+
+export function paginate<T>(items: T[], page = 1, limit = 12) {
+  const totalPages = Math.max(1, Math.ceil(items.length / limit));
+  const current = Math.min(Math.max(1, page), totalPages);
+  const start = (current - 1) * limit;
+  return { data: items.slice(start, start + limit), total: items.length, page: current, totalPages };
+}
+
+export function computeStats(all: DinosaurSpecies[]): DinosaurStats {
+  const stats: DinosaurStats = {
+    totalSpecies: all.length,
+    periods: { triassic: 0, jurassic: 0, cretaceous: 0 },
+    diets: { carnivore: 0, herbivore: 0, omnivore: 0 },
+    regions: {},
+  };
+  for (const d of all) {
+    const p = periodGroupOf(d.geological_period);
+    const diet = dietGroupOf(d.diet);
+    const r = regionOf(d.lived_in, d.fossil_location);
+    if (p) stats.periods[p]++;
+    if (diet) stats.diets[diet]++;
+    if (r) stats.regions[r] = (stats.regions[r] ?? 0) + 1;
+  }
+  return stats;
+}
+
+/**
+ * Species that share the most traits with `target` — same period first,
+ * then same diet and region, ties broken by similar body length.
+ */
+export function relatedTo(target: DinosaurSpecies, all: DinosaurSpecies[], count = 4): DinosaurSpecies[] {
+  const period = periodGroupOf(target.geological_period);
+  const diet = dietGroupOf(target.diet);
+  const region = regionOf(target.lived_in, target.fossil_location);
+  const length = target.length_m ?? 0;
+
+  return all
+    .filter((d) => d.row_index !== target.row_index)
+    .map((d) => {
+      let score = 0;
+      if (period && periodGroupOf(d.geological_period) === period) score += 3;
+      if (diet && dietGroupOf(d.diet) === diet) score += 2;
+      if (region && regionOf(d.lived_in, d.fossil_location) === region) score += 2;
+      if (d.image_url) score += 1;
+      return { d, score, delta: Math.abs((d.length_m ?? 0) - length) };
+    })
+    .sort((a, b) => b.score - a.score || a.delta - b.delta)
+    .slice(0, count)
+    .map((x) => x.d);
+}
+
+/* ------------------------------------------------------------------ */
+/* Data access                                                          */
+/* ------------------------------------------------------------------ */
+
 export class DinosaurService {
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private allPromise: Promise<DinosaurSpecies[]> | null = null;
+  private byId = new Map<string, DinosaurSpecies>();
 
-  // Firestore pagination uses cursor, but the UI expects page numbers.
-  // For now, we implement page-based pagination by paging in-memory after fetching.
-  // This is OK for ~1000 docs, and we can optimize later with index/cursors.
-
-  /**
-   * Get dinosaurs with filtering and pagination
-  * Fetches from Firestore
-   */
-  async getDinosaurs(filters: DinosaurFilters = {}): Promise<DinosaurResponse> {
-    const cacheKey = JSON.stringify(filters);
-    
-    // Check cache first
-    const cached = this.getFromCache(cacheKey);
-    if (cached) {
-      if (config.debugMode) {
-        console.log('🦕 Using cached dinosaurs');
-      }
-      return cached;
+  /** Every species, fetched once and shared by all callers. */
+  getAll(): Promise<DinosaurSpecies[]> {
+    if (!this.allPromise) {
+      const source = localDataMode
+        ? loadLocalDataset()
+        : getDocs(col(COLLECTION)).then((snap) =>
+            snap.docs.map((d) => ({ ...(d.data() as DinosaurSpecies), row_index: String(d.data().row_index ?? d.id) })),
+          );
+      this.allPromise = source
+        .then((docs) => {
+          const items = docs.filter(isRealRecord);
+          items.forEach((d) => this.byId.set(d.row_index, d));
+          return items;
+        })
+        .catch((error) => {
+          // Don't cache a failure — the next caller should retry.
+          this.allPromise = null;
+          throw error;
+        });
     }
-
-    try {
-      if (config.debugMode) {
-        console.log('🦕 Fetching dinosaurs from Firestore:', filters);
-      }
-      
-  const response = await this.getFromFirestore(filters);
-
-  // Best-effort: enrich missing images for the current page.
-  // Keeps requests bounded by page size and avoids spamming the public API.
-  await this.enrichImagesInPlace(response.data, 3);
-
-      this.setCache(cacheKey, response);
-      return response;
-
-    } catch (error) {
-      console.error('❌ Error fetching dinosaurs:', error);
-      // Return empty result instead of throwing
-      return {
-        data: [],
-        total: 0,
-        page: 1,
-        totalPages: 1
-      };
-    }
+    return this.allPromise;
   }
 
-  /**
-   * Get a specific dinosaur by ID
-  * Fetches from Firestore
-   */
+  async getDinosaurs(filters: DinosaurFilters = {}): Promise<DinosaurPage> {
+    const all = await this.getAll();
+    return paginate(filterDinosaurs(all, filters), filters.page, filters.limit);
+  }
+
+  /** Resolves from memory when possible; images are enriched separately. */
   async getDinosaurById(id: string): Promise<DinosaurSpecies> {
-    const cacheKey = `dinosaur-${id}`;
-    
-    // Check cache first
-    const cached = this.getFromCache(cacheKey);
-    if (cached) {
-      return cached;
+    const cached = this.byId.get(id);
+    if (cached) return cached;
+
+    if (!localDataMode) {
+      const snap = await getDoc(doc(col(COLLECTION), id));
+      if (snap.exists()) {
+        const data = { ...(snap.data() as DinosaurSpecies), row_index: id };
+        this.byId.set(id, data);
+        return data;
+      }
     }
 
-    try {
-      if (config.debugMode) {
-        console.log(`🦕 Fetching dinosaur ${id} from Firestore...`);
-      }
+    // Document ids may not match `row_index` — fall back to the full list.
+    const match = (await this.getAll()).find((d) => d.row_index === id);
+    if (!match) throw new Error('not-found');
+    return match;
+  }
 
-      const snap = await getDoc(doc(col('dinosaur_species2'), id));
-      if (!snap.exists()) {
-        throw new Error('Dinosaur not found');
-      }
-      const data = snap.data() as DinosaurSpecies;
+  async getStats(): Promise<DinosaurStats> {
+    return computeStats(await this.getAll());
+  }
 
-      // Enrich with public images when missing.
-      // This keeps Firestore as the source of truth but maximizes images in UI.
-      if (!data.image_url) {
-        const lookupName = (data.scientific_name || data.common_name || '').trim();
-        if (lookupName) {
-          try {
-            const enrichment = await dinoPicturesService.getDinosaur(lookupName);
-            const first = enrichment?.images?.[0]?.url;
-            if (first) data.image_url = first;
-          } catch (e) {
-            if (config.debugMode) {
-              console.warn('🖼️ DinoPictures enrichment failed:', e);
-            }
-          }
-        }
-      }
-
-      this.setCache(cacheKey, data);
-      return data;
-
-    } catch (error) {
-      console.error(`❌ Error fetching dinosaur ${id}:`, error);
-      throw error;
-    }
+  /** Cheap aggregate count (1 read per 1 000 index entries) for the landing page. */
+  async getCount(): Promise<number> {
+    if (this.allPromise || localDataMode) return (await this.getAll()).length;
+    const snap = await getCountFromServer(col(COLLECTION));
+    return snap.data().count;
   }
 
   /**
-   * Get dinosaur statistics (for dashboard/analytics)
+   * Fill `image_url` from dinosaurpictures.org for the given species.
+   * Mutates the shared records so the result is reused everywhere.
+   * Concurrency is bounded to stay polite with the public API.
    */
-  async getDinosaurStats(): Promise<{
-    totalSpecies: number;
-    periodDistribution: Record<string, number>;
-    dietDistribution: Record<string, number>;
-    locationDistribution: Record<string, number>;
-  }> {
-    const cacheKey = 'dinosaur-stats';
-    
-    const cached = this.getFromCache(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    try {
-      if (config.debugMode) {
-        console.log('📊 Fetching stats from Firestore...');
+  async enrichImages(items: DinosaurSpecies[], concurrency = 3): Promise<void> {
+    const queue = items.filter((d) => !d.image_url && displayName(d));
+    const worker = async () => {
+      for (let next = queue.shift(); next; next = queue.shift()) {
+        await this.withImage(next);
       }
-      
-  const stats = await this.calculateStatsFromFirestore();
-      this.setCache(cacheKey, stats);
-      return stats;
-
-    } catch (error) {
-      console.error('❌ Error fetching stats:', error);
-      // Return default stats
-      return {
-        totalSpecies: 0,
-        periodDistribution: {},
-        dietDistribution: {},
-        locationDistribution: {}
-      };
-    }
-  }
-
-  /**
-   * Search dinosaurs with fuzzy matching
-   */
-  async searchDinosaurs(query: string, limit: number = 10): Promise<DinosaurSpecies[]> {
-    const cacheKey = `search-${query}-${limit}`;
-    
-    const cached = this.getFromCache(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    try {
-      if (config.debugMode) {
-        console.log('🔍 Searching dinosaurs in Firestore...');
-      }
-      
-  const results = await this.searchInFirestore(query, limit);
-      this.setCache(cacheKey, results);
-      return results;
-
-    } catch (error) {
-      console.error('❌ Error searching dinosaurs:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Firestore implementation
-   */
-  private async getFromFirestore(filters: DinosaurFilters): Promise<DinosaurResponse> {
-    // We'll fetch a superset and apply complex filters client-side.
-    // Firestore doesn't support OR/ILIKE easily without extra indexing/denormalization.
-    const base = col('dinosaur_species2');
-    const page = filters.page || 1;
-    const pageSize = filters.limit || 12;
-
-    // Narrow down via equality filters where we can (cheap).
-    const wheres: any[] = [];
-    if (filters.period && filters.period !== 'all') wheres.push(fsWhere('geological_period', '==', filters.period));
-    if (filters.diet && filters.diet !== 'all') wheres.push(fsWhere('diet', '==', filters.diet));
-    if (filters.location && filters.location !== 'all') wheres.push(fsWhere('lived_in', '==', filters.location));
-
-    // Pull a reasonable slice for UX. Increase if needed.
-    const q = wheres.length
-      ? fsQuery(base, ...wheres, fsLimit(1000))
-      : fsQuery(base, fsLimit(1000));
-
-    const snap = await getDocs(q);
-    let data = snap.docs.map((d) => d.data() as DinosaurSpecies);
-
-    // Search (client-side containing). Mimics ilike %query%.
-    if (filters.search) {
-      const s = filters.search.toLowerCase();
-      data = data.filter((d) =>
-        (d.common_name || '').toLowerCase().includes(s) ||
-        (d.scientific_name || '').toLowerCase().includes(s)
-      );
-    }
-
-    if (filters.lengthRange) {
-      data = data.filter((d) => {
-        const v = d.length_m ?? null;
-        if (v === null) return false;
-        return v >= filters.lengthRange![0] && v <= filters.lengthRange![1];
-      });
-    }
-
-    if (filters.heightRange) {
-      data = data.filter((d) => {
-        const v = d.height_m ?? null;
-        if (v === null) return false;
-        return v >= filters.heightRange![0] && v <= filters.heightRange![1];
-      });
-    }
-
-    // Stable-ish ordering (by scientific_name then row_index)
-    data.sort((a, b) => {
-      const an = (a.scientific_name || a.common_name || '').toLowerCase();
-      const bn = (b.scientific_name || b.common_name || '').toLowerCase();
-      if (an < bn) return -1;
-      if (an > bn) return 1;
-      return String(a.row_index).localeCompare(String(b.row_index));
-    });
-
-    const total = data.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const paged = data.slice(start, end);
-
-    return { data: paged, total, page, totalPages };
-  }
-
-  /**
-   * Search implementation for Firestore
-   */
-  private async searchInFirestore(queryText: string, limitCount: number): Promise<DinosaurSpecies[]> {
-    const q = fsQuery(col('dinosaur_species2'), fsLimit(1000));
-    const snap = await getDocs(q);
-    const s = queryText.toLowerCase();
-    const all = snap.docs.map((d) => d.data() as DinosaurSpecies);
-    return all
-      .filter((d) =>
-        (d.common_name || '').toLowerCase().includes(s) ||
-        (d.scientific_name || '').toLowerCase().includes(s) ||
-        (d.behavior_notes || '').toLowerCase().includes(s)
-      )
-      .slice(0, limitCount);
-  }
-
-  /**
-   * Calculate statistics from Firestore
-   */
-  private async calculateStatsFromFirestore() {
-    const snap = await getDocs(fsQuery(col('dinosaur_species2'), fsLimit(1000)));
-    const data = snap.docs.map((d) => d.data() as Pick<DinosaurSpecies, 'geological_period' | 'diet' | 'lived_in'>);
-
-    const stats = {
-      totalSpecies: data?.length || 0,
-      periodDistribution: {} as Record<string, number>,
-      dietDistribution: {} as Record<string, number>,
-      locationDistribution: {} as Record<string, number>
     };
-
-    data?.forEach(item => {
-      // Count periods
-      if (item.geological_period) {
-        stats.periodDistribution[item.geological_period] = 
-          (stats.periodDistribution[item.geological_period] || 0) + 1;
-      }
-
-      // Count diets
-      if (item.diet) {
-        stats.dietDistribution[item.diet] = 
-          (stats.dietDistribution[item.diet] || 0) + 1;
-      }
-
-      // Count locations
-      if (item.lived_in) {
-        stats.locationDistribution[item.lived_in] = 
-          (stats.locationDistribution[item.lived_in] || 0) + 1;
-      }
-    });
-
-    return stats;
+    await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, worker));
   }
 
-  /**
-   * Cache management
-   */
-  private getFromCache(key: string) {
-    const cached = this.cache.get(key);
-    if (cached && (Date.now() - cached.timestamp) < this.cacheTimeout) {
-      return cached.data;
-    }
-    return null;
-  }
-
-  private setCache(key: string, data: any) {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now()
-    });
-  }
-
-  /**
-   * Clear cache (useful for forced refresh)
-   */
-  clearCache() {
-    this.cache.clear();
-    if (config.debugMode) {
-    }
-  }
-
-  /**
-   * Get unique values for filters
-   * Uses Firestore
-   */
-  async getFilterOptions(): Promise<{
-    periods: string[];
-    diets: string[];
-    locations: string[];
-  }> {
-    const cacheKey = 'filter-options';
-    
-    const cached = this.getFromCache(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
+  private async withImage(d: DinosaurSpecies): Promise<DinosaurSpecies> {
+    if (d.image_url) return d;
     try {
-      if (config.debugMode) {
-        console.log('🦕 Fetching filter options from Firestore...');
-      }
-
-      const snap = await getDocs(fsQuery(col('dinosaur_species2'), fsLimit(1000)));
-      const data = snap.docs.map((d) => d.data() as Pick<DinosaurSpecies, 'geological_period' | 'diet' | 'lived_in'>);
-
-      const options = {
-        periods: [...new Set(data?.map(d => d.geological_period).filter(Boolean))].sort() as string[],
-        diets: [...new Set(data?.map(d => d.diet).filter(Boolean))].sort() as string[],
-        locations: [...new Set(data?.map(d => d.lived_in).filter(Boolean))].sort() as string[]
-      };
-
-      this.setCache(cacheKey, options);
-      return options;
-      
-    } catch (error) {
-      console.error('❌ Error fetching filter options:', error);
-      // Return default options
-      return {
-        periods: ['Triassic', 'Jurassic', 'Cretaceous'],
-        diets: ['Carnivore', 'Herbivore', 'Omnivore'],
-        locations: ['North America', 'South America', 'Europe', 'Asia', 'Africa', 'Australia']
-      };
+      const enrichment = await dinoPicturesService.getDinosaur(d.scientific_name || d.common_name || '');
+      const first = enrichment?.images?.[0]?.url;
+      if (first) d.image_url = first;
+    } catch (e) {
+      if (config.debugMode) console.warn('🖼️ DinoPictures enrichment failed:', displayName(d), e);
     }
-  }
-
-  private async enrichImagesInPlace(items: DinosaurSpecies[], concurrency: number) {
-    const targets = items.filter((d) => !d.image_url && (d.scientific_name || d.common_name));
-    if (!targets.length) return;
-
-    // simple concurrency pool
-    let i = 0;
-    const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
-      while (i < targets.length) {
-        const current = targets[i++];
-        const name = (current.scientific_name || current.common_name || '').trim();
-        if (!name) continue;
-
-        try {
-          const enrichment = await dinoPicturesService.getDinosaur(name);
-          const first = enrichment?.images?.[0]?.url;
-          if (first) current.image_url = first;
-        } catch (e) {
-          if (config.debugMode) {
-            console.warn('🖼️ DinoPictures enrichment failed:', name, e);
-          }
-        }
-      }
-    });
-
-    await Promise.all(workers);
+    return d;
   }
 }
 
-// Create singleton instance
 export const dinosaurService = new DinosaurService();
 
 export default dinosaurService;

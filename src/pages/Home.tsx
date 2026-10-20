@@ -12,6 +12,8 @@ import allosaurusImage from '@/assets/dinosaur-images/alossauro.jpg';
 import brachiosaurusImage from '@/assets/dinosaur-images/braquiossauro.jpg';
 import oxalaiaImage from '@/assets/dinosaur-images/oxalaia.jpg';
 import SmartImage from '@/components/SmartImage';
+import CallToAction from '@/components/layout/CallToAction';
+import { useSpeciesCount } from '@/hooks/useDinosaurs';
 
 interface FavoriteDinosaur {
   name: string;
@@ -39,6 +41,7 @@ const favoriteOrder: { id: FavoriteKey; name: string; scientificName: string }[]
 
 export default function Home() {
   const { t } = useTranslation();
+  const { data: speciesCount } = useSpeciesCount();
 
   const favoriteDinosaurs: FavoriteDinosaur[] = favoriteOrder.map((f) => ({
     name: f.name,
@@ -81,29 +84,10 @@ export default function Home() {
   ];
 
   const stats = [
-    { label: t('home.stats.cataloged'), value: '1000', icon: Zap },
-    { label: t('home.stats.discoveries'), value: '500+', icon: Globe },
-    { label: t('home.stats.resources'), value: '5+', icon: Book }
+    { label: t('home.stats.cataloged'), value: speciesCount ? speciesCount.toLocaleString() : '—', icon: Zap },
+    { label: t('home.stats.span'), value: '186', icon: Globe },
+    { label: t('home.stats.languages'), value: '3', icon: Book }
   ];
-
-  const credibility = [
-    {
-      title: t('home.features.maps.title'),
-      description: t('home.features.maps.description'),
-      icon: Map,
-    },
-    {
-      title: t('home.features.timeline.title'),
-      description: t('home.features.timeline.description'),
-      icon: Clock,
-    },
-    {
-      title: t('home.features.education.title'),
-      description: t('home.features.education.description'),
-      icon: GraduationCap,
-    },
-  ];
-
 
   return (
     <div className="flex flex-col">
@@ -217,7 +201,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <figcaption className="absolute left-5 bottom-5 z-10 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
-                    Plate II · Ankylosaur, study at dusk
+                    {t('home.plates.two')}
                   </figcaption>
                 </figure>
 
@@ -231,7 +215,7 @@ export default function Home() {
 
             {/* Reading column */}
             <div className="lg:col-span-7">
-              <div className="text-caption text-jade mb-6">— What you can explore</div>
+              <div className="text-caption text-jade mb-6">— {t('home.features.caption')}</div>
               <h2 className="font-display text-display-xl text-foreground max-w-[18ch] tracking-tighter">
                 {t('home.features.title')}
               </h2>
@@ -329,7 +313,7 @@ export default function Home() {
 
               {/* Caption plate, like under the mural */}
               <div className="mt-10 inline-flex text-caption text-foreground/55 bg-background/40 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
-                Plate III · Paleo landscape · panoramic
+                {t('home.plates.three')}
               </div>
             </div>
           </div>
@@ -373,7 +357,11 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {favoriteDinosaurs.map((dino, index) => (
-              <article key={index} className="group flex flex-col">
+              <Link
+                key={dino.name}
+                to={`/catalog?q=${encodeURIComponent(dino.name)}`}
+                className="group flex flex-col rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+              >
                 <div
                   className={
                     'relative overflow-hidden rounded-3xl ring-1 ring-jade/25 shadow-[0_0_40px_-18px_hsl(158_86%_72%/0.4)] mb-6 ' +
@@ -390,7 +378,7 @@ export default function Home() {
                     loading="lazy"
                   />
                   <div className="absolute top-4 left-4 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
-                    Plate IV · 0{index + 1}
+                    {t('home.plates.four', { n: index + 1 })}
                   </div>
                 </div>
 
@@ -409,8 +397,12 @@ export default function Home() {
                   <p className="text-sm text-foreground/65 leading-relaxed line-clamp-3">
                     {dino.description}
                   </p>
+                  <p className="mt-4 text-xs text-foreground/50 leading-relaxed border-l border-jade/40 pl-3">
+                    <span className="text-caption text-jade mr-2">{t('home.favorites.funFact')}</span>
+                    {dino.funFact}
+                  </p>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </div>
@@ -459,7 +451,7 @@ export default function Home() {
                   />
                 </div>
                 <figcaption className="absolute left-5 bottom-5 z-10 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
-                  Plate V · Cranial study
+                  {t('home.plates.five')}
                 </figcaption>
               </figure>
             </div>
@@ -467,11 +459,13 @@ export default function Home() {
 
           {/* Closing colophon */}
           <div className="hairline-t mt-24 pt-6 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-caption text-foreground/40">— End of guide · return any time</p>
+            <p className="text-caption text-foreground/40">— {t('home.endOfGuide')}</p>
             <p className="text-caption text-foreground/40 hidden sm:block">dino.library · mmxxvi</p>
           </div>
         </div>
       </section>
+
+      <CallToAction />
     </div>
   );
 }

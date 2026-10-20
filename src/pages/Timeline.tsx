@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { DinoLoader } from '@/components/loader';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,9 +22,9 @@ interface GeologicalEvent {
 }
 
 export default function Timeline() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  usePageTitle(t('navigation.timeline'));
   const [discoveries, setDiscoveries] = useState<ArchaeologicalDiscovery[]>([]);
-  const [filteredDiscoveries, setFilteredDiscoveries] = useState<ArchaeologicalDiscovery[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState<string>('');
@@ -34,110 +33,101 @@ export default function Timeline() {
   const [activeTab, setActiveTab] = useState('discoveries');
 
   // Geological events data
+  // Copy lives in the locale files under timeline.events.<id>.
   const geologicalEvents: GeologicalEvent[] = [
     {
       id: 'cretaceous_end',
-      title: 'End-Cretaceous Mass Extinction',
-      description: 'The asteroid impact that ended the age of dinosaurs. A massive asteroid struck Earth, causing global climate change and the extinction of non-avian dinosaurs.',
-      period: 'Cretaceous',
+      title: t('timeline.events.cretaceous_end.title'),
+      description: t('timeline.events.cretaceous_end.description'),
+      period: t('timeline.periods.cretaceous'),
       years_ago: 66,
       type: 'extinction',
       icon: <Skull className="w-6 h-6" />,
-      color: 'from-red-600 to-orange-600'
+      color: '',
     },
     {
       id: 'cretaceous_start',
-      title: 'Cretaceous Period Begins',
-      description: 'The final period of the Mesozoic Era begins. Flowering plants appear and dinosaurs reach their peak diversity.',
-      period: 'Cretaceous',
+      title: t('timeline.events.cretaceous_start.title'),
+      description: t('timeline.events.cretaceous_start.description'),
+      period: t('timeline.periods.cretaceous'),
       years_ago: 145,
       type: 'period_start',
       icon: <Mountain className="w-6 h-6" />,
-      color: 'from-purple-500 to-pink-500'
+      color: '',
     },
     {
       id: 'jurassic_start',
-      title: 'Jurassic Period Begins',
-      description: 'The golden age of dinosaurs begins. Supercontinent Pangaea breaks apart, creating new ocean basins and climate patterns.',
-      period: 'Jurassic',
+      title: t('timeline.events.jurassic_start.title'),
+      description: t('timeline.events.jurassic_start.description'),
+      period: t('timeline.periods.jurassic'),
       years_ago: 201,
       type: 'period_start',
       icon: <Globe className="w-6 h-6" />,
-      color: 'from-green-500 to-emerald-500'
+      color: '',
     },
     {
       id: 'triassic_jurassic_extinction',
-      title: 'Triassic-Jurassic Extinction Event',
-      description: 'A major extinction event that eliminated many competitors of dinosaurs, allowing them to become the dominant terrestrial vertebrates.',
-      period: 'Triassic',
+      title: t('timeline.events.triassic_jurassic_extinction.title'),
+      description: t('timeline.events.triassic_jurassic_extinction.description'),
+      period: t('timeline.periods.triassic'),
       years_ago: 201,
       type: 'extinction',
       icon: <Zap className="w-6 h-6" />,
-      color: 'from-yellow-600 to-red-600'
+      color: '',
     },
     {
       id: 'triassic_start',
-      title: 'Triassic Period Begins',
-      description: 'The first period of the Mesozoic Era. Early dinosaurs evolve and the supercontinent Pangaea dominates Earth\'s geography.',
-      period: 'Triassic',
+      title: t('timeline.events.triassic_start.title'),
+      description: t('timeline.events.triassic_start.description'),
+      period: t('timeline.periods.triassic'),
       years_ago: 252,
       type: 'period_start',
       icon: <Mountain className="w-6 h-6" />,
-      color: 'from-red-500 to-orange-500'
+      color: '',
     },
     {
       id: 'permian_extinction',
-      title: 'Permian-Triassic Extinction',
-      description: 'The Great Dying - the most severe mass extinction event in Earth\'s history. Sets the stage for dinosaur evolution.',
-      period: 'Permian',
+      title: t('timeline.events.permian_extinction.title'),
+      description: t('timeline.events.permian_extinction.description'),
+      period: t('timeline.periods.permian'),
       years_ago: 252,
       type: 'extinction',
       icon: <Skull className="w-6 h-6" />,
-      color: 'from-gray-600 to-black'
-    }
+      color: '',
+    },
   ];
 
-  useEffect(() => {
-    fetchDiscoveries();
-  }, []);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    filterDiscoveries();
+    let cancelled = false;
+    setFailed(false);
+    fetchDiscoveriesFromFirestore()
+      .then((data) => {
+        if (cancelled) return;
+        setDiscoveries(data.map((d) => ({ ...d, id: d.id || crypto.randomUUID() })));
+      })
+      .catch((error) => {
+        console.error('Error loading discoveries:', error);
+        if (!cancelled) setFailed(true);
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [attempt]);
+
+  useEffect(() => setVisibleItems(6), [searchTerm, selectedYear]);
+
+  const filteredDiscoveries = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    return discoveries.filter(
+      (d) =>
+        (!query || [d.title, d.description, d.location].some((f) => (f ?? '').toLowerCase().includes(query))) &&
+        (!selectedYear || new Date(d.discovery_date).getFullYear().toString() === selectedYear),
+    );
   }, [discoveries, searchTerm, selectedYear]);
-
-  const fetchDiscoveries = async () => {
-    try {
-      const data = await fetchDiscoveriesFromFirestore();
-      setDiscoveries(data.map((d) => ({
-        ...d,
-        id: d.id || crypto.randomUUID(),
-      })));
-    } catch (error) {
-      console.error('Error loading discoveries:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterDiscoveries = () => {
-    let filtered = discoveries;
-
-    if (searchTerm) {
-      filtered = filtered.filter(discovery =>
-        discovery.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        discovery.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        discovery.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (selectedYear) {
-      filtered = filtered.filter(discovery =>
-        new Date(discovery.discovery_date).getFullYear().toString() === selectedYear
-      );
-    }
-
-    setFilteredDiscoveries(filtered);
-  };
 
   const getUniqueYears = () => {
     const years = discoveries.map(discovery => 
@@ -147,7 +137,7 @@ export default function Timeline() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -182,7 +172,7 @@ export default function Timeline() {
         <div className="container-editorial">
           <div className="flex items-center justify-between mb-6">
             <div className="text-caption text-jade">— {t('editorial.rooms.timeline')}</div>
-            <div className="text-caption text-foreground/40 hidden sm:block">252 — present · MYA</div>
+            <div className="text-caption text-foreground/40 hidden sm:block">{t('timeline.range')}</div>
           </div>
 
           <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
@@ -254,6 +244,15 @@ export default function Timeline() {
                 </button>
               </div>
 
+              {failed && (
+                <div className="py-16 text-center hairline-t">
+                  <p className="text-foreground/60 mb-6">{t('common.errorMessage')}</p>
+                  <Button variant="outline" onClick={() => { setLoading(true); setAttempt((n) => n + 1); }}>
+                    {t('common.retry')}
+                  </Button>
+                </div>
+              )}
+
               <ol className="relative">
                 {filteredDiscoveries.slice(0, visibleItems).map((discovery) => {
                   const expanded = expandedCard === discovery.id;
@@ -304,7 +303,7 @@ export default function Timeline() {
                           className="mt-5 text-caption text-jade hover:text-foreground transition-colors duration-300 flex items-center gap-2"
                         >
                           <Eye className="w-3.5 h-3.5" />
-                          {expanded ? 'Less' : 'More'}
+                          {expanded ? t('timeline.discovery.less') : t('timeline.discovery.more')}
                         </button>
                       </div>
 
@@ -331,9 +330,9 @@ export default function Timeline() {
                 </div>
               )}
 
-              {filteredDiscoveries.length === 0 && (
+              {!failed && filteredDiscoveries.length === 0 && (
                 <div className="py-24 text-center">
-                  <div className="text-caption text-jade mb-4">— Empty page</div>
+                  <div className="text-caption text-jade mb-4">— {t('timeline.discovery.emptyCaption')}</div>
                   <h3 className="font-display text-display-lg text-foreground tracking-tighter mb-3">
                     {t('timeline.discovery.noDiscoveries')}
                   </h3>
@@ -362,7 +361,7 @@ export default function Timeline() {
                       <div className="text-caption text-foreground/40 mb-3 flex items-center gap-2">
                         <span>{event.period} · {t('timeline.geological.period')}</span>
                         <span className="opacity-30">·</span>
-                        <span className="capitalize">{event.type.replace('_', ' ')}</span>
+                        <span>{t(`timeline.eventTypes.${event.type}`)}</span>
                       </div>
                       <h3 className="font-display text-2xl tracking-[-0.025em] text-foreground mb-3 transition-colors duration-300 group-hover:text-jade">
                         {event.title}

@@ -1,6 +1,7 @@
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -32,4 +33,8 @@ export async function signUpWithEmail(email: string, password: string, displayNa
 
 export async function signOutUser() {
   await signOut(getFirebaseAuth());
+}
+
+export async function sendPasswordReset(email: string) {
+  await sendPasswordResetEmail(getFirebaseAuth(), email);
 }

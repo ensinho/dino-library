@@ -1,9 +1,11 @@
 import { useLocation, Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const NotFound = () => {
   const location = useLocation();
   const { t } = useTranslation();
+  usePageTitle('404');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">

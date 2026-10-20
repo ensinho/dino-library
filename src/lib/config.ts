@@ -57,6 +57,12 @@ const config: AppConfig = {
   logLevel: import.meta.env.VITE_LOG_LEVEL || 'info',
 };
 
+/**
+ * True when the app should read the bundled dataset instead of Firestore —
+ * either explicitly requested or because no Firebase project is configured.
+ */
+export const localDataMode = config.useLocalServices || !config.firebase;
+
 // Validation function
 export function validateConfig(): boolean {
   const errors: string[] = [];

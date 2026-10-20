@@ -36,3 +36,17 @@
   background-color: hsl(var(--primary-foreground)) !important;
   color: hsl(var(--primary)) !important;
 }
+
+.leaflet-popup-content {
+  margin: 14px 16px;
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 1rem;
+  box-shadow: 0 20px 40px -20px hsl(0 0% 0% / 0.6);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: hsl(var(--foreground) / 0.5);
+}

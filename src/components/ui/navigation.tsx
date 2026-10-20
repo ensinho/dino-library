@@ -12,10 +12,13 @@ import {
   Menu,
   X,
   Compass,
-  Newspaper
+  Newspaper,
+  Bookmark
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useFavorites } from '@/hooks/useFavorites';
 
 interface NavigationProps {
   className?: string;
@@ -24,7 +27,16 @@ interface NavigationProps {
 export function Navigation({ className }: NavigationProps) {
   const location = useLocation();
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { ids: favoriteIds } = useFavorites();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close the drawer whenever the route changes (back button included).
+  useEffect(() => setMobileMenuOpen(false), [location.pathname]);
+
+  const account = user
+    ? { href: '/profile', label: t('navigation.profile') }
+    : { href: '/auth', label: t('navigation.auth') };
 
   const navigationItems = [
     { name: t('navigation.home'), href: '/', icon: Home },
@@ -36,7 +48,13 @@ export function Navigation({ className }: NavigationProps) {
     { name: t('navigation.news'), href: '/news', icon: Newspaper },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  // Detail pages light up their parent section (/species/12 → Catalog).
+  const isActive = (path: string) => {
+    const { pathname } = location;
+    if (path === '/') return pathname === '/';
+    if (path === '/catalog' && pathname.startsWith('/species/')) return true;
+    return pathname === path || pathname.startsWith(`${path}/`);
+  };
 
   return (
     <nav
@@ -66,6 +84,7 @@ export function Navigation({ className }: NavigationProps) {
                 <Link
                   key={item.name}
                   to={item.href}
+                  aria-current={active ? 'page' : undefined}
                   className={cn(
                     'relative px-3.5 py-2 text-sm font-medium tracking-[-0.01em] transition-colors duration-300 ease-spring',
                     active
@@ -86,15 +105,33 @@ export function Navigation({ className }: NavigationProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Link to="/profile" className="hidden sm:block">
-              <Button
-                variant={isActive('/profile') ? 'accent' : 'outline'}
-                size="sm"
+            {!user && favoriteIds.length > 0 && (
+              <Link
+                to="/profile"
+                aria-label={t('navigation.collection', { count: favoriteIds.length })}
+                title={t('navigation.collection', { count: favoriteIds.length })}
+                className={cn(
+                  'relative flex h-9 w-9 items-center justify-center rounded-full ring-1 ring-inset transition-colors duration-300',
+                  isActive('/profile') ? 'text-jade ring-jade/40' : 'text-foreground/70 ring-foreground/15 hover:text-jade',
+                )}
               >
+                <Bookmark className="h-4 w-4" />
+                <span className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-jade px-1 text-center font-mono text-[10px] leading-[18px] text-canvas">
+                  {favoriteIds.length}
+                </span>
+              </Link>
+            )}
+            <Button
+              asChild
+              variant={isActive(account.href) ? 'accent' : 'outline'}
+              size="sm"
+              className="hidden sm:inline-flex"
+            >
+              <Link to={account.href}>
                 <User className="w-4 h-4" />
-                <span className="hidden sm:inline">{t('navigation.profile')}</span>
-              </Button>
-            </Link>
+                {account.label}
+              </Link>
+            </Button>
 
             {/* Mobile menu button */}
             <div className="lg:hidden">
@@ -102,6 +139,7 @@ export function Navigation({ className }: NavigationProps) {
                 variant="ghost"
                 size="icon"
                 aria-label={t('navigation.menu')}
+                aria-expanded={mobileMenuOpen}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -120,6 +158,7 @@ export function Navigation({ className }: NavigationProps) {
                   <Link
                     key={item.name}
                     to={item.href}
+                    aria-current={active ? 'page' : undefined}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
                       'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors duration-300',
@@ -134,12 +173,12 @@ export function Navigation({ className }: NavigationProps) {
                 );
               })}
               <Link
-                to="/profile"
+                to={account.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-foreground/70 hover:bg-foreground/[0.04] hover:text-foreground"
               >
                 <User className="w-4 h-4 text-jade" />
-                <span>{t('navigation.profile')}</span>
+                <span>{account.label}</span>
               </Link>
             </div>
           </div>

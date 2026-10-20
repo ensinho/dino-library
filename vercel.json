@@ -3,11 +3,6 @@
   "outputDirectory": "dist",
   "framework": null,
   "installCommand": "npm install",
-  "functions": {
-    "api/**/*.{ts,tsx}": {
-      "runtime": "@vercel/node@3.0.19"
-    }
-  },
   "env": {
     "VITE_USE_LOCAL_SERVICES": "false",
     "VITE_ENABLE_ANALYTICS": "true",

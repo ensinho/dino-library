@@ -12,9 +12,13 @@ import {
   type DocumentData,
 } from 'firebase/firestore';
 import { getFirebaseFirestore } from '@/integrations/firebase/firestore';
+import config from '@/lib/config';
 
 // Small helpers so the rest of the code stays clean.
-export const db = () => getFirebaseFirestore();
+export const db = () => {
+  if (!config.firebase) throw new Error('firebase-not-configured');
+  return getFirebaseFirestore();
+};
 
 export async function getDocData<T = DocumentData>(path: string): Promise<T | null> {
   const snap = await getDoc(doc(db(), path));

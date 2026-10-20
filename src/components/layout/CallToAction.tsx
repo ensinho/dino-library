@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
-interface CallToActionProps {
-  user: { isAuthenticated: boolean };
-}
-
-const CallToAction: React.FC<CallToActionProps> = ({ user }) => {
+const CallToAction: React.FC = () => {
   const { t } = useTranslation();
-  if (user.isAuthenticated) return null;
+  const { user } = useAuth();
+  if (user) return null;
 
   return (
     <section className="relative py-32 overflow-hidden">

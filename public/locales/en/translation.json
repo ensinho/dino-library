@@ -33,7 +33,7 @@
       "europe": "Europe",
       "asia": "Asia",
       "africa": "Africa",
-      "australia": "Australia",
+      "australia": "Oceania",
       "antarctica": "Antarctica"
     },
     "stats": {
@@ -45,7 +45,10 @@
       "fossilLocation": "Fossil Location",
       "meters": "m",
       "kilograms": "kg",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "lengthShort": "L",
+      "heightShort": "H",
+      "weightShort": "Wt"
     },
     "pagination": {
       "showing": "Showing",
@@ -55,13 +58,31 @@
       "perPage": "Per page",
       "grid": "Grid",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "summary": "Showing {{shown}} of {{total}} species · page {{page}}/{{pages}}",
+      "label": "Catalogue pages"
     },
     "noResults": {
       "title": "No dinosaurs found",
       "subtitle": "Try adjusting your search criteria or clearing the filters.",
-      "action": "Clear all filters"
-    }
+      "action": "Clear all filters",
+      "caption": "No specimens match",
+      "discover": "Browse curated themes"
+    },
+    "viewSpecies": "View {{name}}",
+    "periodStage": {
+      "early": "Early {{period}}",
+      "middle": "Middle {{period}}",
+      "late": "Late {{period}}"
+    },
+    "sort": {
+      "label": "Sort by",
+      "default": "A → Z",
+      "length": "Longest",
+      "weight": "Heaviest",
+      "discovered": "Newest finds"
+    },
+    "themeChip": "Theme: {{theme}}"
   },
   "species": {
     "loading": "Loading species details...",
@@ -120,8 +141,8 @@
       "learnMore": "View Source"
     },
     "relatedSpecies": {
-      "title": "Discover More Species",
-      "description": "Explore our complete collection of dinosaur species and learn about their fascinating world.",
+      "title": "Related species",
+      "description": "Specimens that shared its time, diet or ground.",
       "exploreCatalog": "Explore Catalog"
     },
     "gallery": {
@@ -137,7 +158,9 @@
       "previous": "Previous",
       "next": "Next",
       "of": "of"
-    }
+    },
+    "shareText": "Discover {{name}} on Dino Library",
+    "linkCopied": "Link copied to clipboard"
   },
   "discover": {
     "title": "Discover Dinosaurs",
@@ -151,11 +174,11 @@
     "groups": {
       "giants": {
         "title": "Giants",
-        "description": "The largest dinosaurs that ever walked the Earth. Massive sauropods and other colossal creatures."
+        "description": "The longest animals ever to walk the Earth — every species here measured fifteen metres or more, ranked by length."
       },
       "predators": {
         "title": "Predators",
-        "description": "Fast and deadly carnivores. The most fearsome hunters of the prehistoric world."
+        "description": "Large carnivores of six metres and up, ranked by body mass. The apex hunters of the Mesozoic."
       },
       "brazil": {
         "title": "From Brazil",
@@ -166,24 +189,26 @@
         "description": "Heavily defended dinosaurs with armor, spikes, and horns for protection."
       },
       "rare": {
-        "title": "Rare Finds",
-        "description": "Recently discovered or exceptionally rare dinosaur species with unique characteristics."
+        "title": "Recent finds",
+        "description": "Species described in the last decade — proof that the fossil record is still being written."
       },
       "aerial": {
-        "title": "Sky Rulers",
-        "description": "Flying reptiles and dinosaurs that ruled the prehistoric skies."
+        "title": "Feathered",
+        "description": "Dinosaurs with feathers, wings or gliding adaptations — the lineage that eventually took to the skies."
       }
     },
     "noSpecies": {
       "title": "No species found",
       "subtitle": "We couldn't find any dinosaurs matching this category criteria.",
-      "action": "Explore All Species"
+      "action": "Explore All Species",
+      "caption": "Empty case"
     },
     "cta": {
       "title": "Want to learn more?",
       "description": "Dive deeper into these fascinating creatures and discover their complete stories.",
       "viewAll": "View All in Category",
-      "exploreAll": "Explore All Species"
+      "exploreAll": "Explore All Species",
+      "caption": "Continue"
     }
   },
   "common": {
@@ -191,7 +216,9 @@
     "loading": "Loading...",
     "error": "Error",
     "retry": "Retry",
-    "close": "Close"
+    "close": "Close",
+    "errorTitle": "Something went wrong",
+    "errorMessage": "We could not reach the archive. Check your connection and try again."
   },
   "services": {
     "status": "Service Status",
@@ -243,7 +270,10 @@
       "subtitle": "Try adjusting your search or filters",
       "action": "Clear all filters"
     },
-    "loadMore": "Load More Articles"
+    "loadMore": "Load More Articles",
+    "linkCopied": "Link copied!",
+    "linkCopiedDesc": "The article link is on your clipboard.",
+    "byline": "Byline"
   },
   "home": {
     "hero": {
@@ -270,7 +300,8 @@
       "education": {
         "title": "Learning Area",
         "description": "Participate in interactive quizzes and learn in a fun way."
-      }
+      },
+      "caption": "What you can explore"
     },
     "favorites": {
       "title": "Some of My Favorite Dinosaurs",
@@ -302,8 +333,17 @@
     "stats": {
       "cataloged": "Species Cataloged",
       "discoveries": "Discoveries Mapped",
-      "resources": "Educational Resources"
-    }
+      "resources": "Educational Resources",
+      "span": "Million years covered",
+      "languages": "Languages"
+    },
+    "plates": {
+      "two": "Plate II · Ankylosaur, study at dusk",
+      "three": "Plate III · Paleo landscape · panoramic",
+      "four": "Plate IV · 0{{n}}",
+      "five": "Plate V · Cranial study"
+    },
+    "endOfGuide": "End of guide · return any time"
   },
   "timeline": {
     "title": "Paleontological Timeline",
@@ -323,7 +363,10 @@
       "viewMore": "View More Discoveries",
       "remaining": "remaining",
       "noDiscoveries": "No discoveries found",
-      "adjustFilters": "Try adjusting your search filters."
+      "adjustFilters": "Try adjusting your search filters.",
+      "more": "More",
+      "less": "Less",
+      "emptyCaption": "Empty page"
     },
     "geological": {
       "millionYearsAgo": "Million Years Ago",
@@ -338,6 +381,46 @@
       "triassicDesc": "Early dinosaur evolution",
       "jurassicDesc": "Golden age of dinosaurs",
       "cretaceousDesc": "Peak diversity & extinction"
+    },
+    "range": "252 MYA — present",
+    "periods": {
+      "permian": "Permian",
+      "triassic": "Triassic",
+      "jurassic": "Jurassic",
+      "cretaceous": "Cretaceous"
+    },
+    "eventTypes": {
+      "extinction": "Extinction",
+      "period_start": "Period begins",
+      "period_end": "Period ends",
+      "climate_change": "Climate change",
+      "geological": "Geological event"
+    },
+    "events": {
+      "cretaceous_end": {
+        "title": "End-Cretaceous Mass Extinction",
+        "description": "The asteroid impact that ended the age of dinosaurs. A massive asteroid struck Earth, causing global climate change and the extinction of non-avian dinosaurs."
+      },
+      "cretaceous_start": {
+        "title": "Cretaceous Period Begins",
+        "description": "The final period of the Mesozoic Era begins. Flowering plants appear and dinosaurs reach their peak diversity."
+      },
+      "jurassic_start": {
+        "title": "Jurassic Period Begins",
+        "description": "The golden age of dinosaurs begins. Supercontinent Pangaea breaks apart, creating new ocean basins and climate patterns."
+      },
+      "triassic_jurassic_extinction": {
+        "title": "Triassic–Jurassic Extinction Event",
+        "description": "A major extinction event that eliminated many competitors of dinosaurs, allowing them to become the dominant terrestrial vertebrates."
+      },
+      "triassic_start": {
+        "title": "Triassic Period Begins",
+        "description": "The first period of the Mesozoic Era. Early dinosaurs evolve and the supercontinent Pangaea dominates Earth's geography."
+      },
+      "permian_extinction": {
+        "title": "Permian–Triassic Extinction",
+        "description": "The Great Dying — the most severe mass extinction in Earth's history. It set the stage for dinosaur evolution."
+      }
     }
   },
   "education": {
@@ -396,7 +479,8 @@
       "tip2": "Read the answer explanations to learn from your mistakes",
       "tip3": "Explore the species catalog to learn more about each dinosaur",
       "tip4": "Use the interactive map to understand habitats and discoveries",
-      "tip5": "Practice regularly to improve your score"
+      "tip5": "Practice regularly to improve your score",
+      "caption": "Notes from the docent"
     },
     "session": {
       "exitQuiz": "Exit Quiz",
@@ -411,24 +495,51 @@
       "explanation": "Explanation",
       "quizCompleted": "Quiz Completed!",
       "yourScore": "Your Score",
-      "answeredCorrectly": "You answered {score} of {total} questions correctly",
-      "tryAgain": "Try Again",
-      "newQuiz": "New Quiz"
+      "answeredCorrectly": "You answered {{score}} of {{total}} questions correctly",
+      "tryAgain": "Play again",
+      "newQuiz": "Choose another quiz",
+      "inPlay": "In play",
+      "points": "points",
+      "closed": "Quiz closed",
+      "pointsSummary": "{{points}} points · {{speed}} from speed bonuses",
+      "saved": "Result saved to your profile.",
+      "signInToSave": "Sign in to keep track of your scores →"
+    },
+    "preparing": "Preparing the questions",
+    "comingSoon": "Coming to the floor",
+    "errors": {
+      "noQuestions": "No questions found",
+      "noQuestionsDesc": "Try again or pick a different difficulty.",
+      "loadFailed": "Could not load the quiz"
+    },
+    "rewards": {
+      "correct": "Correct!",
+      "speed": "Quick answer · +{{points}}",
+      "streak": "{{count}} in a row · +{{points}}",
+      "timeUp": "Time's up"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
     }
   },
   "map": {
-    "title": "Interactive Fossil Map",
-    "subtitle": "Explore where dinosaur fossils have been discovered around the world",
+    "title": "The fossil map",
+    "subtitle": "Where each specimen was unearthed, plotted across the world. Filter by group or period, then open a site to read its file.",
     "loading": "Loading map...",
     "filters": {
       "period": "Filter by Period",
       "diet": "Filter by Diet",
-      "clear": "Clear Filters"
+      "clear": "Clear Filters",
+      "clade": "Filter by group",
+      "allGroups": "All groups"
     },
     "stats": {
       "discoveries": "Fossil Sites",
       "species": "Species Mapped",
-      "countries": "Countries"
+      "countries": "Countries",
+      "sites": "{{count}} sites"
     },
     "legend": {
       "title": "Legend",
@@ -444,12 +555,23 @@
       "discovered": "Discovered",
       "location": "Location",
       "viewDetails": "View Details"
-    }
+    },
+    "plotting": "Plotting fossil sites",
+    "mappedCount": "{{shown}} of {{total}} mapped",
+    "index": "Index · {{count}} entries",
+    "clades": {
+      "theropod": "Theropods",
+      "sauropod": "Sauropods",
+      "armored": "Armoured & horned",
+      "ornithopod": "Ornithopods",
+      "other": "Other"
+    },
+    "disclaimer": "Positions are approximate — each marker is placed at the region named in the record, slightly offset so nearby finds stay visible."
   },
   "profile": {
     "title": "My Profile",
     "subtitle": "Track your learning progress and manage your account",
-    "memberSince": "Member since {date}",
+    "memberSince": "Member since {{date}}",
     "organization": "Organization",
     "editProfile": "Edit Profile",
     "cancel": "Cancel",
@@ -473,7 +595,8 @@
       "takeNewQuiz": "Take a New Quiz",
       "quizzesTaken": "Quizzes Taken",
       "speciesViewed": "Species Viewed",
-      "articlesRead": "Articles Read"
+      "articlesRead": "Articles Read",
+      "averageScore": "Average score"
     },
     "settings": {
       "title": "Account Settings",
@@ -495,11 +618,39 @@
       "expertDesc": "Scored over 80% on a quiz",
       "keepLearning": "Keep learning to unlock more achievements!",
       "locked": "Locked",
-      "unlocked": "Unlocked"
+      "unlocked": "Unlocked",
+      "heading": "Marks of progress",
+      "collector": "Collector",
+      "collectorDesc": "Saved five species to your collection",
+      "dedicated": "Dedicated",
+      "dedicatedDesc": "Completed ten quizzes"
     },
     "recentActivity": {
       "title": "Recent Activity",
       "noActivity": "No recent activity"
+    },
+    "readingDesk": "Reading desk",
+    "visitorFile": "Visitor file",
+    "visitor": "Visitor",
+    "editFile": "Edit file",
+    "toast": {
+      "saved": "Profile updated",
+      "savedDesc": "Your information has been saved.",
+      "saveFailed": "Could not save your profile"
+    },
+    "collection": {
+      "title": "Collection",
+      "emptyTitle": "Your collection is empty",
+      "emptyDesc": "Use the bookmark on any species card to keep it here.",
+      "browse": "Browse the catalogue",
+      "guestTitle": "Your collection",
+      "guestDesc": "Species you bookmark are kept on this device. Sign in to sync them across devices and track your quiz scores."
+    },
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "expert": "Expert"
     }
   },
   "navigation": {
@@ -512,7 +663,8 @@
     "news": "News",
     "profile": "Profile",
     "auth": "Sign In",
-    "menu": "Menu"
+    "menu": "Menu",
+    "collection": "Your collection ({{count}})"
   },
   "editorial": {
     "rooms": {
@@ -610,8 +762,16 @@
       "userNotFound": "No account found for this email. Please sign up.",
       "emailInUse": "This email is already registered. Please try to sign in.",
       "weakPassword": "Password is too weak. Please choose a stronger password.",
-      "generic": "An unexpected error occurred. Please try again."
-    }
+      "generic": "An unexpected error occurred. Please try again.",
+      "invalidEmail": "That email address looks invalid.",
+      "tooManyRequests": "Too many attempts. Please wait a moment and try again.",
+      "network": "Network error. Check your connection.",
+      "emailRequired": "Enter your email above first."
+    },
+    "backHome": "Back to the library",
+    "forgotPassword": "Forgot your password?",
+    "resetSent": "Check your inbox",
+    "resetSentDesc": "We sent a reset link to {{email}}."
   },
   "glossary": {
     "title": "Paleontology glossary",
@@ -647,5 +807,11 @@
     "earlyEvolution": "Early dinosaur evolution",
     "goldenAge": "Golden age of dinosaurs",
     "finalPeriod": "Final dinosaur period"
+  },
+  "favorites": {
+    "add": "Save {{name}} to your collection",
+    "remove": "Remove {{name}} from your collection",
+    "save": "Save",
+    "saved": "Saved"
   }
 }

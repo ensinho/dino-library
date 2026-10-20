@@ -33,7 +33,7 @@
       "europe": "Europa",
       "asia": "Asia",
       "africa": "África",
-      "australia": "Australia",
+      "australia": "Oceanía",
       "antarctica": "Antártida"
     },
     "stats": {
@@ -45,7 +45,10 @@
       "fossilLocation": "Ubicación del Fósil",
       "meters": "m",
       "kilograms": "kg",
-      "unknown": "Desconocido"
+      "unknown": "Desconocido",
+      "lengthShort": "L",
+      "heightShort": "A",
+      "weightShort": "P"
     },
     "pagination": {
       "showing": "Mostrando",
@@ -55,13 +58,31 @@
       "perPage": "Por página",
       "grid": "Cuadrícula",
       "previous": "Anterior",
-      "next": "Siguiente"
+      "next": "Siguiente",
+      "summary": "Mostrando {{shown}} de {{total}} especies · página {{page}}/{{pages}}",
+      "label": "Páginas del catálogo"
     },
     "noResults": {
       "title": "No se encontraron dinosaurios",
       "subtitle": "Intenta ajustar tus criterios de búsqueda o limpiar los filtros.",
-      "action": "Limpiar todos los filtros"
-    }
+      "action": "Limpiar todos los filtros",
+      "caption": "Ningún espécimen coincide",
+      "discover": "Ver temas curados"
+    },
+    "viewSpecies": "Ver {{name}}",
+    "periodStage": {
+      "early": "{{period}} Inferior",
+      "middle": "{{period}} Medio",
+      "late": "{{period}} Superior"
+    },
+    "sort": {
+      "label": "Ordenar por",
+      "default": "A → Z",
+      "length": "Más largos",
+      "weight": "Más pesados",
+      "discovered": "Hallazgos recientes"
+    },
+    "themeChip": "Tema: {{theme}}"
   },
   "species": {
     "loading": "Cargando detalles de la especie...",
@@ -120,8 +141,8 @@
       "learnMore": "Ver Fuente"
     },
     "relatedSpecies": {
-      "title": "Descubre Más Especies",
-      "description": "Explora nuestra colección completa de especies de dinosaurios y aprende sobre su mundo fascinante.",
+      "title": "Especies relacionadas",
+      "description": "Especímenes que compartieron su época, dieta o territorio.",
       "exploreCatalog": "Explorar Catálogo"
     },
     "gallery": {
@@ -137,7 +158,9 @@
       "previous": "Anterior",
       "next": "Siguiente",
       "of": "de"
-    }
+    },
+    "shareText": "Descubre a {{name}} en Dino Library",
+    "linkCopied": "Enlace copiado al portapapeles"
   },
   "discover": {
     "title": "Descubre Dinosaurios",
@@ -151,11 +174,11 @@
     "groups": {
       "giants": {
         "title": "Gigantes",
-        "description": "Los dinosaurios más grandes que han caminado por la Tierra. Saurópodos masivos y otras criaturas colosales."
+        "description": "Los animales más largos que han pisado la Tierra: todas estas especies superan los quince metros, ordenadas por longitud."
       },
       "predators": {
         "title": "Depredadores",
-        "description": "Carnívoros rápidos y mortales. Los cazadores más temidos del mundo prehistórico."
+        "description": "Grandes carnívoros de seis metros o más, ordenados por masa corporal. Los superdepredadores del Mesozoico."
       },
       "brazil": {
         "title": "De Brasil",
@@ -166,24 +189,26 @@
         "description": "Dinosaurios fuertemente defendidos con armaduras, espinas y cuernos para protegerse."
       },
       "rare": {
-        "title": "Hallazgos Raros",
-        "description": "Especies de dinosaurios descubiertas recientemente o excepcionalmente raras con características únicas."
+        "title": "Hallazgos recientes",
+        "description": "Especies descritas en la última década: prueba de que el registro fósil aún se está escribiendo."
       },
       "aerial": {
-        "title": "Señores del Cielo",
-        "description": "Reptiles voladores y dinosaurios que dominaron los cielos prehistóricos."
+        "title": "Emplumados",
+        "description": "Dinosaurios con plumas, alas o adaptaciones para planear: el linaje que acabó conquistando los cielos."
       }
     },
     "noSpecies": {
       "title": "No se encontraron especies",
       "subtitle": "No pudimos encontrar dinosaurios que coincidan con los criterios de esta categoría.",
-      "action": "Explorar Todas las Especies"
+      "action": "Explorar Todas las Especies",
+      "caption": "Vitrina vacía"
     },
     "cta": {
       "title": "¿Quieres saber más?",
       "description": "Sumergéte más a fondo en estas criaturas fascinantes y descubre sus historias completas.",
       "viewAll": "Ver Todo en la Categoría",
-      "exploreAll": "Explorar Todas las Especies"
+      "exploreAll": "Explorar Todas las Especies",
+      "caption": "Continúa"
     }
   },
   "common": {
@@ -191,7 +216,9 @@
     "loading": "Cargando...",
     "error": "Error",
     "retry": "Reintentar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "errorTitle": "Algo salió mal",
+    "errorMessage": "No pudimos acceder al archivo. Revisa tu conexión e inténtalo de nuevo."
   },
   "services": {
     "status": "Estado de los Servicios",
@@ -243,7 +270,10 @@
       "subtitle": "Intenta ajustar tu búsqueda o filtros",
       "action": "Limpiar todos los filtros"
     },
-    "loadMore": "Cargar Más Artículos"
+    "loadMore": "Cargar Más Artículos",
+    "linkCopied": "¡Enlace copiado!",
+    "linkCopiedDesc": "El enlace del artículo está en tu portapapeles.",
+    "byline": "Autoría"
   },
   "home": {
     "hero": {
@@ -270,7 +300,8 @@
       "education": {
         "title": "Área de Aprendizaje",
         "description": "Participa en quizzes interactivos y aprende de forma divertida."
-      }
+      },
+      "caption": "Qué puedes explorar"
     },
     "favorites": {
       "title": "Algunos de Mis Dinosaurios Favoritos",
@@ -302,8 +333,17 @@
     "stats": {
       "cataloged": "Especies Catalogadas",
       "discoveries": "Descubrimientos Mapeados",
-      "resources": "Recursos Educativos"
-    }
+      "resources": "Recursos Educativos",
+      "span": "Millones de años abarcados",
+      "languages": "Idiomas"
+    },
+    "plates": {
+      "two": "Lámina II · Anquilosaurio al atardecer",
+      "three": "Lámina III · Paisaje prehistórico · panorámica",
+      "four": "Lámina IV · 0{{n}}",
+      "five": "Lámina V · Estudio craneal"
+    },
+    "endOfGuide": "Fin de la guía · vuelve cuando quieras"
   },
   "timeline": {
     "title": "Línea de Tiempo Paleontológica",
@@ -323,7 +363,10 @@
       "viewMore": "Ver Más Descubrimientos",
       "remaining": "restantes",
       "noDiscoveries": "No se encontraron descubrimientos",
-      "adjustFilters": "Intenta ajustar tus filtros de búsqueda."
+      "adjustFilters": "Intenta ajustar tus filtros de búsqueda.",
+      "more": "Más",
+      "less": "Menos",
+      "emptyCaption": "Página vacía"
     },
     "geological": {
       "millionYearsAgo": "Millones de Años Atrás",
@@ -338,6 +381,46 @@
       "triassicDesc": "Evolución temprana de los dinosaurios",
       "jurassicDesc": "Era dorada de los dinosaurios",
       "cretaceousDesc": "Pico de diversidad y extinción"
+    },
+    "range": "252 Ma — presente",
+    "periods": {
+      "permian": "Pérmico",
+      "triassic": "Triásico",
+      "jurassic": "Jurásico",
+      "cretaceous": "Cretácico"
+    },
+    "eventTypes": {
+      "extinction": "Extinción",
+      "period_start": "Inicio de período",
+      "period_end": "Fin de período",
+      "climate_change": "Cambio climático",
+      "geological": "Evento geológico"
+    },
+    "events": {
+      "cretaceous_end": {
+        "title": "Extinción Masiva del Fin del Cretácico",
+        "description": "El impacto del asteroide que puso fin a la era de los dinosaurios. Un enorme asteroide golpeó la Tierra, causando un cambio climático global y la extinción de los dinosaurios no avianos."
+      },
+      "cretaceous_start": {
+        "title": "Comienza el Período Cretácico",
+        "description": "Comienza el último período de la Era Mesozoica. Aparecen las plantas con flores y los dinosaurios alcanzan su máxima diversidad."
+      },
+      "jurassic_start": {
+        "title": "Comienza el Período Jurásico",
+        "description": "Comienza la edad de oro de los dinosaurios. El supercontinente Pangea se fragmenta, creando nuevas cuencas oceánicas y patrones climáticos."
+      },
+      "triassic_jurassic_extinction": {
+        "title": "Extinción del Triásico–Jurásico",
+        "description": "Un gran evento de extinción que eliminó a muchos competidores de los dinosaurios, permitiéndoles convertirse en los vertebrados terrestres dominantes."
+      },
+      "triassic_start": {
+        "title": "Comienza el Período Triásico",
+        "description": "El primer período de la Era Mesozoica. Evolucionan los primeros dinosaurios y el supercontinente Pangea domina la geografía terrestre."
+      },
+      "permian_extinction": {
+        "title": "Extinción del Pérmico–Triásico",
+        "description": "La Gran Mortandad: la extinción masiva más severa de la historia de la Tierra. Preparó el escenario para la evolución de los dinosaurios."
+      }
     }
   },
   "education": {
@@ -396,7 +479,8 @@
       "tip2": "Lee las explicaciones de las respuestas para aprender de tus errores",
       "tip3": "Explora el catálogo de especies para aprender más sobre cada dinosaurio",
       "tip4": "Usa el mapa interactivo para entender hábitats y descubrimientos",
-      "tip5": "Practica regularmente para mejorar tu puntuación"
+      "tip5": "Practica regularmente para mejorar tu puntuación",
+      "caption": "Notas del guía"
     },
     "session": {
       "exitQuiz": "Salir del Quiz",
@@ -411,24 +495,51 @@
       "explanation": "Explicación",
       "quizCompleted": "¡Quiz Completado!",
       "yourScore": "Tu Puntuación",
-      "answeredCorrectly": "Respondiste correctamente {score} de {total} preguntas",
-      "tryAgain": "Intentar de Nuevo",
-      "newQuiz": "Nuevo Quiz"
+      "answeredCorrectly": "Respondiste correctamente {{score}} de {{total}} preguntas",
+      "tryAgain": "Jugar de nuevo",
+      "newQuiz": "Elegir otro quiz",
+      "inPlay": "En juego",
+      "points": "puntos",
+      "closed": "Quiz terminado",
+      "pointsSummary": "{{points}} puntos · {{speed}} por bonos de velocidad",
+      "saved": "Resultado guardado en tu perfil.",
+      "signInToSave": "Inicia sesión para guardar tus puntuaciones →"
+    },
+    "preparing": "Preparando las preguntas",
+    "comingSoon": "Próximamente",
+    "errors": {
+      "noQuestions": "No se encontraron preguntas",
+      "noQuestionsDesc": "Inténtalo de nuevo o elige otra dificultad.",
+      "loadFailed": "No se pudo cargar el quiz"
+    },
+    "rewards": {
+      "correct": "¡Correcto!",
+      "speed": "Respuesta rápida · +{{points}}",
+      "streak": "{{count}} seguidas · +{{points}}",
+      "timeUp": "Se acabó el tiempo"
+    },
+    "difficulty": {
+      "easy": "Fácil",
+      "medium": "Medio",
+      "hard": "Difícil"
     }
   },
   "map": {
-    "title": "Mapa Interactivo de Fósiles",
-    "subtitle": "Explora dónde se han descubierto fósiles de dinosaurios alrededor del mundo",
+    "title": "El mapa fósil",
+    "subtitle": "Dónde se desenterró cada espécimen, marcado en el mapa. Filtra por grupo o período y abre un punto para ver su ficha.",
     "loading": "Cargando mapa...",
     "filters": {
       "period": "Filtrar por Período",
       "diet": "Filtrar por Dieta",
-      "clear": "Limpiar Filtros"
+      "clear": "Limpiar Filtros",
+      "clade": "Filtrar por grupo",
+      "allGroups": "Todos los grupos"
     },
     "stats": {
       "discoveries": "Sitios Fósiles",
       "species": "Especies Mapeadas",
-      "countries": "Países"
+      "countries": "Países",
+      "sites": "{{count}} sitios"
     },
     "legend": {
       "title": "Leyenda",
@@ -444,12 +555,23 @@
       "discovered": "Descubierto",
       "location": "Ubicación",
       "viewDetails": "Ver Detalles"
-    }
+    },
+    "plotting": "Marcando yacimientos",
+    "mappedCount": "{{shown}} de {{total}} en el mapa",
+    "index": "Índice · {{count}} entradas",
+    "clades": {
+      "theropod": "Terópodos",
+      "sauropod": "Saurópodos",
+      "armored": "Acorazados y con cuernos",
+      "ornithopod": "Ornitópodos",
+      "other": "Otros"
+    },
+    "disclaimer": "Posiciones aproximadas: cada marcador se ubica en la región indicada en el registro, ligeramente desplazado para que los hallazgos cercanos sigan visibles."
   },
   "profile": {
     "title": "Mi Perfil",
     "subtitle": "Rastrea tu progreso de aprendizaje y gestiona tu cuenta",
-    "memberSince": "Miembro desde {date}",
+    "memberSince": "Miembro desde {{date}}",
     "organization": "Organización",
     "editProfile": "Editar Perfil",
     "cancel": "Cancelar",
@@ -473,7 +595,8 @@
       "takeNewQuiz": "Hacer Nuevo Quiz",
       "quizzesTaken": "Quizzes Realizados",
       "speciesViewed": "Especies Visualizadas",
-      "articlesRead": "Artículos Leídos"
+      "articlesRead": "Artículos Leídos",
+      "averageScore": "Promedio"
     },
     "settings": {
       "title": "Configuración de la Cuenta",
@@ -495,11 +618,39 @@
       "expertDesc": "Puntuaste más del 80% en un quiz",
       "keepLearning": "¡Sigue aprendiendo para desbloquear más logros!",
       "locked": "Bloqueado",
-      "unlocked": "Desbloqueado"
+      "unlocked": "Desbloqueado",
+      "heading": "Marcas de progreso",
+      "collector": "Coleccionista",
+      "collectorDesc": "Guardaste cinco especies en tu colección",
+      "dedicated": "Dedicado",
+      "dedicatedDesc": "Completaste diez quizzes"
     },
     "recentActivity": {
       "title": "Actividad Reciente",
       "noActivity": "Sin actividad reciente"
+    },
+    "readingDesk": "Mesa de lectura",
+    "visitorFile": "Ficha del visitante",
+    "visitor": "Visitante",
+    "editFile": "Editar ficha",
+    "toast": {
+      "saved": "Perfil actualizado",
+      "savedDesc": "Tu información se ha guardado.",
+      "saveFailed": "No se pudo guardar el perfil"
+    },
+    "collection": {
+      "title": "Colección",
+      "emptyTitle": "Tu colección está vacía",
+      "emptyDesc": "Usa el marcador en cualquier especie para guardarla aquí.",
+      "browse": "Explorar el catálogo",
+      "guestTitle": "Tu colección",
+      "guestDesc": "Las especies que marcas se guardan en este dispositivo. Inicia sesión para sincronizarlas entre dispositivos y seguir tus quizzes."
+    },
+    "levels": {
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado",
+      "expert": "Experto"
     }
   },
   "navigation": {
@@ -512,7 +663,8 @@
     "news": "Noticias",
     "profile": "Perfil",
     "auth": "Iniciar Sesión",
-    "menu": "Menú"
+    "menu": "Menú",
+    "collection": "Tu colección ({{count}})"
   },
   "editorial": {
     "rooms": {
@@ -610,8 +762,16 @@
       "userNotFound": "No se encontró una cuenta para este correo. Regístrate primero.",
       "emailInUse": "Este correo ya está registrado. Intenta iniciar sesión.",
       "weakPassword": "La contraseña es demasiado débil. Elige una más fuerte.",
-      "generic": "Ocurrió un error inesperado. Intenta de nuevo."
-    }
+      "generic": "Ocurrió un error inesperado. Intenta de nuevo.",
+      "invalidEmail": "Ese correo parece inválido.",
+      "tooManyRequests": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+      "network": "Error de red. Revisa tu conexión.",
+      "emailRequired": "Escribe tu correo arriba primero."
+    },
+    "backHome": "Volver a la biblioteca",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetSent": "Revisa tu correo",
+    "resetSentDesc": "Enviamos un enlace de restablecimiento a {{email}}."
   },
   "glossary": {
     "title": "Glosario de paleontología",
@@ -647,5 +807,11 @@
     "earlyEvolution": "Evolución temprana de los dinosaurios",
     "goldenAge": "Era dorada de los dinosaurios",
     "finalPeriod": "Último período de los dinosaurios"
+  },
+  "favorites": {
+    "add": "Guardar {{name}} en tu colección",
+    "remove": "Quitar {{name}} de tu colección",
+    "save": "Guardar",
+    "saved": "Guardado"
   }
 }

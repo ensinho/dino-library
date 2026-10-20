@@ -1,230 +1,215 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DinoLoader } from '@/components/loader';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { 
-  GraduationCap, 
-  Brain, 
-  Trophy, 
-  BookOpen, 
-  PlayCircle, 
+import { PageLoader } from '@/components/PageState';
+import {
+  Brain,
+  Trophy,
+  BookOpen,
+  PlayCircle,
   Target,
   CheckCircle,
   XCircle,
   RotateCcw,
-  Star,
   Zap,
   Award,
   Sparkles,
-  Timer
+  Timer,
+  type LucideIcon,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { fetchQuizQuestions, type QuizQuestion as FirestoreQuizQuestion } from '@/services/quizService';
-import { getCurrentUser } from '@/services/firebaseAuthService';
-import { updateProfile } from '@/services/profileService';
+import { fetchQuizQuestions, type QuizQuestion } from '@/services/quizService';
+import { recordQuizResult } from '@/services/profileService';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { QUESTION_TIME, pointsFor, shuffle } from '@/lib/quiz';
 
-type QuizQuestion = FirestoreQuizQuestion & { id: string };
+interface SessionQuestion extends QuizQuestion {
+  id: string;
+  options: string[];
+}
 
 interface QuizSession {
-  questions: (QuizQuestion & { options: string[] })[];
+  difficulty?: string;
+  questions: SessionQuestion[];
   currentQuestion: number;
+  /** Correct answers. */
   score: number;
-  answers: boolean[];
-  completed: boolean;
+  /** Correct answers + streak and speed bonuses. */
+  points: number;
   streak: number;
-  bonusPoints: number;
   timeBonus: number;
+  completed: boolean;
 }
+
+/** How long the answer + explanation stay on screen before moving on. */
+const REVEAL_MS = 3000;
 
 export default function Education() {
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  usePageTitle(t('navigation.education'));
+
   const [quizSession, setQuizSession] = useState<QuizSession | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [showReward, setShowReward] = useState(false);
-  const [currentReward, setCurrentReward] = useState<string>('');
-  const { toast } = useToast();
+  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
+  const [reward, setReward] = useState<string | null>(null);
+  const [saved, setSaved] = useState<'idle' | 'saved' | 'guest'>('idle');
+  const advanceTimer = useRef<number>();
 
-  const difficultyColors = {
-    easy: 'bg-green-500/20 text-green-700',
-    medium: 'bg-yellow-500/20 text-yellow-700',
-    hard: 'bg-red-500/20 text-red-700'
-  };
+  useEffect(() => () => window.clearTimeout(advanceTimer.current), []);
 
   const startQuiz = async (difficulty?: string) => {
     setLoading(true);
     try {
       const data = await fetchQuizQuestions(difficulty, 10, i18n.language);
 
-      if (!data || data.length === 0) {
+      if (!data.length) {
         toast({
-          title: "No questions found",
-          description: "Please try again or select a different difficulty.",
-          variant: "destructive"
+          title: t('education.errors.noQuestions'),
+          description: t('education.errors.noQuestionsDesc'),
+          variant: 'destructive',
         });
         return;
       }
 
-      const shuffledQuestions = data
-        .sort(() => Math.random() - 0.5)
-        .slice(0, Math.min(10, data.length))
-        .map((q) => ({
+      setQuizSession({
+        difficulty,
+        questions: data.map((q) => ({
           ...q,
           id: q.id || crypto.randomUUID(),
-          options: [q.correct_answer, ...(q.wrong_answers || [])].sort(() => Math.random() - 0.5),
-        }));
-
-      setQuizSession({
-        questions: shuffledQuestions,
+          options: shuffle([q.correct_answer, ...q.wrong_answers]),
+        })),
         currentQuestion: 0,
         score: 0,
-        answers: [],
-        completed: false,
+        points: 0,
         streak: 0,
-        bonusPoints: 0,
-        timeBonus: 0
+        timeBonus: 0,
+        completed: false,
       });
-      setTimeLeft(30);
+      setTimeLeft(QUESTION_TIME);
       setSelectedAnswer(null);
       setShowResult(false);
+      setSaved('idle');
     } catch (error) {
       console.error('Error loading quiz:', error);
       toast({
-        title: "Error loading quiz",
-        description: "Please try again later.",
-        variant: "destructive"
+        title: t('education.errors.loadFailed'),
+        description: t('common.errorMessage'),
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
   };
 
+  const saveQuizScore = useCallback(
+    async (correct: number, total: number) => {
+      if (!user) {
+        setSaved('guest');
+        return;
+      }
+      try {
+        await recordQuizResult(user.uid, Math.round((correct / total) * 100));
+        setSaved('saved');
+      } catch (error) {
+        console.error('Error saving quiz score:', error);
+      }
+    },
+    [user],
+  );
+
+  /**
+   * Locks in the current answer. `answer` is null when the timer runs out,
+   * which counts as a wrong answer instead of freezing the quiz.
+   */
+  const submitAnswer = useCallback(
+    (answer: string | null) => {
+      if (!quizSession || showResult) return;
+
+      const question = quizSession.questions[quizSession.currentQuestion];
+      const isCorrect = answer === question.correct_answer;
+      const streak = isCorrect ? quizSession.streak + 1 : 0;
+      const { speed, streakBonus } = pointsFor(isCorrect, timeLeft, streak);
+
+      if (isCorrect) {
+        setReward(
+          streak >= 3
+            ? t('education.rewards.streak', { count: streak, points: streakBonus })
+            : speed > 0
+              ? t('education.rewards.speed', { points: speed })
+              : t('education.rewards.correct'),
+        );
+        window.setTimeout(() => setReward(null), 1500);
+      } else if (answer === null) {
+        setReward(t('education.rewards.timeUp'));
+        window.setTimeout(() => setReward(null), 1500);
+      }
+
+      const next: QuizSession = {
+        ...quizSession,
+        score: quizSession.score + (isCorrect ? 1 : 0),
+        points: quizSession.points + (isCorrect ? 1 : 0) + speed + streakBonus,
+        streak,
+        timeBonus: quizSession.timeBonus + speed,
+      };
+      setQuizSession(next);
+      setShowResult(true);
+
+      advanceTimer.current = window.setTimeout(() => {
+        const isLast = next.currentQuestion >= next.questions.length - 1;
+        if (isLast) {
+          setQuizSession({ ...next, completed: true });
+          saveQuizScore(next.score, next.questions.length);
+        } else {
+          setQuizSession({ ...next, currentQuestion: next.currentQuestion + 1 });
+          setSelectedAnswer(null);
+          setShowResult(false);
+          setTimeLeft(QUESTION_TIME);
+        }
+      }, REVEAL_MS);
+    },
+    [quizSession, showResult, timeLeft, t, saveQuizScore],
+  );
+
+  // Countdown — when it hits zero the current selection (if any) is submitted.
   useEffect(() => {
-    if (quizSession && !quizSession.completed && !showResult && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !showResult) {
-      submitAnswer();
+    if (!quizSession || quizSession.completed || showResult) return;
+    if (timeLeft <= 0) {
+      submitAnswer(selectedAnswer);
+      return;
     }
-  }, [timeLeft, quizSession, showResult]);
-
-  const submitAnswer = () => {
-    if (!quizSession || !selectedAnswer) return;
-
-    const currentQ = quizSession.questions[quizSession.currentQuestion];
-    const isCorrect = selectedAnswer === currentQ.correct_answer;
-    
-    let newStreak = isCorrect ? quizSession.streak + 1 : 0;
-    let bonusPoints = 0;
-    let timeBonus = 0;
-    
-    if (isCorrect) {
-      if (timeLeft > 20) timeBonus = 50;
-      else if (timeLeft > 10) timeBonus = 25;
-      
-      if (newStreak >= 3) bonusPoints = newStreak * 10;
-    }
-
-    const newAnswers = [...quizSession.answers, isCorrect];
-    let newScore = isCorrect ? quizSession.score + 1 : quizSession.score;
-    
-    if (isCorrect) {
-      if (newStreak === 5) {
-        setCurrentReward('ðŸ”¥ AWESOME! 5-in-a-row streak!');
-      } else if (newStreak >= 3) {
-        setCurrentReward('⚡ STREAK! +' + (newStreak * 10) + ' points!');
-      } else if (timeBonus > 0) {
-        setCurrentReward('ðŸ’¨ SPEEDY ANSWER! +' + timeBonus + ' points!');
-      } else {
-        setCurrentReward('✅ CORRECT!');
-      }
-      setShowReward(true);
-      setTimeout(() => setShowReward(false), 1500);
-    }
-
-    setQuizSession({
-      ...quizSession,
-      answers: newAnswers,
-      score: newScore,
-      streak: newStreak,
-      bonusPoints: quizSession.bonusPoints + bonusPoints,
-      timeBonus: quizSession.timeBonus + timeBonus
-    });
-
-    setShowResult(true);
-
-    setTimeout(() => {
-      if (quizSession.currentQuestion < quizSession.questions.length - 1) {
-        setQuizSession(prev => prev ? {
-          ...prev,
-          currentQuestion: prev.currentQuestion + 1
-        } : null);
-        setSelectedAnswer(null);
-        setShowResult(false);
-        setTimeLeft(30);
-      } else {
-        setQuizSession(prev => prev ? { ...prev, completed: true } : null);
-        saveQuizScore(newScore + bonusPoints + timeBonus, quizSession.questions.length);
-      }
-    }, 3000);
-  };
-
-  const saveQuizScore = async (score: number, total: number) => {
-    try {
-      const user = await getCurrentUser();
-
-      if (user) {
-        const percentage = Math.round((score / total) * 100);
-
-        await updateProfile(user.uid, {
-          quiz_scores: {
-            latest_score: percentage,
-            total_quizzes: 1,
-            best_score: percentage,
-            last_quiz_date: new Date().toISOString(),
-          },
-        });
-      }
-    } catch (error) {
-      // Silent fail on score save
-    }
-  };
+    const id = window.setTimeout(() => setTimeLeft((s) => s - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [timeLeft, quizSession, showResult, selectedAnswer, submitAnswer]);
 
   const resetQuiz = () => {
+    window.clearTimeout(advanceTimer.current);
     setQuizSession(null);
     setSelectedAnswer(null);
     setShowResult(false);
-    setTimeLeft(30);
-    setShowReward(false);
+    setTimeLeft(QUESTION_TIME);
+    setReward(null);
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-caption text-jade mb-6">— Preparing the questions</div>
-          <DinoLoader size="lg" label="Loading" />
-        </div>
-      </div>
-    );
+    return <PageLoader caption={t('education.preparing')} />;
   }
 
   if (quizSession && !quizSession.completed) {
     const currentQuestion = quizSession.questions[quizSession.currentQuestion];
     const progress = ((quizSession.currentQuestion + 1) / quizSession.questions.length) * 100;
-    const totalScore = quizSession.score + quizSession.bonusPoints + quizSession.timeBonus;
 
     return (
       <div className="min-h-screen bg-background relative">
-        {showReward && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+        {reward && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none" role="status">
             <div className="bg-jade text-canvas px-8 py-4 rounded-full font-display text-xl tracking-tighter shadow-2xl animate-bounce">
-              {currentReward}
+              {reward}
             </div>
           </div>
         )}
@@ -247,7 +232,7 @@ export default function Education() {
                   <span className={`font-mono ${timeLeft <= 10 ? 'text-jade' : 'text-foreground'}`}>{timeLeft}s</span>
                 </span>
                 <span className="text-foreground/40">·</span>
-                <span className="text-jade">{currentQuestion.difficulty}</span>
+                <span className="text-jade">{t(`education.difficulty.${currentQuestion.difficulty}`, currentQuestion.difficulty)}</span>
               </div>
             </div>
             {/* Progress hairline */}
@@ -266,7 +251,7 @@ export default function Education() {
             <div className="grid lg:grid-cols-12 gap-12">
               {/* Sidebar — fact-file */}
               <aside className="lg:col-span-3">
-                <div className="text-caption text-jade mb-4">— In play</div>
+                <div className="text-caption text-jade mb-4">— {t('education.session.inPlay')}</div>
                 <dl className="hairline-t divide-y divide-foreground/8">
                   <div className="py-4 grid grid-cols-2 items-baseline">
                     <dt className="text-caption text-foreground/55 flex items-center gap-2"><Trophy className="w-3 h-3 text-jade" />{t('education.session.correct')}</dt>
@@ -285,9 +270,9 @@ export default function Education() {
                 <div className="hairline-t mt-8 pt-6">
                   <div className="text-caption text-foreground/40 mb-2">{t('education.session.totalScore')}</div>
                   <div className="font-display text-display-lg text-jade tracking-tighter leading-none">
-                    {totalScore}
+                    {quizSession.points}
                   </div>
-                  <div className="text-caption text-foreground/40 font-mono mt-1">/ {quizSession.questions.length}</div>
+                  <div className="text-caption text-foreground/40 font-mono mt-1">{t('education.session.points')}</div>
                 </div>
               </aside>
 
@@ -312,6 +297,7 @@ export default function Education() {
                         key={index}
                         type="button"
                         onClick={() => !showResult && setSelectedAnswer(option)}
+                        aria-pressed={isSelected}
                         disabled={showResult}
                         className={`w-full text-left py-6 grid grid-cols-12 gap-4 items-center transition-colors duration-300 ease-spring ${
                           showAsCorrect
@@ -344,7 +330,7 @@ export default function Education() {
 
                 {!showResult && (
                   <Button
-                    onClick={submitAnswer}
+                    onClick={() => submitAnswer(selectedAnswer)}
                     disabled={!selectedAnswer}
                     size="lg"
                     className="mt-10 rounded-full bg-jade text-canvas hover:bg-jade/90 px-8"
@@ -380,7 +366,7 @@ export default function Education() {
         <div className="container-editorial">
           <div className="grid lg:grid-cols-12 gap-y-10 gap-x-12 items-center">
             <div className="lg:col-span-5">
-              <div className="text-caption text-jade mb-6">— Quiz closed</div>
+              <div className="text-caption text-jade mb-6">— {t('education.session.closed')}</div>
               <h1 className="font-display text-[clamp(5rem,15vw,12rem)] leading-[0.85] text-jade tracking-tighter">
                 {percentage}<span className="text-foreground/40 text-[0.3em] align-top">%</span>
               </h1>
@@ -389,15 +375,28 @@ export default function Education() {
               <h2 className="font-display text-display-xl text-foreground tracking-tighter mb-4">
                 {t('education.session.quizCompleted')}
               </h2>
-              <p className="text-foreground/65 text-lg leading-relaxed mb-10 max-w-[44ch]">
+              <p className="text-foreground/65 text-lg leading-relaxed mb-4 max-w-[44ch]">
                 {t('education.session.answeredCorrectly', { score: quizSession.score, total: quizSession.questions.length })}
               </p>
+              <p className="text-caption text-foreground/45 mb-10">
+                {t('education.session.pointsSummary', { points: quizSession.points, speed: quizSession.timeBonus })}
+              </p>
+              {saved === 'saved' && (
+                <p className="text-sm text-jade mb-6">{t('education.session.saved')}</p>
+              )}
+              {saved === 'guest' && (
+                <p className="text-sm text-foreground/60 mb-6">
+                  <Link to="/auth" state={{ from: '/education' }} className="text-jade hover:underline">
+                    {t('education.session.signInToSave')}
+                  </Link>
+                </p>
+              )}
               <div className="hairline-t pt-8 flex flex-col sm:flex-row gap-3">
-                <Button onClick={() => startQuiz()} size="lg" className="bg-jade text-canvas hover:bg-jade/90 rounded-full">
-                  {t('education.session.newQuiz')}
-                </Button>
-                <Button onClick={resetQuiz} variant="outline" size="lg" className="rounded-full">
+                <Button onClick={() => startQuiz(quizSession.difficulty)} size="lg" variant="accent">
                   {t('education.session.tryAgain')}
+                </Button>
+                <Button onClick={resetQuiz} variant="outline" size="lg">
+                  {t('education.session.newQuiz')}
                 </Button>
               </div>
             </div>
@@ -410,13 +409,13 @@ export default function Education() {
   // ============================================================
   // LANDING — quiz selection
   // ============================================================
-  const activities: Array<{ key: string; icon: any; difficulty?: string; disabled?: boolean }> = [
+  const activities: Array<{ key: string; icon: LucideIcon; difficulty?: string }> = [
     { key: 'general', icon: Brain },
     { key: 'easy', icon: Target, difficulty: 'easy' },
     { key: 'medium', icon: Target, difficulty: 'medium' },
     { key: 'hard', icon: Target, difficulty: 'hard' }
   ];
-  const upcoming: Array<{ titleKey: string; descKey: string; icon: any }> = [
+  const upcoming: Array<{ titleKey: string; descKey: string; icon: LucideIcon }> = [
     { titleKey: 'education.lessons.title', descKey: 'education.lessons.description', icon: BookOpen },
     { titleKey: 'education.simulations.title', descKey: 'education.simulations.description', icon: Trophy }
   ];
@@ -485,7 +484,7 @@ export default function Education() {
         <div className="container-editorial">
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-3">
-              <div className="text-caption text-jade mb-3">— Coming to the floor</div>
+              <div className="text-caption text-jade mb-3">— {t('education.comingSoon')}</div>
             </div>
             <ol className="lg:col-span-9 grid sm:grid-cols-2 gap-x-12 gap-y-2">
               {upcoming.map((u, i) => {
@@ -513,7 +512,7 @@ export default function Education() {
         <div className="container-editorial">
           <div className="grid lg:grid-cols-12 gap-12">
             <div className="lg:col-span-4">
-              <div className="text-caption text-jade mb-3">— Notes from the docent</div>
+              <div className="text-caption text-jade mb-3">— {t('education.tips.caption')}</div>
               <h3 className="font-display text-display-lg text-foreground tracking-tighter">
                 {t('education.tips.title')}
               </h3>

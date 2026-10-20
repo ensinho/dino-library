@@ -101,7 +101,7 @@ export default function SpeciesGallery({ species }: SpeciesGalleryProps) {
     // 1) Firestore/main image first
     add(
       species.image_url || null,
-      `${displayName} - Main View`,
+      displayName,
       t('species.gallery.primary')
     );
 
@@ -139,7 +139,7 @@ export default function SpeciesGallery({ species }: SpeciesGalleryProps) {
     }
 
     return merged;
-  }, [externalImages, species.common_name, species.scientific_name, species.image_url, t]);
+  }, [externalImages, species.common_name, species.scientific_name, species.image_url, species.image_urls, t]);
 
   if (images.length <= 1 && !species.image_url) {
     return (

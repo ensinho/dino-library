@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Search, BookOpen, ArrowRight, Link as LinkIcon } from 'lucide-react';
+import { Search, ArrowRight, Link as LinkIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface GlossaryTerm {
@@ -18,6 +17,7 @@ interface GlossaryTerm {
 
 export default function Glossary() {
   const { t } = useTranslation();
+  usePageTitle(t('footer.glossary'));
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -118,10 +118,6 @@ export default function Glossary() {
     const matchesCategory = selectedCategory === 'all' || term.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
-
-  const getCategoryColor = (category: string) => {
-    return categories.find(cat => cat.id === category)?.color || 'bg-gray-500';
-  };
 
   return (
     <div className="min-h-screen bg-background">

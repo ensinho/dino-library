@@ -91,7 +91,7 @@ async function main() {
 
     processed++;
 
-    const data = doc.data() as any;
+    const data = doc.data() as Record<string, unknown>;
     const scientific = String(data.scientific_name || '').trim();
     const common = String(data.common_name || '').trim();
     const lookup = scientific || common;
