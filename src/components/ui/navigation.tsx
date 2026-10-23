@@ -13,7 +13,8 @@ import {
   X,
   Compass,
   Newspaper,
-  Bookmark
+  Bookmark,
+  Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ interface NavigationProps {
 
 export function Navigation({ className }: NavigationProps) {
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { ids: favoriteIds } = useFavorites();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -104,7 +105,32 @@ export function Navigation({ className }: NavigationProps) {
             })}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Quick Search trigger (desktop) */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-quick-search'))}
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-foreground/10 bg-foreground/[0.03] hover:border-jade/40 hover:bg-foreground/[0.06] text-foreground/55 hover:text-foreground text-xs font-sans transition-all duration-300 group"
+              aria-label={t('navigation.searchPlaceholder', { defaultValue: 'Buscar no museu (⌘K)' })}
+              title={t('navigation.searchPlaceholder', { defaultValue: 'Buscar no museu (⌘K)' })}
+            >
+              <Search className="w-3.5 h-3.5 text-jade transition-transform duration-300 group-hover:scale-110" />
+              <span className="hidden xl:inline">{t('navigation.searchPlaceholder', { defaultValue: 'Buscar espécimes...' })}</span>
+              <kbd className="hidden md:inline-flex items-center text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-2 border border-foreground/10 text-foreground/50">
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* Quick Search trigger (mobile) */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-quick-search'))}
+              className="md:hidden flex h-9 w-9 items-center justify-center rounded-full text-foreground/70 hover:text-jade hover:bg-foreground/[0.04] transition-colors"
+              aria-label={t('navigation.quickSearch', { defaultValue: 'Buscar' })}
+            >
+              <Search className="w-4 h-4 text-jade" />
+            </button>
+
             {!user && favoriteIds.length > 0 && (
               <Link
                 to="/profile"
@@ -152,6 +178,23 @@ export function Navigation({ className }: NavigationProps) {
         {mobileMenuOpen && (
           <div className="lg:hidden border-t border-foreground/8 py-4">
             <div className="grid gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open-quick-search'));
+                }}
+                className="flex items-center justify-between rounded-2xl px-4 py-3 mb-2 text-sm font-medium bg-foreground/[0.04] border border-foreground/10 text-foreground/80 hover:bg-foreground/[0.08] hover:text-foreground transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Search className="w-4 h-4 text-jade" />
+                  <span>{t('navigation.searchPlaceholder', { defaultValue: 'Buscar no museu...' })}</span>
+                </div>
+                <kbd className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-2 border border-foreground/10 text-foreground/60">
+                  ⌘K
+                </kbd>
+              </button>
+
               {navigationItems.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -180,6 +223,39 @@ export function Navigation({ className }: NavigationProps) {
                 <User className="w-4 h-4 text-jade" />
                 <span>{account.label}</span>
               </Link>
+            </div>
+
+            {/* Mobile language switch bar */}
+            <div className="mt-3 pt-3 border-t border-foreground/8 flex items-center justify-between px-3">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-foreground/45 flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-jade" />
+                {t('common.language')}
+              </span>
+              <div className="flex items-center gap-1.5">
+                {[
+                  { code: 'pt-BR', flag: '🇧🇷', label: 'PT' },
+                  { code: 'en', flag: '🇺🇸', label: 'EN' },
+                  { code: 'es', flag: '🇪🇸', label: 'ES' },
+                ].map((l) => {
+                  const active = i18n.language === l.code || (l.code === 'pt-BR' && i18n.language.startsWith('pt'));
+                  return (
+                    <button
+                      key={l.code}
+                      type="button"
+                      onClick={() => i18n.changeLanguage(l.code)}
+                      className={cn(
+                        'flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-mono transition-all',
+                        active
+                          ? 'bg-jade text-canvas font-semibold shadow-sm'
+                          : 'bg-surface-2 text-foreground/60 hover:text-foreground hover:bg-surface-3'
+                      )}
+                    >
+                      <span className="text-xs">{l.flag}</span>
+                      <span>{l.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

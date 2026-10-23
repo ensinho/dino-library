@@ -64,14 +64,14 @@ export default function PeriodTimeline({ selectedPeriod, onPeriodChange }: Perio
                 size="sm"
                 onClick={() => onPeriodChange(period.id)}
                 className={cn(
-                  "relative z-10 w-16 h-16 rounded-full p-0 transition-all duration-300",
+                  "relative z-10 w-11 h-11 rounded-full p-0 transition-all duration-300",
                   selectedPeriod === period.id
-                    ? `bg-gradient-to-br ${period.color} text-white shadow-lg scale-110 border-2 border-white`
-                    : "bg-background hover:scale-105 border-2 border-muted"
+                    ? `bg-gradient-to-br ${period.color} text-white shadow-md scale-105 border-2 border-white`
+                    : "bg-background hover:scale-105 border border-muted"
                 )}
               >
                 <div className="text-center">
-                  <div className="text-lg">{period.emoji}</div>
+                  <div className="text-base">{period.emoji}</div>
                 </div>
               </Button>
               

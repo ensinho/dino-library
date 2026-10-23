@@ -314,7 +314,7 @@ export default function Education() {
                         <span className="col-span-1 font-mono text-caption text-foreground/40">
                           {String.fromCharCode(65 + index)}
                         </span>
-                        <span className="col-span-9 font-display text-xl md:text-2xl tracking-[-0.025em]">
+                        <span className="col-span-9 font-display text-lg sm:text-xl md:text-2xl tracking-[-0.025em]">
                           {option}
                         </span>
                         <span className="col-span-2 flex justify-end">

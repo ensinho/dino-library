@@ -121,12 +121,25 @@ export default function SpeciesDetail() {
           </div>
 
           {/* Top label bar */}
-          <div className="flex items-center justify-between mb-6 hairline-b pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 hairline-b pb-4">
             <div className="text-caption text-jade">— {t('editorial.specimenFile')} · Nº {species.row_index}</div>
-            <div className="text-caption text-foreground/40 hidden sm:flex gap-3">
-              <span>{labels.period(species.geological_period)}</span>
-              <span className="opacity-30">·</span>
-              <span>{labels.diet(species.diet)}</span>
+            <div className="text-caption flex flex-wrap items-center gap-2">
+              {species.geological_period && (
+                <Link
+                  to={`/catalog?period=${encodeURIComponent(species.geological_period.toLowerCase())}`}
+                  className="px-2.5 py-0.5 rounded-full bg-surface-1 border border-foreground/10 text-foreground/60 hover:text-jade hover:border-jade/40 transition-colors duration-200"
+                >
+                  {labels.period(species.geological_period)}
+                </Link>
+              )}
+              {species.diet && (
+                <Link
+                  to={`/catalog?diet=${encodeURIComponent(species.diet.toLowerCase())}`}
+                  className="px-2.5 py-0.5 rounded-full bg-surface-1 border border-foreground/10 text-foreground/60 hover:text-jade hover:border-jade/40 transition-colors duration-200"
+                >
+                  {labels.diet(species.diet)}
+                </Link>
+              )}
             </div>
           </div>
 
@@ -203,7 +216,7 @@ export default function SpeciesDetail() {
       <section className="pb-20">
         <div className="container-editorial">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-transparent p-0 h-auto gap-1 hairline-b w-full justify-start rounded-none">
+            <TabsList className="bg-transparent p-0 h-auto gap-1 hairline-b w-full justify-start rounded-none overflow-x-auto flex-nowrap scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
               {[
                 { v: 'overview', label: t('species.tabs.overview') },
                 { v: 'gallery', label: t('species.tabs.gallery') },
@@ -222,7 +235,7 @@ export default function SpeciesDetail() {
             </TabsList>
 
             {/* Overview */}
-            <TabsContent value="overview" className="mt-12">
+            <TabsContent value="overview" className="mt-6">
               <div className="grid gap-12 lg:gap-16 lg:grid-cols-12">
                 <div className="lg:col-span-5">
                   <div className="text-caption text-jade mb-4 flex items-center gap-2">
@@ -275,7 +288,7 @@ export default function SpeciesDetail() {
             </TabsContent>
 
             {/* Gallery */}
-            <TabsContent value="gallery" className="mt-12">
+            <TabsContent value="gallery" className="mt-6">
               <div className="text-caption text-jade mb-4 flex items-center gap-2">
                 <Camera className="h-3.5 w-3.5" />
                 {t('species.gallery.title')}
@@ -287,7 +300,7 @@ export default function SpeciesDetail() {
             </TabsContent>
 
             {/* Anatomy */}
-            <TabsContent value="anatomy" className="mt-12">
+            <TabsContent value="anatomy" className="mt-6">
               <div className="text-caption text-jade mb-4">— {t('species.anatomy.title')}</div>
               <p className="text-foreground/60 mb-10 max-w-[60ch]">{t('species.anatomy.description')}</p>
               <div className="grid gap-12 md:grid-cols-2">
@@ -317,7 +330,7 @@ export default function SpeciesDetail() {
             </TabsContent>
 
             {/* Ecology */}
-            <TabsContent value="ecology" className="mt-12">
+            <TabsContent value="ecology" className="mt-6">
               <div className="grid gap-12 lg:grid-cols-2">
                 <div>
                   <div className="text-caption text-jade mb-4 flex items-center gap-2">
@@ -353,7 +366,7 @@ export default function SpeciesDetail() {
             </TabsContent>
 
             {/* Discovery */}
-            <TabsContent value="discovery" className="mt-12">
+            <TabsContent value="discovery" className="mt-6">
               <div className="text-caption text-jade mb-4 flex items-center gap-2">
                 <Calendar className="h-3.5 w-3.5" />
                 {t('species.discovery.title')}
@@ -387,20 +400,20 @@ export default function SpeciesDetail() {
           </Tabs>
 
           {/* Related species */}
-          <div className="mt-24 pt-10 hairline-t">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+          <div className="mt-16 pt-8 hairline-t">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
               <div>
-                <div className="text-caption text-jade mb-3">— {t('species.relatedSpecies.title')}</div>
+                <div className="text-caption text-jade mb-2">— {t('species.relatedSpecies.title')}</div>
                 <p className="font-display text-display-lg text-foreground tracking-tighter max-w-[20ch]">
                   {t('species.relatedSpecies.description')}
                 </p>
               </div>
-              <Button asChild variant="accent" size="lg">
+              <Button asChild variant="accent" size="sm">
                 <Link to="/catalog">{t('species.relatedSpecies.exploreCatalog')}</Link>
               </Button>
             </div>
             {related.length > 0 && (
-              <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+              <ol className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3.5 gap-y-5">
                 {related.map((d) => (
                   <li key={d.row_index}>
                     <SpeciesCard species={d} imageUrl={relatedImages[d.row_index]} variant="compact" />

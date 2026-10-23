@@ -664,7 +664,9 @@
     "profile": "Perfil",
     "auth": "Entrar",
     "menu": "Menu",
-    "collection": "Sua coleção ({{count}})"
+    "collection": "Sua coleção ({{count}})",
+    "quickSearch": "Busca Rápida",
+    "searchPlaceholder": "Buscar espécimes, salas..."
   },
   "editorial": {
     "rooms": {

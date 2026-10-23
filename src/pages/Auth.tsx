@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { DinoLoader } from '@/components/loader';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,7 +27,7 @@ const AUTH_ERRORS: Record<string, string> = {
   'auth/network-request-failed': 'auth.errors.network',
 };
 
-const INPUT_CLASS = 'h-12 rounded-full bg-surface-1 border-foreground/10 px-5';
+const INPUT_CLASS = 'h-11 rounded-full bg-surface-1 border-foreground/10 px-4 text-sm';
 
 export default function Auth() {
   const { t } = useTranslation();
@@ -38,6 +38,7 @@ export default function Auth() {
 
   const [tab, setTab] = useState<'signin' | 'signup'>('signin');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -98,7 +99,7 @@ export default function Auth() {
   );
 
   const submitButton = (label: string) => (
-    <Button type="submit" size="lg" variant="accent" className="w-full h-12" disabled={loading}>
+    <Button type="submit" size="lg" variant="accent" className="w-full h-11" disabled={loading}>
       {loading && <DinoLoader size="sm" className="!h-6 !max-w-[120px] !border-0 mr-2" ariaLabel={t('auth.loading')} />}
       {label}
     </Button>
@@ -136,21 +137,21 @@ export default function Auth() {
       </aside>
 
       {/* RIGHT — form */}
-      <section className="lg:col-span-7 flex flex-col justify-center px-6 py-16 lg:py-24 lg:px-16 xl:px-24">
+      <section className="lg:col-span-7 flex flex-col justify-center px-4 sm:px-6 py-10 sm:py-16 lg:py-24 lg:px-16 xl:px-24">
         <div className="w-full max-w-md mx-auto lg:mx-0">
           <Link
             to="/"
-            className="mb-12 inline-flex items-center gap-2 text-caption text-foreground/50 hover:text-jade transition-colors duration-300"
+            className="mb-6 sm:mb-8 inline-flex items-center gap-2 text-caption text-foreground/50 hover:text-jade transition-colors duration-300"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             {t('auth.backHome')}
           </Link>
-          <div className="mb-12">
-            <div className="text-caption text-jade mb-4">— {t('auth.readingDesk')}</div>
-            <h1 className="font-display text-display-xl text-foreground tracking-tighter mb-4">
+          <div className="mb-6 sm:mb-8">
+            <div className="text-caption text-jade mb-3">— {t('auth.readingDesk')}</div>
+            <h1 className="font-display text-3xl sm:text-display-xl text-foreground tracking-tighter mb-3">
               {t('auth.welcomeBack')}
             </h1>
-            <p className="text-foreground/65 leading-relaxed">
+            <p className="text-foreground/65 leading-relaxed text-sm sm:text-base">
               {t('auth.welcomeDesc')}
             </p>
           </div>
@@ -163,7 +164,7 @@ export default function Auth() {
             }}
             className="w-full"
           >
-            <TabsList className="w-full bg-transparent justify-start gap-8 hairline-b rounded-none p-0 h-auto mb-10">
+            <TabsList className="w-full bg-transparent justify-start gap-8 hairline-b rounded-none p-0 h-auto mb-6 sm:mb-8">
               <TabsTrigger
                 value="signin"
                 className="text-caption text-foreground/45 data-[state=active]:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-0 pb-3 -mb-px border-b border-transparent data-[state=active]:border-jade transition-colors"
@@ -195,16 +196,26 @@ export default function Auth() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signin-password" className="text-caption text-foreground/55">{t('auth.password')}</Label>
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    autoComplete="current-password"
-                    placeholder={t('auth.passwordPlaceholder')}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className={INPUT_CLASS}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="signin-password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      placeholder={t('auth.passwordPlaceholder')}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className={`${INPUT_CLASS} pr-11`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground transition-colors p-1"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 {errorAlert}
                 {submitButton(t('auth.signIn'))}
@@ -248,17 +259,27 @@ export default function Auth() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password" className="text-caption text-foreground/55">{t('auth.password')}</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder={t('auth.passwordPlaceholder')}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className={INPUT_CLASS}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="signup-password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
+                      placeholder={t('auth.passwordPlaceholder')}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      className={`${INPUT_CLASS} pr-11`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground transition-colors p-1"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 {errorAlert}
                 {submitButton(t('auth.signUp'))}

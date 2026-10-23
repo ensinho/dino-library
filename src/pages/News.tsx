@@ -202,7 +202,7 @@ export default function News() {
       <section className="hairline-t hairline-b py-4 bg-surface-1/40">
         <div className="container-editorial">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2" role="tablist">
+            <div className="flex items-center gap-2 overflow-x-auto flex-nowrap scrollbar-none pb-1 -mb-1 w-full sm:w-auto" role="tablist">
               <button
                 type="button"
                 role="tab"
@@ -389,7 +389,7 @@ export default function News() {
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-8 hairline-b pb-5">
+          <div className="flex overflow-x-auto flex-nowrap sm:flex-wrap gap-2 mb-8 hairline-b pb-3 sm:pb-5 scrollbar-none">
             {categories.map((cat) => (
               <button
                 key={cat.value}
