@@ -24,11 +24,11 @@ const buttonVariants = cva(
         link: "text-jade underline-offset-4 decoration-jade/40 hover:decoration-jade hover:underline rounded-none px-0",
       },
       size: {
-        default: "h-11 px-6 py-2.5",
-        sm: "h-9 px-4 text-xs",
-        lg: "h-12 px-7 text-base",
-        xl: "h-14 px-9 text-base",
-        icon: "h-11 w-11",
+        default: "h-9.5 px-5 py-2 text-xs sm:text-sm",
+        sm: "h-8 px-3.5 text-xs",
+        lg: "h-10 px-5 text-sm",
+        xl: "h-11.5 px-6 text-sm sm:text-base",
+        icon: "h-9 w-9",
       },
     },
     defaultVariants: {

@@ -5,6 +5,7 @@ import { DinoLoader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SmartImage from '@/components/SmartImage';
 import { Calendar, MapPin, Users, Search, Filter, Eye, Zap, Mountain, Skull, Globe } from 'lucide-react';
 import { fetchDiscoveries as fetchDiscoveriesFromFirestore, type ArchaeologicalDiscovery as FirestoreDiscovery } from '@/services/discoveriesService';
 
@@ -168,18 +169,18 @@ export default function Timeline() {
       {/* ============================================================
            HEADER — wall plaque
            ============================================================ */}
-      <section className="pt-16 lg:pt-20 pb-6">
+      <section className="pt-10 lg:pt-14 pb-5">
         <div className="container-editorial">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="text-caption text-jade">— {t('editorial.rooms.timeline')}</div>
             <div className="text-caption text-foreground/40 hidden sm:block">{t('timeline.range')}</div>
           </div>
 
-          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+          <div className="grid gap-y-3 gap-x-12 lg:grid-cols-12 items-baseline">
             <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
               {t('timeline.title')}
             </h1>
-            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+            <p className="lg:col-span-5 max-w-[48ch] text-xs md:text-sm text-foreground/60 leading-relaxed">
               {t('timeline.subtitle')}
             </p>
           </div>
@@ -209,21 +210,21 @@ export default function Timeline() {
             {/* ============================================================
                  DISCOVERIES — chronological column
                  ============================================================ */}
-            <TabsContent value="discoveries" className="mt-12">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-10">
+            <TabsContent value="discoveries" className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 mb-8">
                 <div className="md:col-span-7 relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
                   <Input
                     placeholder={t('timeline.filters.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-11 h-11 rounded-full bg-surface-1 border-foreground/10"
+                    className="pl-10 h-10 text-sm rounded-full bg-surface-1 border-foreground/10"
                   />
                 </div>
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="md:col-span-3 h-11 px-4 rounded-full bg-surface-1 border border-foreground/10 text-sm text-foreground"
+                  className="md:col-span-3 h-10 px-3.5 rounded-full bg-surface-1 border border-foreground/10 text-sm text-foreground"
                 >
                   <option value="">{t('timeline.filters.allYears')}</option>
                   {getUniqueYears().map(year => (
@@ -257,34 +258,34 @@ export default function Timeline() {
                 {filteredDiscoveries.slice(0, visibleItems).map((discovery) => {
                   const expanded = expandedCard === discovery.id;
                   return (
-                    <li key={discovery.id} className="hairline-t py-10 grid grid-cols-12 gap-6 group">
+                    <li key={discovery.id} className="hairline-t py-6 lg:py-7 grid grid-cols-12 gap-5 group items-start">
                       <div className="col-span-12 md:col-span-2">
                         <div className="font-display text-display-lg text-jade tracking-tighter leading-none">
                           {new Date(discovery.discovery_date).getFullYear()}
                         </div>
-                        <div className="mt-2 text-caption text-foreground/40">
+                        <div className="mt-1.5 text-caption text-foreground/40">
                           {formatDate(discovery.discovery_date)}
                         </div>
                       </div>
 
                       <div className={discovery.image_url ? 'col-span-12 md:col-span-7' : 'col-span-12 md:col-span-10'}>
-                        <h3 className="font-display text-2xl tracking-[-0.025em] text-foreground mb-3 transition-colors duration-300 group-hover:text-jade">
+                        <h3 className="font-display text-xl tracking-tight text-foreground mb-2 transition-colors duration-300 group-hover:text-jade">
                           {discovery.title}
                         </h3>
-                        <div className="text-caption text-foreground/50 mb-4 flex items-center gap-2">
+                        <div className="text-caption text-foreground/50 mb-3 flex items-center gap-2">
                           <MapPin className="w-3.5 h-3.5" />
                           {discovery.location}
                         </div>
-                        <p className={`text-foreground/70 leading-relaxed ${expanded ? '' : 'line-clamp-3'}`}>
+                        <p className={`text-foreground/70 leading-relaxed text-sm ${expanded ? '' : 'line-clamp-3'}`}>
                           {discovery.description}
                         </p>
 
                         {expanded && (
-                          <div className="mt-6 space-y-5 hairline-t pt-6">
+                          <div className="mt-4 space-y-4 hairline-t pt-4">
                             {discovery.significance && (
                               <div>
-                                <div className="text-caption text-jade mb-2">— {t('timeline.discovery.significance')}</div>
-                                <p className="text-sm text-foreground/65 leading-relaxed">{discovery.significance}</p>
+                                <div className="text-caption text-jade mb-1.5">— {t('timeline.discovery.significance')}</div>
+                                <p className="text-xs text-foreground/65 leading-relaxed">{discovery.significance}</p>
                               </div>
                             )}
                             {(discovery.researcher_name || discovery.organization) && (
@@ -300,7 +301,7 @@ export default function Timeline() {
                         <button
                           type="button"
                           onClick={() => toggleCardExpansion(discovery.id)}
-                          className="mt-5 text-caption text-jade hover:text-foreground transition-colors duration-300 flex items-center gap-2"
+                          className="mt-3.5 text-caption text-jade hover:text-foreground transition-colors duration-300 flex items-center gap-2"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           {expanded ? t('timeline.discovery.less') : t('timeline.discovery.more')}
@@ -308,11 +309,14 @@ export default function Timeline() {
                       </div>
 
                       {discovery.image_url && (
-                        <figure className="col-span-12 md:col-span-3 relative overflow-hidden rounded-2xl ring-1 ring-foreground/8 aspect-[4/5] bg-surface-1">
-                          <img
+                        <figure className="col-span-12 md:col-span-3 relative overflow-hidden rounded-2xl ring-1 ring-foreground/8 aspect-[16/10] bg-surface-1">
+                          <SmartImage
                             src={discovery.image_url}
                             alt={discovery.title}
-                            className="absolute inset-0 w-full h-full object-cover img-duotone-hover"
+                            className="absolute inset-0 w-full h-full rounded-2xl ring-0"
+                            imgClassName="w-full h-full object-cover img-duotone-hover"
+                            fallbackSrc="/placeholder.svg"
+                            loading="lazy"
                           />
                         </figure>
                       )}

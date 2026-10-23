@@ -28,13 +28,14 @@ import { isThemeId } from '@/lib/themes';
 const LENGTH_MAX = 50;
 const HEIGHT_MAX = 20;
 const SORTS: SortKey[] = ['name', 'length', 'weight', 'discovered'];
-const PER_PAGE = [12, 16, 24, 32];
+const PER_PAGE = [12, 16, 24, 32, 48];
 
 const GRID_CLASSES = {
-  '2': 'grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10',
-  '3': 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8',
-  '4': 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7',
-  '5': 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6',
+  '2': 'grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6',
+  '3': 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5',
+  '4': 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 lg:gap-4',
+  '5': 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-3.5',
+  '6': 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3',
 } as const;
 type GridCols = keyof typeof GRID_CLASSES;
 
@@ -137,20 +138,20 @@ export default function Catalog() {
   return (
     <div className="min-h-screen bg-background">
       {/* HEADER — wall plaque */}
-      <section className="pt-16 lg:pt-20 pb-6">
+      <section className="pt-10 lg:pt-14 pb-5">
         <div className="container-editorial">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="text-caption text-jade">— {t('editorial.rooms.catalog')}</div>
             <div className="text-caption text-foreground/40 hidden sm:block">
               {all.length} {t('editorial.specimensOnRecord')}
             </div>
           </div>
 
-          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+          <div className="grid gap-y-3 gap-x-12 lg:grid-cols-12 items-baseline">
             <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
               {t('catalog.title')}
             </h1>
-            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+            <p className="lg:col-span-5 max-w-[48ch] text-xs md:text-sm text-foreground/60 leading-relaxed">
               {t('catalog.subtitle')}
             </p>
           </div>
@@ -158,24 +159,24 @@ export default function Catalog() {
       </section>
 
       {/* FILTER RAIL */}
-      <section className="hairline-t hairline-b">
-        <div className="container-editorial py-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+      <section className="hairline-t hairline-b bg-surface-1/20">
+        <div className="container-editorial py-5">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
             <div className="md:col-span-5 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
               <Input
                 type="search"
                 placeholder={t('catalog.search')}
                 aria-label={t('catalog.search')}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="pl-11 h-11 rounded-full bg-surface-1 border-foreground/10"
+                className="pl-10 h-10 text-sm rounded-full bg-surface-1 border-foreground/10"
               />
             </div>
 
             <div className="md:col-span-2">
               <Select value={diet ?? 'all'} onValueChange={(v) => update({ diet: v })}>
-                <SelectTrigger className="h-11 rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.diet')}>
+                <SelectTrigger className="h-10 text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.diet')}>
                   <SelectValue placeholder={t('catalog.filters.diet')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -189,7 +190,7 @@ export default function Catalog() {
 
             <div className="md:col-span-3">
               <Select value={region ?? 'all'} onValueChange={(v) => update({ region: v })}>
-                <SelectTrigger className="h-11 rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.location')}>
+                <SelectTrigger className="h-10 text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.location')}>
                   <SelectValue placeholder={t('catalog.filters.location')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -203,7 +204,7 @@ export default function Catalog() {
 
             <div className="md:col-span-2">
               <Select value={sort ?? 'default'} onValueChange={(v) => update({ sort: v === 'default' ? undefined : v })}>
-                <SelectTrigger className="h-11 rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.sort.label')}>
+                <SelectTrigger className="h-10 text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.sort.label')}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -266,8 +267,8 @@ export default function Catalog() {
       </section>
 
       {/* META BAR */}
-      <section className="py-6">
-        <div className="container-editorial flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <section className="py-4">
+        <div className="container-editorial flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <p className="text-caption text-foreground/50" aria-live="polite">
             {t('catalog.pagination.summary', {
               shown: current.data.length,
@@ -276,7 +277,7 @@ export default function Catalog() {
               pages: current.totalPages,
             })}
           </p>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <span className="text-caption text-foreground/40">{t('catalog.pagination.perPage')}</span>
               <Select
@@ -286,7 +287,7 @@ export default function Catalog() {
                   update({});
                 }}
               >
-                <SelectTrigger className="w-[78px] h-9 rounded-full bg-surface-1 border-foreground/10">
+                <SelectTrigger className="w-[72px] h-8 text-xs rounded-full bg-surface-1 border-foreground/10">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -299,7 +300,7 @@ export default function Catalog() {
             <div className="hidden lg:flex items-center gap-2">
               <span className="text-caption text-foreground/40">{t('catalog.pagination.grid')}</span>
               <Select value={gridCols} onValueChange={(v) => setGridCols(v as GridCols)}>
-                <SelectTrigger className="w-[78px] h-9 rounded-full bg-surface-1 border-foreground/10">
+                <SelectTrigger className="w-[72px] h-8 text-xs rounded-full bg-surface-1 border-foreground/10">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -314,7 +315,7 @@ export default function Catalog() {
       </section>
 
       {/* SPECIES GRID */}
-      <section className="pb-32">
+      <section className="pb-24">
         <div className="container-editorial">
           {current.data.length > 0 ? (
             <div className={GRID_CLASSES[gridCols]}>

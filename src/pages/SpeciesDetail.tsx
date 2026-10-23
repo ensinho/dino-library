@@ -96,10 +96,10 @@ export default function SpeciesDetail() {
       {/* ============================================================
            SPECIMEN FILE HEADER — wall-text layout
            ============================================================ */}
-      <section className="pt-12 pb-16">
+      <section className="pt-8 pb-12">
         <div className="container-editorial">
           {/* Back / Share bar */}
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center justify-between mb-8">
             <Link
               to="/catalog"
               className="text-caption text-foreground/50 hover:text-jade transition-colors duration-300 flex items-center gap-2"
@@ -121,7 +121,7 @@ export default function SpeciesDetail() {
           </div>
 
           {/* Top label bar */}
-          <div className="flex items-center justify-between mb-8 hairline-b pb-6">
+          <div className="flex items-center justify-between mb-6 hairline-b pb-4">
             <div className="text-caption text-jade">— {t('editorial.specimenFile')} · Nº {species.row_index}</div>
             <div className="text-caption text-foreground/40 hidden sm:flex gap-3">
               <span>{labels.period(species.geological_period)}</span>
@@ -131,10 +131,10 @@ export default function SpeciesDetail() {
           </div>
 
           {/* Big-plate hero */}
-          <div className="grid gap-y-12 gap-x-12 lg:grid-cols-12">
+          <div className="grid gap-y-10 gap-x-12 lg:grid-cols-12 items-start">
             {/* Plate */}
             <figure className="lg:col-span-7 relative overflow-hidden rounded-3xl ring-1 ring-foreground/8 bg-surface-1">
-              <div className="aspect-[4/5]">
+              <div className="aspect-[16/11]">
                 {heroImage ? (
                   <SmartImage
                     src={heroImage}
@@ -149,7 +149,7 @@ export default function SpeciesDetail() {
                   </div>
                 )}
               </div>
-              <figcaption className="absolute left-5 bottom-5 z-10 text-caption text-foreground/85 bg-background/55 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
+              <figcaption className="absolute left-4 bottom-4 z-10 text-caption text-foreground/85 bg-background/70 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/10">
                 {t('editorial.plate')} · {name}
               </figcaption>
             </figure>
@@ -180,7 +180,7 @@ export default function SpeciesDetail() {
               )}
 
               {/* Compact specimen index */}
-              <dl className="mt-10 grid grid-cols-3 gap-x-6 gap-y-2 hairline-t pt-6">
+              <dl className="mt-8 grid grid-cols-3 gap-x-6 gap-y-2 hairline-t pt-5">
                 {[
                   [t('species.factFile.length'), metric(species.length_m, 'm')],
                   [t('species.factFile.height'), metric(species.height_m, 'm')],
@@ -188,7 +188,7 @@ export default function SpeciesDetail() {
                 ].map(([label, value]) => (
                   <div key={label}>
                     <dt className="text-caption text-foreground/40 mb-1">{label}</dt>
-                    <dd className="font-display text-2xl text-foreground tracking-tight">{value}</dd>
+                    <dd className="font-display text-lg sm:text-xl text-foreground tracking-tight">{value}</dd>
                   </div>
                 ))}
               </dl>
@@ -200,7 +200,7 @@ export default function SpeciesDetail() {
       {/* ============================================================
            CONTENT TABS
            ============================================================ */}
-      <section className="pb-32">
+      <section className="pb-20">
         <div className="container-editorial">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-transparent p-0 h-auto gap-1 hairline-b w-full justify-start rounded-none">
