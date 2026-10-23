@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigation } from '@/components/ui/navigation';
 import { LanguageSwitcherFloat } from '@/components/ui/language-switcher-float';
+import QuickSearchDialog from '@/components/QuickSearchDialog';
 import Footer from '@/components/layout/Footer';
 
 interface LayoutProps {
@@ -16,6 +17,7 @@ export function Layout({ children }: LayoutProps) {
       </main>
       <Footer />
       <LanguageSwitcherFloat />
+      <QuickSearchDialog />
     </div>
   );
 }

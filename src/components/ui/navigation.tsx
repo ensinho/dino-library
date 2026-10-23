@@ -105,6 +105,21 @@ export function Navigation({ className }: NavigationProps) {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Quick Search trigger */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-quick-search'))}
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-foreground/10 bg-foreground/[0.03] hover:border-jade/40 hover:bg-foreground/[0.06] text-foreground/55 hover:text-foreground text-xs font-sans transition-all duration-300 group"
+              aria-label={t('navigation.searchPlaceholder', { defaultValue: 'Buscar no museu (⌘K)' })}
+              title={t('navigation.searchPlaceholder', { defaultValue: 'Buscar no museu (⌘K)' })}
+            >
+              <Search className="w-3.5 h-3.5 text-jade transition-transform duration-300 group-hover:scale-110" />
+              <span className="hidden xl:inline">{t('navigation.searchPlaceholder', { defaultValue: 'Buscar espécimes...' })}</span>
+              <kbd className="hidden md:inline-flex items-center text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-2 border border-foreground/10 text-foreground/50">
+                ⌘K
+              </kbd>
+            </button>
+
             {!user && favoriteIds.length > 0 && (
               <Link
                 to="/profile"
@@ -152,6 +167,23 @@ export function Navigation({ className }: NavigationProps) {
         {mobileMenuOpen && (
           <div className="lg:hidden border-t border-foreground/8 py-4">
             <div className="grid gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open-quick-search'));
+                }}
+                className="flex items-center justify-between rounded-2xl px-4 py-3 mb-2 text-sm font-medium bg-foreground/[0.04] border border-foreground/10 text-foreground/80 hover:bg-foreground/[0.08] hover:text-foreground transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Search className="w-4 h-4 text-jade" />
+                  <span>{t('navigation.searchPlaceholder', { defaultValue: 'Buscar no museu...' })}</span>
+                </div>
+                <kbd className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-2 border border-foreground/10 text-foreground/60">
+                  ⌘K
+                </kbd>
+              </button>
+
               {navigationItems.map((item) => {
                 const active = isActive(item.href);
                 return (

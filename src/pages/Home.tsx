@@ -360,15 +360,15 @@ export default function Home() {
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-background via-background/85 to-background" aria-hidden="true" />
 
         <div className="container-editorial relative z-10">
-          <div className="grid gap-12 md:grid-cols-12 mb-20">
+          <div className="grid gap-8 md:grid-cols-12 mb-12">
             <div className="md:col-span-4">
-              <div className="text-caption text-jade mb-6">— {t('editorial.rooms.featured')}</div>
+              <div className="text-caption text-jade mb-4">— {t('editorial.rooms.featured')}</div>
             </div>
             <div className="md:col-span-8">
               <h2 className="font-display text-display-xl text-foreground max-w-[16ch] tracking-tighter">
                 {t('home.favorites.title')}
               </h2>
-              <p className="mt-6 max-w-[52ch] text-base md:text-lg text-foreground/65 leading-relaxed">
+              <p className="mt-4 max-w-[52ch] text-base md:text-lg text-foreground/65 leading-relaxed">
                 {t('home.favorites.subtitle')}
               </p>
             </div>

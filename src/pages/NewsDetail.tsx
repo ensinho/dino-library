@@ -404,10 +404,10 @@ export default function NewsDetail() {
 
       {/* Related Scientific Literature */}
       {relatedArticles.length > 0 && (
-        <section className="hairline-t py-20 bg-surface-1/20">
+        <section className="hairline-t py-14 bg-surface-1/20">
           <div className="container-editorial">
-            <div className="text-caption text-jade mb-8">— {t('news.detail.relatedArticles')}</div>
-            <ol className="grid md:grid-cols-2 gap-12">
+            <div className="text-caption text-jade mb-6">— {t('news.detail.relatedArticles')}</div>
+            <ol className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedArticles.map((r) => (
                 <li key={r.id}>
                   <Link to={`/news/${r.id}`} className="group block">

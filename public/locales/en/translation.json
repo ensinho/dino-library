@@ -664,7 +664,9 @@
     "profile": "Profile",
     "auth": "Sign In",
     "menu": "Menu",
-    "collection": "Your collection ({{count}})"
+    "collection": "Your collection ({{count}})",
+    "quickSearch": "Quick Search",
+    "searchPlaceholder": "Search specimens, rooms..."
   },
   "editorial": {
     "rooms": {

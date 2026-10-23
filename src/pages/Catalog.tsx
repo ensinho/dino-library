@@ -252,7 +252,7 @@ export default function Catalog() {
           </div>
 
           {showAdvanced && (
-            <div className="mt-8 pt-8 hairline-t grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="mt-6 pt-6 hairline-t grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
               <PeriodTimeline selectedPeriod={period ?? 'all'} onPeriodChange={(p) => update({ period: p })} />
               <SizeFilter
                 lengthRange={lengthRange}
@@ -342,7 +342,7 @@ export default function Catalog() {
           )}
 
           {current.totalPages > 1 && (
-            <nav className="mt-20 pt-10 hairline-t flex justify-center" aria-label={t('catalog.pagination.label')}>
+            <nav className="mt-12 pt-6 hairline-t flex justify-center" aria-label={t('catalog.pagination.label')}>
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
