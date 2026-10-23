@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
+import SmartImage from '@/components/SmartImage';
 import { 
   Search, 
   User, 
@@ -291,23 +292,26 @@ export default function News() {
                 <div className="grid gap-10 lg:gap-14 lg:grid-cols-12 items-center">
                   <div className="lg:col-span-7">
                     <figure className="relative aspect-[16/10] overflow-hidden rounded-3xl ring-1 ring-jade/30 shadow-[0_0_50px_-20px_hsl(158_86%_72%/0.35)] bg-surface-1 group">
-                      <img
+                      <SmartImage
                         src={a.imageUrl}
                         alt={a.title}
-                        className="absolute inset-0 w-full h-full object-cover img-duotone-hover transition-transform duration-700 ease-spring group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full rounded-3xl ring-0"
+                        imgClassName="w-full h-full object-cover img-duotone-hover transition-transform duration-700 ease-spring group-hover:scale-105"
+                        fallbackSrc="/placeholder.svg"
+                        loading="eager"
                       />
-                      <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2">
-                        <span className="text-caption text-foreground/90 bg-background/70 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/15 flex items-center gap-1.5">
+                      <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2 pointer-events-none">
+                        <span className="text-caption text-foreground/90 bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full ring-1 ring-foreground/15 flex items-center gap-1.5 shadow-sm">
                           <Icon className="w-3 h-3 text-jade" />
                           {a.journal}
                         </span>
                         {a.openAccess && (
-                          <span className="text-caption text-canvas bg-jade px-2.5 py-1.5 rounded-full font-medium">
+                          <span className="text-caption text-canvas bg-jade px-2.5 py-1.5 rounded-full font-medium shadow-sm">
                             Open Access
                           </span>
                         )}
                       </div>
-                      <figcaption className="absolute bottom-4 left-4 right-4 z-10 text-caption text-foreground/80 bg-background/60 backdrop-blur-md px-3 py-1.5 rounded-2xl ring-1 ring-foreground/10 line-clamp-1">
+                      <figcaption className="absolute bottom-4 left-4 right-4 z-10 text-caption text-foreground/90 bg-background/80 backdrop-blur-md px-3.5 py-2 rounded-2xl ring-1 ring-foreground/15 line-clamp-1 shadow-sm">
                         {a.image?.caption || a.title} · {a.image?.credit}
                       </figcaption>
                     </figure>
@@ -502,16 +506,18 @@ export default function News() {
                         {/* Column 3: Figure thumbnail */}
                         {article.imageUrl && (
                           <figure className="col-span-12 md:col-span-3 relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-foreground/8 bg-surface-1 group">
-                            <Link to={`/news/${article.id}`}>
-                              <img
+                            <Link to={`/news/${article.id}`} className="block w-full h-full">
+                              <SmartImage
                                 src={article.imageUrl}
                                 alt={article.title}
-                                className="absolute inset-0 w-full h-full object-cover img-duotone-hover transition-transform duration-500 group-hover:scale-105"
+                                className="w-full h-full rounded-2xl ring-0"
+                                imgClassName="w-full h-full object-cover img-duotone-hover transition-transform duration-500 group-hover:scale-105"
+                                fallbackSrc="/placeholder.svg"
                                 loading="lazy"
                               />
                             </Link>
                             {article.image?.license && (
-                              <span className="absolute bottom-2 right-2 text-[10px] font-mono bg-background/80 backdrop-blur-md px-2 py-0.5 rounded-full text-foreground/70 ring-1 ring-foreground/10">
+                              <span className="absolute bottom-2 right-2 text-[10px] font-mono bg-background/85 backdrop-blur-md px-2 py-0.5 rounded-full text-foreground/75 ring-1 ring-foreground/10 pointer-events-none z-10">
                                 {article.image.license}
                               </span>
                             )}

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { DinoLoader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
+import SmartImage from '@/components/SmartImage';
 import { 
   ArrowLeft, 
   Calendar, 
@@ -214,10 +215,13 @@ export default function NewsDetail() {
           <div className="container-editorial mb-16">
             <figure className="relative overflow-hidden rounded-3xl ring-1 ring-foreground/10 bg-surface-1">
               <div className="aspect-[16/9] max-h-[580px]">
-                <img
+                <SmartImage
                   src={article.imageUrl}
                   alt={article.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full"
+                  imgClassName="w-full h-full object-cover"
+                  fallbackSrc="/placeholder.svg"
+                  loading="eager"
                 />
               </div>
               <figcaption className="p-5 hairline-t bg-surface-1/90 backdrop-blur-md flex flex-wrap items-center justify-between gap-4 text-caption text-foreground/70">
@@ -264,14 +268,16 @@ export default function NewsDetail() {
                   {copiedBibtex ? <Check className="w-3 h-3 mr-1 text-jade" /> : <FileText className="w-3 h-3 mr-1" />}
                   {copiedBibtex ? 'BibTeX Copiado' : 'Copiar BibTeX'}
                 </Button>
-                {article.pdfUrl && (
-                  <Button asChild size="sm" className="h-8 text-xs bg-jade text-canvas hover:bg-jade/90">
-                    <a href={article.pdfUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-3 h-3 mr-1" />
-                      PDF Open Access
-                    </a>
-                  </Button>
-                )}
+                <Button asChild size="sm" className="h-8 text-xs bg-jade text-canvas hover:bg-jade/90">
+                  <a
+                    href={article.pdfUrl || article.doiUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    {i18n.language.startsWith('pt') ? 'Acessar Artigo / Texto Completo' : i18n.language.startsWith('es') ? 'Acceder al Artículo' : 'Access Publication'}
+                  </a>
+                </Button>
               </div>
             </div>
 
@@ -406,12 +412,15 @@ export default function NewsDetail() {
                 <li key={r.id}>
                   <Link to={`/news/${r.id}`} className="group block">
                     <figure className="relative aspect-[16/10] overflow-hidden rounded-3xl ring-1 ring-foreground/8 bg-surface-1 mb-5">
-                      {r.imageUrl ? (
-                        <img src={r.imageUrl} alt={r.title} className="absolute inset-0 w-full h-full object-cover img-duotone-hover" />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-surface-2 to-surface-1" />
-                      )}
-                      <div className="absolute top-3 left-3 text-caption text-foreground/80 bg-background/70 backdrop-blur-md px-2.5 py-1 rounded-full ring-1 ring-foreground/10">
+                      <SmartImage
+                        src={r.imageUrl}
+                        alt={r.title}
+                        className="absolute inset-0 w-full h-full"
+                        imgClassName="w-full h-full object-cover img-duotone-hover"
+                        fallbackSrc="/placeholder.svg"
+                        loading="lazy"
+                      />
+                      <div className="absolute top-3 left-3 text-caption text-foreground/80 bg-background/70 backdrop-blur-md px-2.5 py-1 rounded-full ring-1 ring-foreground/10 z-10">
                         {r.journal}
                       </div>
                     </figure>

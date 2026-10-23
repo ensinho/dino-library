@@ -516,13 +516,15 @@ export default function Home() {
                   className="group flex flex-col rounded-3xl p-6 ring-1 ring-foreground/8 bg-surface-1/60 hover:ring-jade/40 hover:bg-surface-1 transition-all duration-300"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden rounded-2xl mb-5 bg-surface-2 ring-1 ring-foreground/10">
-                    <img
+                    <SmartImage
                       src={dispatch.imageUrl}
                       alt={dispatch.title}
-                      className="absolute inset-0 w-full h-full object-cover img-duotone-hover transition-transform duration-500 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full rounded-2xl ring-0"
+                      imgClassName="w-full h-full object-cover img-duotone-hover transition-transform duration-500 group-hover:scale-105"
+                      fallbackSrc="/placeholder.svg"
                       loading="lazy"
                     />
-                    <div className="absolute top-3 left-3 text-caption text-foreground/90 bg-background/70 backdrop-blur-md px-2.5 py-1 rounded-full ring-1 ring-foreground/15 font-mono text-[11px]">
+                    <div className="absolute top-3 left-3 text-caption text-foreground/90 bg-background/80 backdrop-blur-md px-2.5 py-1 rounded-full ring-1 ring-foreground/15 font-mono text-[11px] pointer-events-none z-10">
                       {dispatch.journal}
                     </div>
                   </div>
