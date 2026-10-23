@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Search, Map, Clock, GraduationCap, Zap, Globe, Book } from 'lucide-react';
+import { ArrowRight, Search, Map, Clock, GraduationCap, Zap, Globe, Book, Newspaper, Award, ExternalLink } from 'lucide-react';
 import dinoArt1 from '@/assets/backgrounds/DinoArt.jpg';
 import dinoArt2 from '@/assets/backgrounds/DinoArt2.jpg';
 import dinoArt3 from '@/assets/backgrounds/DinoArt3.jpg';
@@ -14,6 +14,7 @@ import oxalaiaImage from '@/assets/dinosaur-images/oxalaia.jpg';
 import SmartImage from '@/components/SmartImage';
 import CallToAction from '@/components/layout/CallToAction';
 import { useSpeciesCount } from '@/hooks/useDinosaurs';
+import { getRecentArticles, NewsArticle } from '@/services/newsService';
 
 interface FavoriteDinosaur {
   name: string;
@@ -40,8 +41,15 @@ const favoriteOrder: { id: FavoriteKey; name: string; scientificName: string }[]
 ];
 
 export default function Home() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: speciesCount } = useSpeciesCount();
+  const [recentDispatches, setRecentDispatches] = useState<NewsArticle[]>([]);
+
+  useEffect(() => {
+    getRecentArticles(3, i18n.language)
+      .then((data) => setRecentDispatches(data))
+      .catch((err) => console.warn('Failed to load recent dispatches for home:', err));
+  }, [i18n.language]);
 
   const favoriteDinosaurs: FavoriteDinosaur[] = favoriteOrder.map((f) => ({
     name: f.name,
@@ -80,6 +88,17 @@ export default function Home() {
       icon: GraduationCap,
       href: '/education',
       color: 'bg-gradient-hero'
+    },
+    {
+      title: t('footer.fieldNotes'),
+      description: i18n.language.startsWith('pt')
+        ? 'Literatura acadêmica revisada por pares, DOIs e descobertas paleontológicas recentes.'
+        : i18n.language.startsWith('es')
+        ? 'Literatura académica revisada por pares, DOIs y descubrimientos recientes.'
+        : 'Peer-reviewed academic literature, persistent DOIs, and landmark paleontological finds.',
+      icon: Newspaper,
+      href: '/news',
+      color: 'bg-gradient-jade'
     }
   ];
 
@@ -464,6 +483,74 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ============================================================
+           PLATE VI — FIELD NOTES & SCIENTIFIC LITERATURE
+           ============================================================ */}
+      {recentDispatches.length > 0 && (
+        <section className="relative py-28 bg-surface-1/30 hairline-t">
+          <div className="container-editorial">
+            <div className="flex flex-wrap items-end justify-between gap-6 mb-16">
+              <div>
+                <div className="text-caption text-jade mb-3 flex items-center gap-2">
+                  <Award className="w-4 h-4" />
+                  — {i18n.language.startsWith('pt') ? 'Revisão por Pares & Despachos de Campo' : 'Peer-Reviewed Dispatches'}
+                </div>
+                <h2 className="font-display text-display-xl text-foreground tracking-tighter">
+                  {t('footer.fieldNotes')}
+                </h2>
+              </div>
+              <Link to="/news">
+                <Button variant="outline" size="lg" className="hover:text-jade">
+                  {i18n.language.startsWith('pt') ? 'Explorar Literatura Científica' : 'Explore Scientific Feed'}
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {recentDispatches.map((dispatch) => (
+                <Link
+                  key={dispatch.id}
+                  to={`/news/${dispatch.id}`}
+                  className="group flex flex-col rounded-3xl p-6 ring-1 ring-foreground/8 bg-surface-1/60 hover:ring-jade/40 hover:bg-surface-1 transition-all duration-300"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-2xl mb-5 bg-surface-2 ring-1 ring-foreground/10">
+                    <img
+                      src={dispatch.imageUrl}
+                      alt={dispatch.title}
+                      className="absolute inset-0 w-full h-full object-cover img-duotone-hover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute top-3 left-3 text-caption text-foreground/90 bg-background/70 backdrop-blur-md px-2.5 py-1 rounded-full ring-1 ring-foreground/15 font-mono text-[11px]">
+                      {dispatch.journal}
+                    </div>
+                  </div>
+
+                  <div className="text-caption text-jade mb-2 font-mono text-xs">
+                    DOI: {dispatch.doi.slice(0, 22)}...
+                  </div>
+
+                  <h3 className="font-display text-xl tracking-tight text-foreground group-hover:text-jade transition-colors duration-300 mb-3 line-clamp-2">
+                    {dispatch.title}
+                  </h3>
+
+                  <p className="text-sm text-foreground/65 line-clamp-3 leading-relaxed mb-6">
+                    {dispatch.excerpt}
+                  </p>
+
+                  <div className="mt-auto hairline-t pt-4 flex items-center justify-between text-caption text-foreground/50">
+                    <span>{dispatch.author.split(' ')[0]} et al.</span>
+                    <span className="flex items-center gap-1 text-jade font-medium group-hover:translate-x-0.5 transition-transform">
+                      {i18n.language.startsWith('pt') ? 'Ler análise' : 'Read'} →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <CallToAction />
     </div>
