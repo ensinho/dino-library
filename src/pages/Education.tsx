@@ -423,17 +423,17 @@ export default function Education() {
   return (
     <div className="min-h-screen bg-background">
       {/* HEADER */}
-      <section className="pt-16 lg:pt-20 pb-6">
+      <section className="pt-10 lg:pt-14 pb-5">
         <div className="container-editorial">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="text-caption text-jade">— {t('editorial.rooms.schoolroom')}</div>
             <div className="text-caption text-foreground/40 hidden sm:block">{activities.length} {t('editorial.routes')}</div>
           </div>
-          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+          <div className="grid gap-y-3 gap-x-12 lg:grid-cols-12 items-baseline">
             <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
               {t('education.title')}
             </h1>
-            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+            <p className="lg:col-span-5 max-w-[48ch] text-xs md:text-sm text-foreground/60 leading-relaxed">
               {t('education.subtitle')}
             </p>
           </div>
@@ -441,7 +441,7 @@ export default function Education() {
       </section>
 
       {/* ACTIVITIES */}
-      <section className="hairline-t pt-16 pb-20">
+      <section className="hairline-t pt-10 pb-16">
         <div className="container-editorial">
           <div className="text-caption text-jade mb-10">— {t('education.activities')}</div>
           <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">

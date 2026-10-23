@@ -352,17 +352,17 @@ export default function Glossary() {
   return (
     <div className="min-h-screen bg-background">
       {/* HEADER */}
-      <section className="pt-16 lg:pt-20 pb-6">
+      <section className="pt-10 lg:pt-14 pb-5">
         <div className="container-editorial">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="text-caption text-jade">— {t('editorial.rooms.glossary')}</div>
             <div className="text-caption text-foreground/40 hidden sm:block">{glossaryTerms.length} {t('editorial.entries')}</div>
           </div>
-          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+          <div className="grid gap-y-3 gap-x-12 lg:grid-cols-12 items-baseline">
             <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
               {t('glossary.title')}
             </h1>
-            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+            <p className="lg:col-span-5 max-w-[48ch] text-xs md:text-sm text-foreground/60 leading-relaxed">
               {t('glossary.subtitle')}
             </p>
           </div>
@@ -370,7 +370,7 @@ export default function Glossary() {
       </section>
 
       {/* FILTER BAR */}
-      <section className="hairline-t hairline-b py-6 sticky top-16 bg-background/80 backdrop-blur-md z-30">
+      <section className="hairline-t hairline-b py-4 sticky top-16 bg-background/80 backdrop-blur-md z-30">
         <div className="container-editorial">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             <div className="md:col-span-5 relative">

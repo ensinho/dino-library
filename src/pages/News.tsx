@@ -165,9 +165,9 @@ export default function News() {
       {/* ============================================================
            HEADER — Editorial Desk & Scientific Credentials
            ============================================================ */}
-      <section className="pt-16 lg:pt-20 pb-8">
+      <section className="pt-10 lg:pt-14 pb-5">
         <div className="container-editorial">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
             <div className="text-caption text-jade flex items-center gap-2">
               <Award className="w-3.5 h-3.5" />
               — {i18n.language.startsWith('pt') ? 'Feed Científico Verificado & DOIs' : i18n.language.startsWith('es') ? 'Feed Científico Verificado & DOIs' : 'Peer-Reviewed Scientific Feed'}
@@ -181,11 +181,11 @@ export default function News() {
             </div>
           </div>
 
-          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+          <div className="grid gap-y-3 gap-x-12 lg:grid-cols-12 items-baseline">
             <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
               {t('news.title')}
             </h1>
-            <p className="lg:col-span-5 lg:pt-3 max-w-[48ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+            <p className="lg:col-span-5 max-w-[48ch] text-xs md:text-sm text-foreground/60 leading-relaxed">
               {i18n.language.startsWith('pt')
                 ? 'Artigos acadêmicos revisados por pares, descobertas fósseis de campo e literatura paleontológica de periódicos internacionais de alto impacto com identificadores DOI verificados.'
                 : i18n.language.startsWith('es')
@@ -278,7 +278,7 @@ export default function News() {
            FEATURED MILESTONE ARTICLE (when on 'all' or 'curated')
            ============================================================ */}
       {viewMode !== 'live' && featuredArticles.length > 0 && !searchTerm && selectedCategory === 'all' && (
-        <section className="hairline-b py-16 bg-gradient-to-b from-surface-1/30 to-background">
+        <section className="hairline-b py-10 lg:py-12 bg-gradient-to-b from-surface-1/30 to-background">
           <div className="container-editorial">
             <div className="text-caption text-jade mb-6 flex items-center gap-2">
               <Award className="w-3.5 h-3.5" />

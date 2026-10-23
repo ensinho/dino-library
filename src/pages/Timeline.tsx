@@ -168,18 +168,18 @@ export default function Timeline() {
       {/* ============================================================
            HEADER — wall plaque
            ============================================================ */}
-      <section className="pt-16 lg:pt-20 pb-6">
+      <section className="pt-10 lg:pt-14 pb-5">
         <div className="container-editorial">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="text-caption text-jade">— {t('editorial.rooms.timeline')}</div>
             <div className="text-caption text-foreground/40 hidden sm:block">{t('timeline.range')}</div>
           </div>
 
-          <div className="grid gap-y-4 gap-x-12 lg:grid-cols-12">
+          <div className="grid gap-y-3 gap-x-12 lg:grid-cols-12 items-baseline">
             <h1 className="lg:col-span-7 font-display text-display-xl text-foreground tracking-tighter">
               {t('timeline.title')}
             </h1>
-            <p className="lg:col-span-5 lg:pt-3 max-w-[44ch] text-sm md:text-base text-foreground/60 leading-relaxed">
+            <p className="lg:col-span-5 max-w-[48ch] text-xs md:text-sm text-foreground/60 leading-relaxed">
               {t('timeline.subtitle')}
             </p>
           </div>
