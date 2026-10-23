@@ -367,35 +367,35 @@ export default function News() {
       {/* ============================================================
            SEARCH & CATEGORY FILTER BAR
            ============================================================ */}
-      <section className="pb-32 pt-12">
+      <section className="pb-24 pt-8">
         <div className="container-editorial">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 mb-5 items-center">
             <div className="md:col-span-9 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
               <Input
                 placeholder={i18n.language.startsWith('pt') ? 'Buscar por táxon (ex: Spinosaurus), autor, periódico ou DOI...' : 'Search by taxon, author, journal or DOI...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-11 h-12 rounded-full bg-surface-1 border-foreground/10 text-sm"
+                className="pl-10 h-10 rounded-full bg-surface-1 border-foreground/10 text-sm"
               />
             </div>
             <button
               type="button"
               onClick={clearFilters}
-              className="md:col-span-3 text-caption text-foreground/50 hover:text-jade transition-colors duration-300 flex items-center justify-center gap-2 h-11"
+              className="md:col-span-3 text-caption text-foreground/50 hover:text-jade transition-colors duration-300 flex items-center justify-center gap-2 h-10"
             >
               <Filter className="w-3.5 h-3.5" />
               {t('news.filters.clear')}
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-12 hairline-b pb-6">
+          <div className="flex flex-wrap gap-2 mb-8 hairline-b pb-5">
             {categories.map((cat) => (
               <button
                 key={cat.value}
                 type="button"
                 onClick={() => setSelectedCategory(cat.value)}
-                className={`text-caption px-4 py-2 rounded-full ring-1 transition-all duration-300 ease-spring flex items-center gap-2 ${
+                className={`text-caption px-3.5 py-1.5 rounded-full ring-1 transition-all duration-300 ease-spring flex items-center gap-2 ${
                   selectedCategory === cat.value
                     ? 'bg-jade text-canvas ring-jade'
                     : 'bg-surface-1 text-foreground/60 ring-foreground/10 hover:text-jade hover:ring-jade/40'
@@ -416,8 +416,8 @@ export default function News() {
                 {filteredArticles.slice(0, visibleCount).map((article) => {
                   const Icon = getCategoryIcon(article.category);
                   return (
-                    <li key={article.id} className="py-10 first:pt-0">
-                      <article className="grid grid-cols-12 gap-6 items-start">
+                    <li key={article.id} className="py-6 lg:py-7 first:pt-0">
+                      <article className="grid grid-cols-12 gap-5 items-start">
                         {/* Column 1: Journal badge, Date, DOI */}
                         <div className="col-span-12 md:col-span-3">
                           <div className="flex flex-wrap items-center gap-2 mb-2">

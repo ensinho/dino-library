@@ -403,30 +403,30 @@ export default function Glossary() {
       </section>
 
       {/* INDEX LIST */}
-      <section className="pb-24 pt-16">
+      <section className="pb-20 pt-8">
         <div className="container-editorial">
           {filteredTerms.length > 0 ? (
             <ol>
               {filteredTerms.map((term) => (
-                <li key={term.id} className="hairline-t py-10 grid grid-cols-12 gap-6">
+                <li key={term.id} className="hairline-t py-6 lg:py-7 grid grid-cols-12 gap-5 items-start">
                   <div className="col-span-12 md:col-span-3 lg:col-span-2">
-                    <div className="text-caption text-jade mb-2">— {categories.find((cat) => cat.id === term.category)?.name}</div>
-                    <h2 className="font-display text-display-lg text-foreground tracking-tighter leading-[0.95]">
+                    <div className="text-caption text-jade mb-1.5">— {categories.find((cat) => cat.id === term.category)?.name}</div>
+                    <h2 className="font-display text-xl sm:text-2xl text-foreground tracking-tight leading-snug">
                       {term.term}
                     </h2>
                   </div>
                   <div className="col-span-12 md:col-span-9 lg:col-span-7">
-                    <p className="text-foreground/75 leading-relaxed text-base md:text-lg max-w-[60ch]">
+                    <p className="text-foreground/75 leading-relaxed text-sm md:text-base max-w-[65ch]">
                       {term.definition}
                     </p>
                     {term.examples && term.examples.length > 0 && (
-                      <div className="mt-6 hairline-t pt-4">
-                        <div className="text-caption text-foreground/40 mb-2">{t('glossary.examples')}</div>
-                        <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs italic text-foreground/70">
+                      <div className="mt-4 hairline-t pt-3">
+                        <div className="text-caption text-foreground/40 mb-1.5">{t('glossary.examples')}</div>
+                        <div className="flex flex-wrap gap-x-2.5 gap-y-1 font-mono text-[11px] italic text-foreground/70">
                           {term.examples.map((example, index) => (
                             <span key={index}>
                               {example}
-                              {index < term.examples!.length - 1 && <span className="text-foreground/25 ml-3">·</span>}
+                              {index < term.examples!.length - 1 && <span className="text-foreground/25 ml-2.5">·</span>}
                             </span>
                           ))}
                         </div>

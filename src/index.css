@@ -193,8 +193,8 @@
   /* ----- Editorial layout ------------------------------------------------- */
   .container-editorial {
     margin-inline: auto;
-    max-width: 1536px;
-    padding-inline: clamp(1.25rem, 3.5vw, 3.5rem);
+    max-width: 1720px;
+    padding-inline: clamp(1rem, 2.5vw, 2.5rem);
   }
 
   .hairline-t { border-top: 1px solid hsl(var(--foreground) / 0.08); }
@@ -204,11 +204,11 @@
   .font-display { font-family: "Bricolage Grotesque", "Inter Display", system-ui, sans-serif; }
   .font-mono    { font-family: "Geist Mono", "JetBrains Mono", ui-monospace, monospace; }
 
-  .text-display-2xl { font-size: clamp(2.75rem, 5.5vw, 5rem); letter-spacing: -0.04em; line-height: 0.98; font-weight: 500; }
-  .text-display-xl  { font-size: clamp(2rem, 3.5vw, 3.25rem); letter-spacing: -0.035em;  line-height: 1.05;  font-weight: 500; }
-  .text-display-lg  { font-size: clamp(1.65rem, 2.5vw, 2.25rem); letter-spacing: -0.03em; line-height: 1.1; font-weight: 500; }
-  .text-heading     { font-size: clamp(1.25rem, 1.8vw, 1.55rem); letter-spacing: -0.02em; line-height: 1.2; font-weight: 500; }
-  .text-caption     { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
+  .text-display-2xl { font-size: clamp(2.25rem, 4.5vw, 4rem); letter-spacing: -0.035em; line-height: 1.0; font-weight: 500; }
+  .text-display-xl  { font-size: clamp(1.75rem, 3vw, 2.75rem); letter-spacing: -0.03em;  line-height: 1.08;  font-weight: 500; }
+  .text-display-lg  { font-size: clamp(1.35rem, 2vw, 1.85rem); letter-spacing: -0.025em; line-height: 1.15; font-weight: 500; }
+  .text-heading     { font-size: clamp(1.1rem, 1.5vw, 1.35rem); letter-spacing: -0.02em; line-height: 1.25; font-weight: 500; }
+  .text-caption     { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
 
   /* ----- Editorial surface helpers --------------------------------------- */
   .surface-1 { background: hsl(var(--surface-1)); }

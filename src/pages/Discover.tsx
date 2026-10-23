@@ -96,29 +96,29 @@ export default function Discover() {
       </section>
 
       {/* THEME OVERVIEW + GRID */}
-      <section className="py-16">
+      <section className="py-10 lg:py-12">
         <div className="container-editorial">
-          <div className="grid lg:grid-cols-12 gap-y-6 gap-x-12 mb-16">
-            <div className="lg:col-span-2">
+          <div className="grid lg:grid-cols-12 gap-y-4 gap-x-10 mb-10">
+            <div className="lg:col-span-1">
               <ActiveIcon className="h-6 w-6 text-jade" />
             </div>
-            <div className="lg:col-span-7">
-              <h2 className="font-display text-display-xl text-foreground tracking-tighter mb-4">
+            <div className="lg:col-span-8">
+              <h2 className="font-display text-display-lg text-foreground tracking-tighter mb-2">
                 {t(`discover.groups.${active}.title`)}
               </h2>
-              <p className="text-foreground/70 leading-relaxed text-lg max-w-[60ch]">
+              <p className="text-foreground/70 leading-relaxed text-sm md:text-base max-w-[65ch]">
                 {t(`discover.groups.${active}.description`)}
               </p>
             </div>
-            <div className="lg:col-span-3 lg:pt-3 flex flex-col gap-3 text-caption text-foreground/55">
-              <div className="hairline-t pt-3 flex items-center justify-between">
+            <div className="lg:col-span-3 flex flex-col gap-2.5 text-caption text-foreground/55">
+              <div className="hairline-t pt-2.5 flex items-center justify-between">
                 <span className="flex items-center gap-2"><TrendingUp className="w-3 h-3 text-jade" />{t('discover.speciesFound')}</span>
                 <span className="font-mono text-foreground">{matches.length}</span>
               </div>
               {matches.length > PREVIEW_SIZE && (
                 <Link
                   to={catalogLink}
-                  className="hairline-t pt-3 text-caption text-jade hover:text-foreground transition-colors duration-300 inline-flex items-center gap-2"
+                  className="hairline-t pt-2.5 text-caption text-jade hover:text-foreground transition-colors duration-300 inline-flex items-center gap-2"
                 >
                   {t('discover.viewAll')}
                   <ArrowRight className="w-3 h-3" />
@@ -128,7 +128,7 @@ export default function Discover() {
           </div>
 
           {preview.length > 0 ? (
-            <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+            <ol className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3.5 gap-y-5">
               {preview.map((species, index) => (
                 <li key={species.row_index}>
                   <SpeciesCard

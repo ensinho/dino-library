@@ -52,7 +52,7 @@ export default function FavoriteButton({ speciesId, name, variant = 'overlay', c
       aria-label={label}
       title={label}
       className={cn(
-        'flex h-9 w-9 items-center justify-center rounded-full bg-background/55 backdrop-blur-md ring-1 ring-foreground/10',
+        'flex h-7.5 w-7.5 items-center justify-center rounded-full bg-background/65 backdrop-blur-md ring-1 ring-foreground/10',
         'transition-all duration-300 ease-spring hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-jade',
         active ? 'text-jade' : 'text-foreground/70 hover:text-jade',
         className,

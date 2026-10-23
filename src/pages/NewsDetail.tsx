@@ -212,9 +212,9 @@ export default function NewsDetail() {
 
         {/* Featured Figure */}
         {article.imageUrl && (
-          <div className="container-editorial mb-16">
+          <div className="container-editorial mb-10 lg:mb-12">
             <figure className="relative overflow-hidden rounded-3xl ring-1 ring-foreground/10 bg-surface-1">
-              <div className="aspect-[16/9] max-h-[580px]">
+              <div className="aspect-[16/9] max-h-[500px]">
                 <SmartImage
                   src={article.imageUrl}
                   alt={article.title}

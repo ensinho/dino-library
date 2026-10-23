@@ -122,7 +122,7 @@ export default function Home() {
         <div className="container-editorial relative z-10">
           {/* The single grand plate */}
           <figure className="relative overflow-hidden rounded-3xl ring-1 ring-jade/25 shadow-[0_0_60px_-20px_hsl(158_86%_72%/0.45)] fade-rise fade-rise-delay-1">
-            <div className="aspect-[16/9] sm:aspect-[21/9]">
+            <div className="aspect-[16/9] sm:aspect-[21/9] max-h-[500px]">
               <SmartImage
                 src={dinoArt1}
                 alt="Two carnotaurs in a luminous prehistoric forest"
@@ -155,7 +155,7 @@ export default function Home() {
           </figure>
 
           {/* Title beside the plate, like wall text */}
-          <div className="grid gap-y-10 gap-x-12 lg:grid-cols-12 mt-16 lg:mt-20">
+          <div className="grid gap-y-8 gap-x-12 lg:grid-cols-12 mt-10 lg:mt-12">
             <div className="lg:col-span-7">
               <h1 className="font-display text-display-2xl text-foreground tracking-tighter fade-rise fade-rise-delay-2">
                 {t('home.hero.title')}
@@ -197,7 +197,7 @@ export default function Home() {
            ankylosaur on the left, a vertical list of "what you can
            explore" on the right. The image lingers as you read.
            ============================================================ */}
-      <section className="relative py-32 bg-surface-1/40">
+      <section className="relative py-16 lg:py-20 bg-surface-1/40">
         <div className="container-editorial">
           <div className="grid gap-12 lg:gap-16 lg:grid-cols-12 items-start">
             {/* Sticky tall plate */}
@@ -248,7 +248,7 @@ export default function Home() {
                   <li key={feature.title}>
                     <Link
                       to={feature.href}
-                      className="group block hairline-t py-7 transition-colors duration-500 ease-spring"
+                      className="group block hairline-t py-4 lg:py-5 transition-colors duration-500 ease-spring"
                     >
                       <div className="grid grid-cols-12 gap-6 items-start">
                         <div className="col-span-2 md:col-span-1 text-caption text-foreground/30 pt-1">
@@ -310,8 +310,8 @@ export default function Home() {
           <div className="absolute top-0 inset-x-0 hairline-t" aria-hidden="true" />
 
           <div className="absolute inset-0 z-10 flex items-end">
-            <div className="container-editorial w-full pb-16 md:pb-24">
-              <div className="grid gap-10 md:grid-cols-12 items-end">
+            <div className="container-editorial w-full pb-12 md:pb-16">
+              <div className="grid gap-8 md:grid-cols-12 items-end">
                 <div className="md:col-span-8">
                   <div className="text-caption text-jade mb-6 flex items-center gap-3">
                     <GraduationCap className="w-4 h-4" /> {t('editorial.rooms.learning')}
@@ -383,9 +383,9 @@ export default function Home() {
               >
                 <div
                   className={
-                    'relative overflow-hidden rounded-3xl ring-1 ring-jade/25 shadow-[0_0_40px_-18px_hsl(158_86%_72%/0.4)] mb-6 ' +
+                    'relative overflow-hidden rounded-3xl ring-1 ring-jade/25 shadow-[0_0_40px_-18px_hsl(158_86%_72%/0.4)] mb-4 ' +
                     // Slight asymmetric heights so the trio reads like a hung gallery
-                    (index === 1 ? 'aspect-[3/4] md:mt-10' : 'aspect-[4/5]')
+                    (index === 1 ? 'aspect-[4/3] md:mt-4' : 'aspect-[16/11]')
                   }
                 >
                   <SmartImage
@@ -433,16 +433,16 @@ export default function Home() {
            specimen; the figures sit quietly to the left. The page
            ends the way a museum ends: with a single quiet artefact.
            ============================================================ */}
-      <section className="relative py-32">
+      <section className="relative py-16 lg:py-20">
         <div className="hairline-t" />
-        <div className="container-editorial pt-24">
-          <div className="grid gap-12 lg:gap-16 lg:grid-cols-12 items-center">
+        <div className="container-editorial pt-12">
+          <div className="grid gap-10 lg:gap-14 lg:grid-cols-12 items-center">
             {/* Numbers */}
             <div className="lg:col-span-7 order-2 lg:order-1">
-              <div className="text-caption text-jade mb-8">— {t('editorial.rooms.inNumbers')}</div>
+              <div className="text-caption text-jade mb-6">— {t('editorial.rooms.inNumbers')}</div>
               <dl className="divide-y divide-foreground/8">
                 {stats.map((stat) => (
-                  <div key={stat.label} className="grid grid-cols-12 items-baseline gap-6 py-8">
+                  <div key={stat.label} className="grid grid-cols-12 items-baseline gap-4 py-5">
                     <dt className="col-span-12 md:col-span-5 flex items-center gap-3 text-caption text-foreground/50">
                       <stat.icon className="w-4 h-4 text-jade" strokeWidth={1.5} />
                       {stat.label}
@@ -459,7 +459,7 @@ export default function Home() {
             {/* Skull as closing artefact */}
             <div className="lg:col-span-5 order-1 lg:order-2">
               <figure className="relative overflow-hidden rounded-3xl ring-1 ring-jade/25 shadow-[0_0_50px_-20px_hsl(158_86%_72%/0.4)]">
-                <div className="aspect-[4/5]">
+                <div className="aspect-[16/11]">
                   <SmartImage
                     src={dinoArt2}
                     alt="Weathered dinosaur skull resting in undergrowth"
@@ -477,7 +477,7 @@ export default function Home() {
           </div>
 
           {/* Closing colophon */}
-          <div className="hairline-t mt-24 pt-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="hairline-t mt-16 pt-5 flex flex-wrap items-center justify-between gap-4">
             <p className="text-caption text-foreground/40">— {t('home.endOfGuide')}</p>
             <p className="text-caption text-foreground/40 hidden sm:block">dino.library · mmxxvi</p>
           </div>
@@ -488,9 +488,9 @@ export default function Home() {
            PLATE VI — FIELD NOTES & SCIENTIFIC LITERATURE
            ============================================================ */}
       {recentDispatches.length > 0 && (
-        <section className="relative py-28 bg-surface-1/30 hairline-t">
+        <section className="relative py-16 lg:py-20 bg-surface-1/30 hairline-t">
           <div className="container-editorial">
-            <div className="flex flex-wrap items-end justify-between gap-6 mb-16">
+            <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
               <div>
                 <div className="text-caption text-jade mb-3 flex items-center gap-2">
                   <Award className="w-4 h-4" />

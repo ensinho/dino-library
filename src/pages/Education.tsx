@@ -453,17 +453,17 @@ export default function Education() {
                     type="button"
                     onClick={() => startQuiz(a.difficulty)}
                     disabled={loading}
-                    className="group w-full text-left hairline-t py-8 grid grid-cols-12 gap-4 items-center transition-colors duration-300"
+                    className="group w-full text-left hairline-t py-5 lg:py-6 grid grid-cols-12 gap-3.5 items-center transition-colors duration-300"
                   >
                     <div className="col-span-1 font-mono text-caption text-foreground/40">
                       {String(i + 1).padStart(2, '0')}
                     </div>
-                    <div className="col-span-2"><Icon className="w-6 h-6 text-jade" /></div>
+                    <div className="col-span-2"><Icon className="w-5 h-5 text-jade" /></div>
                     <div className="col-span-7">
-                      <h3 className="font-display text-2xl tracking-[-0.025em] text-foreground transition-colors duration-300 group-hover:text-jade mb-1">
+                      <h3 className="font-display text-lg sm:text-xl tracking-tight text-foreground transition-colors duration-300 group-hover:text-jade mb-1">
                         {t(`education.quiz.${a.key}.title`)}
                       </h3>
-                      <p className="text-sm text-foreground/60 leading-relaxed line-clamp-2">
+                      <p className="text-xs sm:text-sm text-foreground/60 leading-relaxed line-clamp-2">
                         {t(`education.quiz.${a.key}.description`)}
                       </p>
                     </div>

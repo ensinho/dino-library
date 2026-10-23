@@ -180,7 +180,7 @@ export default function SpeciesDetail() {
               )}
 
               {/* Compact specimen index */}
-              <dl className="mt-10 grid grid-cols-3 gap-x-6 gap-y-2 hairline-t pt-6">
+              <dl className="mt-8 grid grid-cols-3 gap-x-6 gap-y-2 hairline-t pt-5">
                 {[
                   [t('species.factFile.length'), metric(species.length_m, 'm')],
                   [t('species.factFile.height'), metric(species.height_m, 'm')],
@@ -188,7 +188,7 @@ export default function SpeciesDetail() {
                 ].map(([label, value]) => (
                   <div key={label}>
                     <dt className="text-caption text-foreground/40 mb-1">{label}</dt>
-                    <dd className="font-display text-2xl text-foreground tracking-tight">{value}</dd>
+                    <dd className="font-display text-lg sm:text-xl text-foreground tracking-tight">{value}</dd>
                   </div>
                 ))}
               </dl>
@@ -200,7 +200,7 @@ export default function SpeciesDetail() {
       {/* ============================================================
            CONTENT TABS
            ============================================================ */}
-      <section className="pb-32">
+      <section className="pb-20">
         <div className="container-editorial">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-transparent p-0 h-auto gap-1 hairline-b w-full justify-start rounded-none">

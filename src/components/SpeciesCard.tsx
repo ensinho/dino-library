@@ -31,7 +31,7 @@ export default function SpeciesCard({ species, imageUrl, badge, variant = 'full'
         aria-label={t('catalog.viewSpecies', { name })}
       />
 
-      <div className="relative mb-3.5 aspect-[16/11] overflow-hidden rounded-2xl bg-surface-1 ring-1 ring-foreground/8">
+      <div className="relative mb-2.5 aspect-[16/10] overflow-hidden rounded-2xl bg-surface-1 ring-1 ring-foreground/8">
         {src ? (
           <SmartImage
             src={src}
@@ -43,40 +43,40 @@ export default function SpeciesCard({ species, imageUrl, badge, variant = 'full'
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-surface-2 to-surface-1">
-            <img src="/logoDinosaur.svg" alt="" aria-hidden="true" className="h-12 w-12 opacity-10" />
+            <img src="/logoDinosaur.svg" alt="" aria-hidden="true" className="h-10 w-10 opacity-10" />
           </div>
         )}
-        <div className="absolute left-3 top-3 z-10 rounded-full bg-background/70 px-2.5 py-1 text-[11px] font-medium text-foreground/85 ring-1 ring-foreground/10 backdrop-blur-md">
+        <div className="absolute left-2.5 top-2.5 z-10 rounded-full bg-background/75 px-2 py-0.5 text-[10px] font-medium text-foreground/85 ring-1 ring-foreground/10 backdrop-blur-md">
           {badge ?? period(species.geological_period)}
         </div>
-        <FavoriteButton speciesId={species.row_index} name={name} className="absolute right-2.5 top-2.5 z-30" />
+        <FavoriteButton speciesId={species.row_index} name={name} className="absolute right-2 top-2 z-30" />
       </div>
 
-      <div className="mb-0.5 flex items-baseline justify-between gap-2">
-        <h3 className="truncate font-display text-base sm:text-lg tracking-[-0.02em] text-foreground transition-colors duration-300 ease-spring group-hover:text-jade">
+      <div className="mb-0.5 flex items-baseline justify-between gap-1.5">
+        <h3 className="truncate font-display text-sm sm:text-base tracking-[-0.02em] text-foreground transition-colors duration-300 ease-spring group-hover:text-jade">
           {name}
         </h3>
-        <span className="shrink-0 font-mono text-[11px] uppercase tracking-wider text-jade">{diet(species.diet)}</span>
+        <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider text-jade">{diet(species.diet)}</span>
       </div>
-      <p className="mb-2 truncate font-mono text-[11px] italic uppercase tracking-wider text-foreground/40">
+      <p className="mb-1.5 truncate font-mono text-[10px] italic uppercase tracking-wider text-foreground/40">
         {species.scientific_name}
       </p>
 
       {variant === 'full' && (
         <>
-          <p className="mb-3 line-clamp-2 text-xs leading-relaxed text-foreground/60">
+          <p className="mb-2 line-clamp-2 text-[11px] leading-snug text-foreground/60">
             {species.meaning}
             {species.behavior_notes ? ` — ${species.behavior_notes}` : ''}
           </p>
-          <dl className="hairline-t mt-auto grid grid-cols-3 gap-2 pt-2.5 text-xs">
+          <dl className="hairline-t mt-auto grid grid-cols-3 gap-1.5 pt-2 text-[11px]">
             {[
               [t('catalog.stats.lengthShort'), metric(species.length_m, 'm')],
               [t('catalog.stats.heightShort'), metric(species.height_m, 'm')],
               [t('catalog.stats.weightShort'), metric(species.weight_kg, 'kg')],
             ].map(([label, value]) => (
               <div key={label}>
-                <dt className="mb-0.5 font-mono text-[10px] uppercase tracking-wider text-foreground/40">{label}</dt>
-                <dd className="font-display text-xs tracking-tight text-foreground">{value}</dd>
+                <dt className="mb-0.5 font-mono text-[9px] uppercase tracking-wider text-foreground/40">{label}</dt>
+                <dd className="font-display text-[11px] tracking-tight text-foreground">{value}</dd>
               </div>
             ))}
           </dl>

@@ -28,13 +28,14 @@ import { isThemeId } from '@/lib/themes';
 const LENGTH_MAX = 50;
 const HEIGHT_MAX = 20;
 const SORTS: SortKey[] = ['name', 'length', 'weight', 'discovered'];
-const PER_PAGE = [12, 16, 24, 32];
+const PER_PAGE = [12, 16, 24, 32, 48];
 
 const GRID_CLASSES = {
-  '2': 'grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8',
-  '3': 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6',
-  '4': 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5',
-  '5': 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 lg:gap-4.5',
+  '2': 'grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6',
+  '3': 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5',
+  '4': 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 lg:gap-4',
+  '5': 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-3.5',
+  '6': 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3',
 } as const;
 type GridCols = keyof typeof GRID_CLASSES;
 
