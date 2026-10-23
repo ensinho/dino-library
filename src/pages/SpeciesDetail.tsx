@@ -121,9 +121,9 @@ export default function SpeciesDetail() {
           </div>
 
           {/* Top label bar */}
-          <div className="flex items-center justify-between mb-6 hairline-b pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 hairline-b pb-4">
             <div className="text-caption text-jade">— {t('editorial.specimenFile')} · Nº {species.row_index}</div>
-            <div className="text-caption hidden sm:flex items-center gap-2">
+            <div className="text-caption flex flex-wrap items-center gap-2">
               {species.geological_period && (
                 <Link
                   to={`/catalog?period=${encodeURIComponent(species.geological_period.toLowerCase())}`}
@@ -216,7 +216,7 @@ export default function SpeciesDetail() {
       <section className="pb-20">
         <div className="container-editorial">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-transparent p-0 h-auto gap-1 hairline-b w-full justify-start rounded-none">
+            <TabsList className="bg-transparent p-0 h-auto gap-1 hairline-b w-full justify-start rounded-none overflow-x-auto flex-nowrap scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
               {[
                 { v: 'overview', label: t('species.tabs.overview') },
                 { v: 'gallery', label: t('species.tabs.gallery') },

@@ -382,7 +382,7 @@ export default function Glossary() {
                 className="pl-11 h-11 rounded-full bg-surface-1 border-foreground/10"
               />
             </div>
-            <div className="md:col-span-7 flex flex-wrap gap-2 md:justify-end">
+            <div className="md:col-span-7 flex overflow-x-auto flex-nowrap md:flex-wrap gap-2 md:justify-end scrollbar-none pb-1 md:pb-0">
               {categories.map((category) => (
                 <button
                   key={category.id}

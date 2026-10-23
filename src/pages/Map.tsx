@@ -10,6 +10,7 @@ import { PageError, PageLoader } from '@/components/PageState';
 import { useAllDinosaurs } from '@/hooks/useDinosaurs';
 import { useDinoLabels } from '@/hooks/useDinoLabels';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { cn } from '@/lib/utils';
 import {
   CLADES,
   PERIOD_GROUPS,
@@ -60,6 +61,7 @@ const MapPage = () => {
   const [period, setPeriod] = useState<PeriodGroup | 'all'>('all');
   const [visible, setVisible] = useState(INDEX_PAGE);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileTab, setMobileTab] = useState<'map' | 'list'>('map');
 
   const sites = useMemo<Site[]>(
     () =>
@@ -100,6 +102,7 @@ const MapPage = () => {
 
   const focus = (site: Site) => {
     setSelectedId(site.species.row_index);
+    setMobileTab('map');
     map?.flyTo(site.position, Math.max(map.getZoom(), 5), { duration: 0.8 });
   };
 
@@ -178,8 +181,37 @@ const MapPage = () => {
       {/* MAP + INDEX RAIL */}
       <section className="pb-12">
         <div className="container-editorial">
+          {/* Mobile switcher */}
+          <div className="lg:hidden flex items-center p-1 rounded-2xl bg-surface-1 border border-foreground/10 mb-4">
+            <button
+              type="button"
+              onClick={() => setMobileTab('map')}
+              className={cn(
+                'flex-1 py-2 text-xs font-medium rounded-xl transition-all',
+                mobileTab === 'map' ? 'bg-jade text-canvas shadow-sm font-semibold' : 'text-foreground/60 hover:text-foreground'
+              )}
+            >
+              🗺️ {t('navigation.map', { defaultValue: 'Mapa' })}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTab('list')}
+              className={cn(
+                'flex-1 py-2 text-xs font-medium rounded-xl transition-all',
+                mobileTab === 'list' ? 'bg-jade text-canvas shadow-sm font-semibold' : 'text-foreground/60 hover:text-foreground'
+              )}
+            >
+              📋 {t('map.index', { count: searchedSites.length })}
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 relative overflow-hidden rounded-3xl ring-1 ring-foreground/8 bg-surface-1 h-[60vh] lg:h-[70vh]">
+            <div
+              className={cn(
+                'lg:col-span-8 relative overflow-hidden rounded-3xl ring-1 ring-foreground/8 bg-surface-1 h-[65vh] lg:h-[70vh]',
+                mobileTab !== 'map' && 'hidden lg:block'
+              )}
+            >
               <MapContainer
                 center={[20, 10]}
                 zoom={2}
@@ -231,7 +263,12 @@ const MapPage = () => {
             </div>
 
             {/* Index rail */}
-            <div className="lg:col-span-4 flex flex-col rounded-3xl ring-1 ring-foreground/8 bg-surface-1/40 overflow-hidden h-[50vh] lg:h-[70vh]">
+            <div
+              className={cn(
+                'lg:col-span-4 flex flex-col rounded-3xl ring-1 ring-foreground/8 bg-surface-1/40 overflow-hidden h-[65vh] lg:h-[70vh]',
+                mobileTab !== 'list' && 'hidden lg:flex'
+              )}
+            >
               <div className="px-5 py-3.5 hairline-b flex items-center justify-between text-caption">
                 <span className="text-jade">— {t('map.index', { count: searchedSites.length })}</span>
                 <span className="text-foreground/40">{t('map.stats.sites', { count: siteCount })}</span>

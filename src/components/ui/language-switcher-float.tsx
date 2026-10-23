@@ -40,16 +40,16 @@ export function LanguageSwitcherFloat() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 animate-fade-in">
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="h-11 pl-4 pr-5 rounded-full bg-background/70 backdrop-blur-xl
+            className="h-10 sm:h-11 pl-3 sm:pl-4 pr-3.5 sm:pr-5 rounded-full bg-background/80 backdrop-blur-xl
                        border border-foreground/10 shadow-[0_8px_30px_rgba(0,0,0,0.15)]
-                       hover:border-jade/40 hover:bg-background/90
+                       hover:border-jade/40 hover:bg-background/95
                        transition-all duration-300 ease-spring
-                       flex items-center gap-2.5 group"
+                       flex items-center gap-2 sm:gap-2.5 group"
             aria-label={t('common.language')}
           >
             <Globe className="w-4 h-4 text-jade transition-transform duration-500 ease-spring group-hover:rotate-[18deg]" />

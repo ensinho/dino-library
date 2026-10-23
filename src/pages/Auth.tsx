@@ -137,21 +137,21 @@ export default function Auth() {
       </aside>
 
       {/* RIGHT — form */}
-      <section className="lg:col-span-7 flex flex-col justify-center px-6 py-16 lg:py-24 lg:px-16 xl:px-24">
+      <section className="lg:col-span-7 flex flex-col justify-center px-4 sm:px-6 py-10 sm:py-16 lg:py-24 lg:px-16 xl:px-24">
         <div className="w-full max-w-md mx-auto lg:mx-0">
           <Link
             to="/"
-            className="mb-12 inline-flex items-center gap-2 text-caption text-foreground/50 hover:text-jade transition-colors duration-300"
+            className="mb-6 sm:mb-8 inline-flex items-center gap-2 text-caption text-foreground/50 hover:text-jade transition-colors duration-300"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             {t('auth.backHome')}
           </Link>
-          <div className="mb-12">
-            <div className="text-caption text-jade mb-4">— {t('auth.readingDesk')}</div>
-            <h1 className="font-display text-display-xl text-foreground tracking-tighter mb-4">
+          <div className="mb-6 sm:mb-8">
+            <div className="text-caption text-jade mb-3">— {t('auth.readingDesk')}</div>
+            <h1 className="font-display text-3xl sm:text-display-xl text-foreground tracking-tighter mb-3">
               {t('auth.welcomeBack')}
             </h1>
-            <p className="text-foreground/65 leading-relaxed">
+            <p className="text-foreground/65 leading-relaxed text-sm sm:text-base">
               {t('auth.welcomeDesc')}
             </p>
           </div>
@@ -164,7 +164,7 @@ export default function Auth() {
             }}
             className="w-full"
           >
-            <TabsList className="w-full bg-transparent justify-start gap-8 hairline-b rounded-none p-0 h-auto mb-10">
+            <TabsList className="w-full bg-transparent justify-start gap-8 hairline-b rounded-none p-0 h-auto mb-6 sm:mb-8">
               <TabsTrigger
                 value="signin"
                 className="text-caption text-foreground/45 data-[state=active]:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-0 pb-3 -mb-px border-b border-transparent data-[state=active]:border-jade transition-colors"

@@ -174,46 +174,48 @@ export default function Catalog() {
               />
             </div>
 
-            <div className="md:col-span-2">
-              <Select value={diet ?? 'all'} onValueChange={(v) => update({ diet: v })}>
-                <SelectTrigger className="h-10 text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.diet')}>
-                  <SelectValue placeholder={t('catalog.filters.diet')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('catalog.filters.allDiets')}</SelectItem>
-                  {DIET_GROUPS.map((d) => (
-                    <SelectItem key={d} value={d}>{t(`catalog.diet.${d}`)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:col-span-7 gap-2.5">
+              <div className="col-span-1">
+                <Select value={diet ?? 'all'} onValueChange={(v) => update({ diet: v })}>
+                  <SelectTrigger className="h-10 text-xs sm:text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.diet')}>
+                    <SelectValue placeholder={t('catalog.filters.diet')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('catalog.filters.allDiets')}</SelectItem>
+                    {DIET_GROUPS.map((d) => (
+                      <SelectItem key={d} value={d}>{t(`catalog.diet.${d}`)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="md:col-span-3">
-              <Select value={region ?? 'all'} onValueChange={(v) => update({ region: v })}>
-                <SelectTrigger className="h-10 text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.location')}>
-                  <SelectValue placeholder={t('catalog.filters.location')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('catalog.filters.allLocations')}</SelectItem>
-                  {REGIONS.map((r) => (
-                    <SelectItem key={r} value={r}>{t(`catalog.locations.${r}`)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="col-span-1">
+                <Select value={region ?? 'all'} onValueChange={(v) => update({ region: v })}>
+                  <SelectTrigger className="h-10 text-xs sm:text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.filters.location')}>
+                    <SelectValue placeholder={t('catalog.filters.location')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('catalog.filters.allLocations')}</SelectItem>
+                    {REGIONS.map((r) => (
+                      <SelectItem key={r} value={r}>{t(`catalog.locations.${r}`)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="md:col-span-2">
-              <Select value={sort ?? 'default'} onValueChange={(v) => update({ sort: v === 'default' ? undefined : v })}>
-                <SelectTrigger className="h-10 text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.sort.label')}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="default">{t('catalog.sort.default')}</SelectItem>
-                  {SORTS.filter((s) => s !== 'name').map((s) => (
-                    <SelectItem key={s} value={s}>{t(`catalog.sort.${s}`)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="col-span-2 sm:col-span-1">
+                <Select value={sort ?? 'default'} onValueChange={(v) => update({ sort: v === 'default' ? undefined : v })}>
+                  <SelectTrigger className="h-10 text-xs sm:text-sm rounded-full bg-surface-1 border-foreground/10" aria-label={t('catalog.sort.label')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">{t('catalog.sort.default')}</SelectItem>
+                    {SORTS.filter((s) => s !== 'name').map((s) => (
+                      <SelectItem key={s} value={s}>{t(`catalog.sort.${s}`)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 

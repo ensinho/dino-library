@@ -168,13 +168,13 @@ export default function QuickSearchDialog({ open: controlledOpen, onOpenChange }
       <CommandInput
         placeholder={
           isPt
-            ? 'Buscar espécimes, salas, artigos ou temas (ex: Spinosaurus, Gigantes, Mapa)...'
+            ? 'Buscar espécimes, salas ou temas...'
             : isEs
-            ? 'Buscar especímenes, salas o temas (ej: Spinosaurus, Mapa)...'
-            : 'Search specimens, rooms, articles or themes (e.g., Spinosaurus, Giants, Map)...'
+            ? 'Buscar especímenes o salas...'
+            : 'Search specimens, rooms or themes...'
         }
       />
-      <CommandList className="max-h-[380px] p-2">
+      <CommandList className="max-h-[60vh] sm:max-h-[380px] p-2">
         <CommandEmpty className="py-8 text-center text-sm text-foreground/50 font-sans">
           {isPt ? 'Nenhum espécime ou sala encontrada.' : 'No specimen or room found.'}
         </CommandEmpty>
